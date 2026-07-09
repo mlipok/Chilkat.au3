@@ -13,6 +13,18 @@ Current GitHub release:
 
 This release should be treated as a beta / work-in-progress development baseline.
 
+## Current development branch
+
+Active development toward the next version is done on:
+
+* branch: `the_way_to_0.2.0`
+* current UDF header version on this branch: `0.2.0`
+* current UDF header date on this branch: `2026/07/09`
+
+The `0.2.0` development line starts from the `v0.1.4-BETA` baseline and is intended for maintenance, documentation cleanup, compatibility-sensitive refactoring, and further UDF development.
+
+The `0.2.0` changelog currently notes this line as the first version modified with ChatGPT AI assistance.
+
 ## Repository contents
 
 The repository contains:
@@ -38,11 +50,13 @@ Useful Chilkat references:
 
 ## Status
 
-`v0.1.4-BETA` is a development release and may include script-breaking changes compared to earlier public versions.
+`v0.1.4-BETA` is the latest tagged GitHub release.
+
+The `the_way_to_0.2.0` branch is the active development branch for the next `0.2.0` line and may include script-breaking changes compared to earlier public versions.
 
 Known compatibility-sensitive changes include renamed internal/logging helper functions and refactoring around Chilkat object creation wrappers.
 
-Use this release for testing, maintenance, documentation cleanup, and further development rather than as an assumed drop-in replacement without verification.
+Use the development branch for testing, maintenance, documentation cleanup, and further development rather than as an assumed drop-in replacement without verification.
 
 ## Original AutoIt Forum references
 
