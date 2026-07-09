@@ -3787,22 +3787,27 @@ EndFunc   ;==>_Chilkat_Csp_GetProvidersList
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Cert_LoadFromSmartCardEx
-; Description ...: Loads a certificate from the current smart card / USB token with optional PIN and no-dialog flag.
-; Syntax ........: _Chilkat_Cert_LoadFromSmartCardEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default)
+; Description ...: Loads a certificate from the current smart card / USB token with optional PIN, no-dialog flag and validity filtering.
+; Syntax ........: _Chilkat_Cert_LoadFromSmartCardEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $bRejectExpired = 1)
 ; Parameters ....: $s_CspName             - [in] optional CSP / provider name. Empty string lets Chilkat choose.
 ;                  $s_PIN                 - [in] optional smart-card PIN.
-;                  $bNoDialog             - [in] optional SmartCardNoDialog value.
+;                  $bNoDialog             - [in] optional SmartCardNoDialog value applied to the returned Cert object.
+;                  $bRejectExpired        - [in] when 1, iterate smart-card certificates and return only a currently date-valid certificate. Default = 1.
 ; Return values .: Success: Chilkat Cert object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
 ; Author ........: AI / mLipok
 ; Modified ......:
-; Remarks .......: Use this helper when a signing function must obtain a certificate with a private key from a card/token.
-; Related .......: _Chilkat_Cert_LoadFromSmartCard, _Chilkat_PDF_SignPAdES_File_BySmartCard, _Chilkat_XADES_SignExternalFile_BES_BySmartCard
+; Remarks .......: When $bRejectExpired = 1, CertStore.OpenSmartcard() is used because Cert.LoadFromSmartcard() arbitrarily picks one certificate.
+;                  Pass $bRejectExpired = 0 to preserve the previous LoadFromSmartcard() behavior.
+; Related .......: _Chilkat_Cert_LoadFromSmartCard, _Chilkat_Cert_IsDateValidNow, _Chilkat_PDF_SignPAdES_File_BySmartCard, _Chilkat_XADES_SignExternalFile_BES_BySmartCard
 ; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCertRef.html
 ; Example .......: No
 ; ===============================================================================================================================
-Func _Chilkat_Cert_LoadFromSmartCardEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default)
+Func _Chilkat_Cert_LoadFromSmartCardEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $bRejectExpired = 1)
 	Local $oErrorHandler = ObjEvent("AutoIt.Error", __Internal_COM_ERROR_HANDLER__for_Chilkat)
 	#forceref $oErrorHandler
+
+	If $bRejectExpired = Default Then $bRejectExpired = 1
+	If $bRejectExpired Then Return __Chilkat_Cert_LoadFromSmartCardStoreEx($s_CspName, $s_PIN, $bNoDialog, $bRejectExpired)
 
 	Local $oCert = _Chilkat_Cert_ObjCreate()
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
@@ -3817,6 +3822,54 @@ Func _Chilkat_Cert_LoadFromSmartCardEx($s_CspName = '', $s_PIN = Default, $bNoDi
 	EndIf
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oCert)
 EndFunc   ;==>_Chilkat_Cert_LoadFromSmartCardEx
+
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Name ..........: __Chilkat_Cert_LoadFromSmartCardStoreEx
+; Description ...: Opens the smart-card certificate store and returns the first matching certificate with private key.
+; Syntax ........: __Chilkat_Cert_LoadFromSmartCardStoreEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $bRejectExpired = 1)
+; Parameters ....: $s_CspName             - [in] optional CSP/provider name. For Chilkat v10.1.2+ OpenSmartcard ignores this value; empty string is preferred.
+;                  $s_PIN                 - [in] optional smart-card PIN.
+;                  $bNoDialog             - [in] optional SmartCardNoDialog value applied to the returned Cert object.
+;                  $bRejectExpired        - [in] when 1, expired and not-yet-valid certificates are skipped.
+; Return values .: Success: Chilkat Cert object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Remarks .......: This helper avoids Cert.LoadFromSmartcard() because that method arbitrarily picks one certificate when more than one is present.
+;                  CertStore.OpenSmartcard() allows iteration, so the UDF can skip expired certificates before signing.
+; ===============================================================================================================================
+Func __Chilkat_Cert_LoadFromSmartCardStoreEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $bRejectExpired = 1)
+	Local $oErrorHandler = ObjEvent("AutoIt.Error", __Internal_COM_ERROR_HANDLER__for_Chilkat)
+	#forceref $oErrorHandler
+
+	Local $oCertStore = _Chilkat_CertStore_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+	If $s_PIN <> Default And $s_PIN <> '' Then $oCertStore.SmartCardPin = $s_PIN
+
+	Local $iSuccess = $oCertStore.OpenSmartcard($s_CspName)
+	If $iSuccess = 0 Then
+		__Chilkat_LogOnError('__Chilkat_Cert_LoadFromSmartCardStoreEx() CertStore.OpenSmartcard()', $oCertStore, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+
+	Local $iNumCerts = $oCertStore.NumCertificates
+	For $iCert_idx = 0 To $iNumCerts - 1
+		Local $oCert = _Chilkat_Cert_ObjCreate()
+		If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+		$iSuccess = $oCertStore.GetCert($iCert_idx, $oCert)
+		If $iSuccess = 0 Then ContinueLoop
+
+		If $s_PIN <> Default And $s_PIN <> '' Then $oCert.SmartCardPin = $s_PIN
+		If $bNoDialog <> Default Then $oCert.SmartCardNoDialog = $bNoDialog ? 1 : 0
+
+		If $oCert.HasPrivateKey() <> 1 Then ContinueLoop
+		If $bRejectExpired And _Chilkat_Cert_IsDateValidNow($oCert) <> 1 Then ContinueLoop
+
+		Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oCert)
+	Next
+
+	__Chilkat_Log('__Chilkat_Cert_LoadFromSmartCardStoreEx(): no matching smart-card certificate was found. Required: HasPrivateKey=1 and DateValidNow=' & ($bRejectExpired ? '1' : 'any'))
+	Return SetError($CHILKAT_ERR_NOTFOUND, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+EndFunc   ;==>__Chilkat_Cert_LoadFromSmartCardStoreEx
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_PKCS11_OpenSession
@@ -4986,23 +5039,24 @@ EndFunc   ;==>_Chilkat_PDF_SignPAdES_File_ByCert
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_PDF_SignPAdES_File_BySmartCard
 ; Description ...: Signs a PDF as PAdES using a certificate located on a smart card or USB token.
-; Syntax ........: _Chilkat_PDF_SignPAdES_File_BySmartCard($sPDF_InputFileFullPath, $sPDF_OutputFileFullPath, $sPIN = Default, $s_CspName = '', $oJsonOptions = Default, $bNoDialog = Default)
+; Syntax ........: _Chilkat_PDF_SignPAdES_File_BySmartCard($sPDF_InputFileFullPath, $sPDF_OutputFileFullPath, $sPIN = Default, $s_CspName = '', $oJsonOptions = Default, $bNoDialog = Default, $bRejectExpired = 1)
 ; Parameters ....: $sPDF_InputFileFullPath - [in] input PDF path.
 ;                  $sPDF_OutputFileFullPath - [in] output signed PDF path.
 ;                  $sPIN                  - [in] optional card/token PIN.
 ;                  $s_CspName             - [in] optional CSP/provider name.
 ;                  $oJsonOptions          - [in] optional JsonObject options.
 ;                  $bNoDialog             - [in] optional smart-card no-dialog flag.
+;                  $bRejectExpired        - [in] when 1, skip expired and not-yet-valid certificates. Default = 1.
 ; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
 ; Author ........: AI / mLipok
 ; Modified ......:
-; Remarks .......: LoadFromSmartcard may show a provider/PIN dialog unless PIN and no-dialog behavior are supplied and supported.
+; Remarks .......: Certificate selection uses CertStore.OpenSmartcard() by default to avoid arbitrary selection of an expired certificate.
 ; Related .......: _Chilkat_Cert_LoadFromSmartCardEx, _Chilkat_PDF_SignPAdES_File_ByCert
 ; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatPdfRef.html
 ; Example .......: No
 ; ===============================================================================================================================
-Func _Chilkat_PDF_SignPAdES_File_BySmartCard($sPDF_InputFileFullPath, $sPDF_OutputFileFullPath, $sPIN = Default, $s_CspName = '', $oJsonOptions = Default, $bNoDialog = Default)
-	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($s_CspName, $sPIN, $bNoDialog)
+Func _Chilkat_PDF_SignPAdES_File_BySmartCard($sPDF_InputFileFullPath, $sPDF_OutputFileFullPath, $sPIN = Default, $s_CspName = '', $oJsonOptions = Default, $bNoDialog = Default, $bRejectExpired = 1)
+	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($s_CspName, $sPIN, $bNoDialog, $bRejectExpired)
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
 	Local $vReturn = _Chilkat_PDF_SignPAdES_File_ByCert($sPDF_InputFileFullPath, $sPDF_OutputFileFullPath, $oCert, $oJsonOptions)
@@ -5182,22 +5236,23 @@ EndFunc   ;==>_Chilkat_PDF_SignPAdES_Binary_ByCert
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_PDF_SignPAdES_Binary_BySmartCard
 ; Description ...: Signs binary PDF data as PAdES using a smart-card or USB-token certificate and returns signed PDF bytes.
-; Syntax ........: _Chilkat_PDF_SignPAdES_Binary_BySmartCard(ByRef $dPDF_InputBinaryData, $sPIN = Default, $s_CspName = '', $oJsonOptions = Default, $bNoDialog = Default)
+; Syntax ........: _Chilkat_PDF_SignPAdES_Binary_BySmartCard(ByRef $dPDF_InputBinaryData, $sPIN = Default, $s_CspName = '', $oJsonOptions = Default, $bNoDialog = Default, $bRejectExpired = 1)
 ; Parameters ....: $dPDF_InputBinaryData  - [in/out] input PDF bytes.
 ;                  $sPIN                  - [in] optional smart-card/token PIN.
 ;                  $s_CspName             - [in] optional CSP/provider name.
 ;                  $oJsonOptions          - [in] optional Chilkat JsonObject.
 ;                  $bNoDialog             - [in] optional smart-card no-dialog flag.
+;                  $bRejectExpired        - [in] when 1, skip expired and not-yet-valid certificates. Default = 1.
 ; Return values .: Success: signed PDF bytes as binary Variant. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
 ; Author ........: AI / mLipok
 ; Modified ......:
-; Remarks .......: Loads the signing certificate from smart card and delegates to _Chilkat_PDF_SignPAdES_Binary_ByCert().
+; Remarks .......: Certificate selection uses CertStore.OpenSmartcard() by default to avoid arbitrary selection of an expired certificate.
 ; Related .......: _Chilkat_Cert_LoadFromSmartCardEx, _Chilkat_PDF_SignPAdES_Binary_ByCert
 ; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatPdfRef.html
 ; Example .......: No
 ; ===============================================================================================================================
-Func _Chilkat_PDF_SignPAdES_Binary_BySmartCard(ByRef $dPDF_InputBinaryData, $sPIN = Default, $s_CspName = '', $oJsonOptions = Default, $bNoDialog = Default)
-	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($s_CspName, $sPIN, $bNoDialog)
+Func _Chilkat_PDF_SignPAdES_Binary_BySmartCard(ByRef $dPDF_InputBinaryData, $sPIN = Default, $s_CspName = '', $oJsonOptions = Default, $bNoDialog = Default, $bRejectExpired = 1)
+	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($s_CspName, $sPIN, $bNoDialog, $bRejectExpired)
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
 	Local $dSignedPdfBinaryData = _Chilkat_PDF_SignPAdES_Binary_ByCert($dPDF_InputBinaryData, $oCert, $oJsonOptions)
@@ -5457,7 +5512,7 @@ EndFunc   ;==>_Chilkat_XADES_SignExternalFile_BES_ByCert
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_XADES_SignExternalFile_BES_BySmartCard
 ; Description ...: Creates a detached XAdES-BES XML signature for an external file using a smart-card or USB-token certificate.
-; Syntax ........: _Chilkat_XADES_SignExternalFile_BES_BySmartCard($sFileFullPath, $sOutputXadesFileFullPath, $sPIN = Default, $s_CspName = '', $sReferenceUri = Default, $sDigestMethod = 'sha256', $sMimeType = 'application/octet-stream', $bNoDialog = Default)
+; Syntax ........: _Chilkat_XADES_SignExternalFile_BES_BySmartCard($sFileFullPath, $sOutputXadesFileFullPath, $sPIN = Default, $s_CspName = '', $sReferenceUri = Default, $sDigestMethod = 'sha256', $sMimeType = 'application/octet-stream', $bNoDialog = Default, $bRejectExpired = 1)
 ; Parameters ....: $sFileFullPath         - [in] file to sign and digest.
 ;                  $sOutputXadesFileFullPath - [in] output XAdES XML file.
 ;                  $sPIN                  - [in] optional card/token PIN.
@@ -5466,16 +5521,17 @@ EndFunc   ;==>_Chilkat_XADES_SignExternalFile_BES_ByCert
 ;                  $sDigestMethod         - [in] digest method. Default is 'sha256'.
 ;                  $sMimeType             - [in] signed file MIME type. Default is 'application/octet-stream'.
 ;                  $bNoDialog             - [in] optional smart-card no-dialog flag.
+;                  $bRejectExpired        - [in] when 1, skip expired and not-yet-valid certificates. Default = 1.
 ; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
 ; Author ........: AI / mLipok
 ; Modified ......:
-; Remarks .......: Wrapper over _Chilkat_Cert_LoadFromSmartCardEx() and _Chilkat_XADES_SignExternalFile_BES_ByCert().
+; Remarks .......: Certificate selection uses CertStore.OpenSmartcard() by default to avoid arbitrary selection of an expired certificate.
 ; Related .......: _Chilkat_Cert_LoadFromSmartCardEx, _Chilkat_XADES_SignExternalFile_BES_ByCert
 ; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatXmlDSigGenRef.html
 ; Example .......: No
 ; ===============================================================================================================================
-Func _Chilkat_XADES_SignExternalFile_BES_BySmartCard($sFileFullPath, $sOutputXadesFileFullPath, $sPIN = Default, $s_CspName = '', $sReferenceUri = Default, $sDigestMethod = 'sha256', $sMimeType = 'application/octet-stream', $bNoDialog = Default)
-	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($s_CspName, $sPIN, $bNoDialog)
+Func _Chilkat_XADES_SignExternalFile_BES_BySmartCard($sFileFullPath, $sOutputXadesFileFullPath, $sPIN = Default, $s_CspName = '', $sReferenceUri = Default, $sDigestMethod = 'sha256', $sMimeType = 'application/octet-stream', $bNoDialog = Default, $bRejectExpired = 1)
+	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($s_CspName, $sPIN, $bNoDialog, $bRejectExpired)
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
 	Local $vReturn = _Chilkat_XADES_SignExternalFile_BES_ByCert($sFileFullPath, $sOutputXadesFileFullPath, $oCert, $sReferenceUri, $sDigestMethod, $sMimeType)
@@ -5716,7 +5772,7 @@ EndFunc   ;==>_Chilkat_XADES_SignExternalBinary_BES_ByCert
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_XADES_SignExternalBinary_BES_BySmartCard
 ; Description ...: Creates a detached XAdES-BES XML signature for external binary data using a smart-card/USB-token certificate.
-; Syntax ........: _Chilkat_XADES_SignExternalBinary_BES_BySmartCard(ByRef $dExternalBinaryData, $sPIN = Default, $s_CspName = '', $sReferenceUri = 'data.bin', $sDigestMethod = 'sha256', $sMimeType = 'application/octet-stream', $bNoDialog = Default, $sXadesXmlCharset = 'utf-8')
+; Syntax ........: _Chilkat_XADES_SignExternalBinary_BES_BySmartCard(ByRef $dExternalBinaryData, $sPIN = Default, $s_CspName = '', $sReferenceUri = 'data.bin', $sDigestMethod = 'sha256', $sMimeType = 'application/octet-stream', $bNoDialog = Default, $sXadesXmlCharset = 'utf-8', $bRejectExpired = 1)
 ; Parameters ....: $dExternalBinaryData   - [in/out] bytes to digest/sign as external reference.
 ;                  $sPIN                  - [in] optional smart-card/token PIN.
 ;                  $s_CspName             - [in] optional CSP/provider name.
@@ -5725,16 +5781,17 @@ EndFunc   ;==>_Chilkat_XADES_SignExternalBinary_BES_ByCert
 ;                  $sMimeType             - [in] signed data MIME type. Default is 'application/octet-stream'.
 ;                  $bNoDialog             - [in] optional smart-card no-dialog flag.
 ;                  $sXadesXmlCharset      - [in] output XML charset. Default is 'utf-8'.
+;                  $bRejectExpired        - [in] when 1, skip expired and not-yet-valid certificates. Default = 1.
 ; Return values .: Success: XAdES XML bytes as binary Variant. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
 ; Author ........: AI / mLipok
 ; Modified ......:
-; Remarks .......: Loads the signing certificate from smart card and delegates to _Chilkat_XADES_SignExternalBinary_BES_ByCert().
+; Remarks .......: Certificate selection uses CertStore.OpenSmartcard() by default to avoid arbitrary selection of an expired certificate.
 ; Related .......: _Chilkat_Cert_LoadFromSmartCardEx, _Chilkat_XADES_SignExternalBinary_BES_ByCert
 ; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatXmlDSigGenRef.html
 ; Example .......: No
 ; ===============================================================================================================================
-Func _Chilkat_XADES_SignExternalBinary_BES_BySmartCard(ByRef $dExternalBinaryData, $sPIN = Default, $s_CspName = '', $sReferenceUri = 'data.bin', $sDigestMethod = 'sha256', $sMimeType = 'application/octet-stream', $bNoDialog = Default, $sXadesXmlCharset = 'utf-8')
-	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($s_CspName, $sPIN, $bNoDialog)
+Func _Chilkat_XADES_SignExternalBinary_BES_BySmartCard(ByRef $dExternalBinaryData, $sPIN = Default, $s_CspName = '', $sReferenceUri = 'data.bin', $sDigestMethod = 'sha256', $sMimeType = 'application/octet-stream', $bNoDialog = Default, $sXadesXmlCharset = 'utf-8', $bRejectExpired = 1)
+	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($s_CspName, $sPIN, $bNoDialog, $bRejectExpired)
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
 	Local $dXadesXmlBinary = _Chilkat_XADES_SignExternalBinary_BES_ByCert($dExternalBinaryData, $oCert, $sReferenceUri, $sDigestMethod, $sMimeType, Default, Default, Default, $sXadesXmlCharset)
