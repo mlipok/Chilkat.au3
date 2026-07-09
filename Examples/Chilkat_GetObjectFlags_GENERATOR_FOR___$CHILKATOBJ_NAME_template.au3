@@ -825,8 +825,8 @@ EndFunc   ;==>_Chilkat_Generator_ShowSummary
 
 Func __Chilkat_GetFallbackObjectList()
 	; Unified fallback list for all supported Chilkat versions.
-	; The manifest remains the preferred source of truth. This list is only a
-	; diagnostic/test fallback used when a manifest path is not provided.
+	; The manifest remains the preferred source of truth.
+	; This list is only a diagnostic/test fallback used when a manifest path is not provided.
 	; Ordering rule: Global first, then object names alphabetically.
 	Return _
 			'Global=GLOBAL|' & _
