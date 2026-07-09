@@ -11,8 +11,8 @@
 ; URL ...........: https://www.chilkatsoft.com/downloads_ActiveX.asp
 ; URL ...........: https://chilkatsoft.com/activex_dll_registration_tutorial.asp
 ; URL ...........: https://cknotes.com/category/release-notes/
-; Date ..........: 2026/02/09
-; Version .......: 0.1.4 BETA - Work in progress
+; Date ..........: 2026/07/09
+; Version .......: 0.2.0
 ; ================================================================================
 
 #cs
@@ -98,6 +98,10 @@
 	.	Added: Examples: _Example_25_Simple_IMAP_List_MailBoxes() - mLipok
 	.	Added: Examples: _Example_26_ZIP() - mLipok
 	.	Added: Examples: _Example_27_DownloadBdAsync() - mLipok
+
+	0.2.0
+	.   First version modified by ChatGPT AI
+
 
 	@LAST
 
