@@ -17,16 +17,19 @@
 ;       -> public _Chilkat_*_ObjCreate() wrappers
 ;
 ; ProgID rule:
-;   The manifest stores COM versioned ProgIDs, for example:
+;   The manifest stores COM class ProgIDs, for example:
 ;       Chilkat_9_5_0.Global.1
 ;       Chilkat.Global.1
-;   The UDF object ProgID must omit the final COM class version suffix:
-;       Chilkat_9_5_0.Global.1 -> Chilkat_9_5_0.Global
-;       Chilkat.Global.1       -> Chilkat.Global
+;   The generator normalizes the manifest ProgID to the class name, then builds
+;   the UDF ProgID according to the requested $CHILKATOBJ_VERSION_* constant:
+;       $CHILKATOBJ_VERSION_950 -> Chilkat_9_5_0.Global
+;       $CHILKATOBJ_VERSION_10  -> Chilkat.Global.10
+;       $CHILKATOBJ_VERSION_11  -> Chilkat.Global.11
 ;
 ; Version rule:
-;   Chilkat 9.5.0 uses versioned ProgIDs such as Chilkat_9_5_0.Global.
-;   Chilkat 10.x and 11.x use version-independent ProgIDs such as Chilkat.Global.
+;   Chilkat 9.5.0 uses legacy versioned ProgIDs such as Chilkat_9_5_0.Global.
+;   Chilkat 10.x and newer should use major-version-specific ProgIDs such as
+;   Chilkat.Global.10 and Chilkat.Global.11.
 ;   Therefore, the generator must not infer $CHILKATOBJ_VERSION_* from ProgID.
 ;   The generic _Chilkat_Generator() receives the target $CHILKATOBJ_VERSION_* constant and ProgID prefix explicitly.
 ;
@@ -86,7 +89,13 @@ Func _Chilkat_Generator($sChilkatObjVersionConst, $sManifestFileFullPath, $sProg
 		ConsoleWrite("> GENERATOR: END: " & $sChilkatObjVersionConst & @CRLF)
 		Return SetError(1, 0, 0)
 	EndIf
-	__Chilkat_ReportGlobalObject($sProgIdPrefix & '.Global')
+	Local $sGlobalProgId = __Chilkat_Generator_BuildObjectProgId($sProgIdPrefix, 'Global', $sChilkatObjVersionConst)
+	If @error Then
+		__Chilkat_Generator_ErrorList_Add('Parameter', $sChilkatObjVersionConst, @error, @extended, 'Unable to build Global ProgID for this version constant.')
+		ConsoleWrite("> GENERATOR: END: " & $sChilkatObjVersionConst & @CRLF)
+		Return SetError(@error, @extended, 0)
+	EndIf
+	__Chilkat_ReportGlobalObject($sGlobalProgId)
 
 	Local $iResult = 0
 	If __Chilkat_IsUsableFilePath($sManifestFileFullPath) Then
@@ -120,11 +129,17 @@ Func __Chilkat_GenerateObjectFlagsFromManifest($sManifestFileFullPath, $sChilkat
 	For $i = 0 To $oComClassNodes.length - 1
 		Local $oComClassNode = $oComClassNodes.item($i)
 		Local $sManifestProgId = $oComClassNode.getAttribute('progid')
-		Local $sObjectProgId = __Chilkat_NormalizeManifestProgId($sManifestProgId)
-		If $sObjectProgId = '' Then ContinueLoop
+		Local $sNormalizedManifestProgId = __Chilkat_NormalizeManifestProgId($sManifestProgId)
+		If $sNormalizedManifestProgId = '' Then ContinueLoop
 
-		Local $sClassName = __Chilkat_GetClassNameFromProgId($sObjectProgId)
+		Local $sClassName = __Chilkat_GetClassNameFromProgId($sNormalizedManifestProgId)
 		If $sClassName = '' Then ContinueLoop
+
+		Local $sObjectProgId = __Chilkat_Generator_BuildObjectProgIdFromVersionConst($sClassName, $sChilkatObjVersionConst)
+		If @error Then
+			__Chilkat_Generator_ErrorList_Add('ProgID.Build', $sClassName, @error, @extended, 'Unable to build version-specific object ProgID from manifest entry: ' & $sManifestProgId)
+			ContinueLoop
+		EndIf
 
 		Local $sNameSuffix = __Chilkat_GetObjectNameSuffix($sClassName)
 		Local $sItem = $sClassName & '=' & $sObjectProgId & '=' & $sNameSuffix
@@ -182,7 +197,13 @@ Func __Chilkat_GenerateObjectFlagsFromList($sProgIdPrefix, $sChilkatObjVersionCo
 		Local $sNameSuffix = __Chilkat_GetObjectNameSuffix($sClassName)
 		If UBound($aObjectInfo) = 2 And $aObjectInfo[1] <> '' Then $sNameSuffix = $aObjectInfo[1]
 
-		_Chilkat_GetObjectFlags($sProgIdPrefix & '.' & $sClassName, $sNameSuffix, $sChilkatObjVersionConst)
+		Local $sObjectProgId = __Chilkat_Generator_BuildObjectProgId($sProgIdPrefix, $sClassName, $sChilkatObjVersionConst)
+		If @error Then
+			__Chilkat_Generator_ErrorList_Add('ProgID.Build', $sClassName, @error, @extended, 'Unable to build version-specific object ProgID from fallback list.')
+			ContinueLoop
+		EndIf
+
+		_Chilkat_GetObjectFlags($sObjectProgId, $sNameSuffix, $sChilkatObjVersionConst)
 	Next
 
 	Return SetError(0, 0, 1)
@@ -246,12 +267,65 @@ EndFunc   ;==>__Chilkat_SortObjectList
 
 Func __Chilkat_NormalizeManifestProgId($sManifestProgId)
 	; The manifest uses COM class version ProgIDs such as Chilkat.Global.1.
-	; The UDF stores the object ProgID without the final COM class version suffix.
+	; This helper removes only the final COM class version suffix so the class
+	; name can be extracted before the generator builds the UDF ProgID.
 	Return StringRegExpReplace($sManifestProgId, '\.[0-9]+$', '')
 EndFunc   ;==>__Chilkat_NormalizeManifestProgId
 
+Func __Chilkat_Generator_BuildObjectProgIdFromVersionConst($sClassName, $sChilkatObjVersionConst)
+	Local $sProgIdPrefix = __Chilkat_Generator_GetProgIdPrefixFromConst($sChilkatObjVersionConst)
+	If @error Then Return SetError(@error, @extended, '')
+	Return __Chilkat_Generator_BuildObjectProgId($sProgIdPrefix, $sClassName, $sChilkatObjVersionConst)
+EndFunc   ;==>__Chilkat_Generator_BuildObjectProgIdFromVersionConst
+
+Func __Chilkat_Generator_BuildObjectProgId($sProgIdPrefix, $sClassName, $sChilkatObjVersionConst)
+	If Not IsString($sProgIdPrefix) Or $sProgIdPrefix = '' Then Return SetError(1, 0, '')
+	If Not IsString($sClassName) Or $sClassName = '' Then Return SetError(2, 0, '')
+
+	; Do not change the legacy 9.5.0 ProgID shape.
+	; $CHILKATOBJ_VERSION_950 must stay: Chilkat_9_5_0.<ClassName>
+	; Chilkat v10+ must use major-version-specific ProgIDs:
+	;   Chilkat.<ClassName>.10
+	;   Chilkat.<ClassName>.11
+	Local $sMajorVersionSuffix = __Chilkat_Generator_GetProgIdMajorVersionSuffixFromConst($sChilkatObjVersionConst)
+	If @error Then Return SetError(@error, @extended, '')
+
+	Local $sObjectProgId = $sProgIdPrefix & '.' & $sClassName
+	If $sMajorVersionSuffix <> '' Then $sObjectProgId &= '.' & $sMajorVersionSuffix
+	Return SetError(0, 0, $sObjectProgId)
+EndFunc   ;==>__Chilkat_Generator_BuildObjectProgId
+
+Func __Chilkat_Generator_GetProgIdPrefixFromConst($sChilkatObjVersionConst)
+	Switch $sChilkatObjVersionConst
+		Case '$CHILKATOBJ_VERSION_950'
+			Return SetError(0, 0, 'Chilkat_9_5_0')
+		Case '$CHILKATOBJ_VERSION_10', '$CHILKATOBJ_VERSION_11'
+			Return SetError(0, 0, 'Chilkat')
+		Case Else
+			Return SetError(1, 0, '')
+	EndSwitch
+EndFunc   ;==>__Chilkat_Generator_GetProgIdPrefixFromConst
+
+Func __Chilkat_Generator_GetProgIdMajorVersionSuffixFromConst($sChilkatObjVersionConst)
+	Switch $sChilkatObjVersionConst
+		Case '$CHILKATOBJ_VERSION_950'
+			Return SetError(0, 0, '')
+		Case '$CHILKATOBJ_VERSION_10'
+			Return SetError(0, 0, '10')
+		Case '$CHILKATOBJ_VERSION_11'
+			Return SetError(0, 0, '11')
+		Case Else
+			Return SetError(1, 0, '')
+	EndSwitch
+EndFunc   ;==>__Chilkat_Generator_GetProgIdMajorVersionSuffixFromConst
+
 Func __Chilkat_GetClassNameFromProgId($sObjectProgId)
-	Return StringRegExpReplace($sObjectProgId, '^.*\.', '')
+	; Supports both legacy ProgIDs and major-version-specific ProgIDs:
+	;   Chilkat_9_5_0.Http -> Http
+	;   Chilkat.Http.10    -> Http
+	;   Chilkat.Http.11    -> Http
+	Local $sNormalizedProgId = StringRegExpReplace($sObjectProgId, '\.[0-9]+$', '')
+	Return StringRegExpReplace($sNormalizedProgId, '^.*\.', '')
 EndFunc   ;==>__Chilkat_GetClassNameFromProgId
 
 Func __Chilkat_GetObjectNameSuffix($sClassName)
