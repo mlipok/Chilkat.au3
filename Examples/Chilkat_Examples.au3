@@ -1,5 +1,6 @@
 #AutoIt3Wrapper_UseX64=N
 
+#AutoIt3Wrapper_AutoIt3Dir=z:\AutoItPortable\AutoIt_3_3_14_5
 ;~ #AutoIt3Wrapper_AutoIt3Dir=z:\AutoItPortable\AutoIt_3_3_18_0
 
 #AutoIt3Wrapper_Au3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6 -w 7
@@ -84,7 +85,7 @@ Func _Example()
 ;~ 	_Example_33_FTP2_ListDirectoryItems_AsArray()
 ;~ 	_Example_34_FTP2_ZIP_Binary_Workflow()
 ;~ 	_Example_35_SmartCards_PKCS11_List()
-;~ 	_Example_36_PDF_PAdES_Binary()
+	_Example_36_PDF_PAdES_Binary()
 ;~ 	_Example_37_XADES_Binary()
 
 EndFunc   ;==>_Example
@@ -1507,15 +1508,15 @@ Func _Example_Init()
 	_Chilkat_DllVersion($CHILKATOBJ_VERSION_10)
 ;~ 	_Chilkat_DllVersion($CHILKATOBJ_VERSION_11)
 
-;~ 	_Chilkat_StartUp(@ScriptDir & '\ChilkatAx-9.5.0-win32.dll', "_Example_Init")
-;~ 	_Chilkat_StartUp("z:\!!!_SVN_AU3\PROGRAMY\Biblioteki\ChilkatAx-9.5.0-win32.dll", "_Example_Init")
-	_Chilkat_StartUp("z:\!!!_SVN_AU3\PROGRAMY\Biblioteki\ChilkatAx-10.1.2.0-win32.dll", "_Example_Init")
-;~ 	_Chilkat_StartUp("z:\!!!_SVN_AU3\PROGRAMY\Biblioteki\ChilkatAx-11.1.0.0-win32.dll", "_Example_Init")
-;~ 	_Chilkat_StartUp("z:\!!!_SVN_AU3\PROGRAMY\Biblioteki\ChilkatAx-11.5.0.0-win32.dll", "_Example_Init")
 ;~ 	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-win32_9.5.98.dll", "_Example_Init")
-;~ 	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-10.1.2.0-win32.dll", "_Example_Init")
-;~ 	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-11.1.0.0-win32.dll", "_Example_Init")
-	If @error Then MsgBox($MB_ICONERROR, '_Chilkat_StartUp', '@error = ' & @error & @CRLF & '@extended = ' & @extended)
+	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-win32_10.1.2.0.dll", "_Example_Init")
+;~ 	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-win32_11.0.0.0.dll", "_Example_Init")
+;~ 	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-win32_11.1.0.0.dll", "_Example_Init")
+;~ 	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-win32_11.5.0.0.dll", "_Example_Init")
+	If @error Then
+		MsgBox($MB_ICONERROR, '_Chilkat_StartUp', '@error = ' & @error & @CRLF & '@extended = ' & @extended)
+		If Not @compiled Then _ArrayDisplay($CHILKATOBJ_API, '$CHILKATOBJ_API')
+	EndIf
 
 	$__g_oChilkat_GLOBAL = _Chilkat_GLOBAL_ObjCreate()
 	If @error Then MsgBox($MB_ICONERROR, 'GLOBAL Declaration', '@error = ' & @error & @CRLF & '@extended = ' & @extended)
