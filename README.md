@@ -18,12 +18,23 @@ This release should be treated as a beta / work-in-progress development baseline
 Active development toward the next version is done on:
 
 * branch: `the_way_to_0.2.0`
-* current UDF header version on this branch: `0.2.0`
+* current UDF header version on this branch: `0.2.10 BETA - Work in progress`
 * current UDF header date on this branch: `2026/07/09`
 
-The `0.2.0` development line starts from the `v0.1.4-BETA` baseline and is intended for maintenance, documentation cleanup, compatibility-sensitive refactoring, and further UDF development.
+The `0.2.x` development line starts from the `v0.1.4-BETA` baseline and is intended for maintenance, documentation cleanup, compatibility-sensitive refactoring, and further UDF development.
 
-The `0.2.0` changelog currently notes this line as the first version modified with ChatGPT AI assistance.
+The `0.2.x` changelog currently notes this line as modified with ChatGPT AI assistance.
+
+Recent development work on this branch includes:
+
+* additional ProgID fallback object creators, including PKCS11, SCard, ScMinidriver, XmlDSig, XmlDSigGen and PrivateKey;
+* ZIP helper functions for file-based and binary/in-memory archive workflows;
+* FTP2 helper functions for connection, upload/download, binary transfer and directory listing as native AutoIt arrays;
+* smart-card, PC/SC and PKCS11 discovery helpers returning native AutoIt arrays;
+* certificate helper functions, including qualified-policy detection and validity-date checks;
+* PAdES PDF signing and aggregate verification helpers, including binary PDF workflows;
+* XAdES-BES signing and verification helpers for external-file and binary XML workflows;
+* expanded examples and standardized example function documentation headers.
 
 ## Repository contents
 
@@ -31,8 +42,8 @@ The repository contains:
 
 * `Chilkat.au3` — main AutoIt UDF wrapper for Chilkat ActiveX components.
 * `ChilkatConstants.au3` — constants and object metadata used by the UDF.
-* `Chilkat_Examples.au3` — example scripts demonstrating selected UDF functionality.
-* `Chilkat_GetObjectFlags_GENERATOR_FOR___$CHILKATOBJ_NAME_template.au3` — helper/generator template used for maintaining Chilkat object metadata.
+* `Examples/Chilkat_Examples.au3` — example scripts demonstrating selected UDF functionality.
+* `Examples/Chilkat_GetObjectFlags_GENERATOR_FOR___$CHILKATOBJ_NAME_template.au3` — helper/generator template used for maintaining Chilkat object metadata.
 
 ## Requirements
 
@@ -47,14 +58,15 @@ Useful Chilkat references:
 * https://www.chilkatsoft.com/refdoc/activex.asp
 * https://www.chilkatsoft.com/downloads_ActiveX.asp
 * https://chilkatsoft.com/activex_dll_registration_tutorial.asp
+* https://cknotes.com/category/release-notes/
 
 ## Status
 
 `v0.1.4-BETA` is the latest tagged GitHub release.
 
-The `the_way_to_0.2.0` branch is the active development branch for the next `0.2.0` line and may include script-breaking changes compared to earlier public versions.
+The `the_way_to_0.2.0` branch is the active development branch for the next `0.2.x` line and may include script-breaking changes compared to earlier public versions.
 
-Known compatibility-sensitive changes include renamed internal/logging helper functions and refactoring around Chilkat object creation wrappers.
+Known compatibility-sensitive changes include renamed internal/logging helper functions, refactoring around Chilkat object creation wrappers, and API renaming in newer ZIP and FTP2 helper functions.
 
 Use the development branch for testing, maintenance, documentation cleanup, and further development rather than as an assumed drop-in replacement without verification.
 
