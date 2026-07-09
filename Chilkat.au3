@@ -176,11 +176,13 @@
 
 #Region - Chilkat.au3 - Include
 #include <AutoItConstants.au3>
+#include <FileConstants.au3>
 #include <GUIConstantsEx.au3>
+#include <IE.au3>
+#include <MsgBoxConstants.au3>
 #include <StringConstants.au3>
 #include <WindowsConstants.au3>
 
-#include "IE.au3"
 #include "ChilkatConstants.au3"
 #EndRegion - Chilkat.au3 - Include
 
@@ -361,7 +363,7 @@ Func _Chilkat_ShutDown()
 
 	__Chilkat_Log('Closing opened Chilkat instances')
 	If IsObj($__g_oChilkat_GLOBAL) Then
-		If _Chilkat_IsAtLeastThisVersion('9.5.0.56') Then $__g_oChilkat_GLOBAL.FinalizeThreadPool()
+		If _Chilkat_IsAtLeastThisVersion('9.5.0.56', "$__g_oChilkat_GLOBAL.FinalizeThreadPool") Then $__g_oChilkat_GLOBAL.FinalizeThreadPool()
 		$__g_oChilkat_GLOBAL = Null
 	EndIf
 	DllClose($__g_hDll_CHILKAT)
@@ -473,14 +475,22 @@ Func __Chilkat_ObjCreate_Wrapper($iChilkatObjectName_IDX)
 	Local $oObject = ObjCreate($CHILKATOBJ_API[$__g_iChilkat_DLLVersion][$iChilkatObjectName_IDX][$CHILKATOBJ_ID_CLSID])
 	If Not @error Then ; if registered
 		__Chilkat_Log('ObjCreate: ' & $CHILKATOBJ_API[$__g_iChilkat_DLLVersion][$iChilkatObjectName_IDX][$CHILKATOBJ_ID_PROGID])
-		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & " REGISTERED COM OBJECT")
+		__Chilkat_ConsoleWrite_IFNC()
+		__Chilkat_ConsoleWrite_IFNC()
+		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & " CREATING OBJECT via registered ProgID")
 		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & " PROGID=" & $CHILKATOBJ_API[$__g_iChilkat_DLLVersion][$iChilkatObjectName_IDX][$CHILKATOBJ_ID_PROGID])
 		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & " IsObj=" & IsObj($oObject))
 		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & " VarType=" & VarGetType($oObject))
 		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & " IDX=" & $iChilkatObjectName_IDX & ' > Using registered ActiveX component NAME=' & ObjName($oObject, $OBJ_NAME) & ' located: ' & ObjName($oObject, $OBJ_FILE))
-		If Not @Compiled And IsObj($oObject) Then __Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & " Object Version=" & $oObject.Version)
-
-		If Not @Compiled Then _Chilkat_ObjName_FlagsValue($oObject, @ScriptLineNumber)
+		; Some Chilkat ActiveX objects, for example Chilkat.BinData.10, do not expose the Version property.
+		; In that case the debug-only Version lookup may set
+		; @error=-2147352570 (DISP_E_UNKNOWNNAME) even though ObjCreate() succeeded.
+		; The fake COM error handler suppresses the COM interruption, so clear @error after this optional debug output to preserve the successful object creation state.
+		If Not @Compiled And IsObj($oObject) Then
+			__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & " Object Version=" & $oObject.Version)
+			SetError(0, @extended)
+			_Chilkat_ObjName_FlagsValue($oObject, @ScriptLineNumber)
+		EndIf
 	Else ; if not Registered then try "Attach on the fly" to file (DLL / OCX)
 		$oErrorHandler = ObjEvent("AutoIt.Error", __Internal_COM_ERROR_HANDLER__for_Chilkat)
 		#forceref $oErrorHandler
@@ -496,10 +506,26 @@ Func __Chilkat_ObjCreate_Wrapper($iChilkatObjectName_IDX)
 		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & ' VarGetType($__g_hDll_CHILKAT): ' & VarGetType($__g_hDll_CHILKAT))
 		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & ' $__g_hDll_CHILKAT: ' & $__g_hDll_CHILKAT)
 		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & ' DLL FILE: ' & $__g_hDll_CHILKAT)
+
+
+		; https://www.autoitscript.com/forum/topic/149405-using-a-com-property-out-of-not-registered-dll/#comment-1064413
+		; Registration-Free COM / SxS object creation path.
+		; The object is created directly from the loaded Chilkat ActiveX DLL by using CLSID, IID and the DLL handle stored in $__g_hDll_CHILKAT.
+		; This path does not require the Chilkat ActiveX ProgID to be registered in the Windows registry.
 		$oObject = ObjCreate( _
 				$CHILKATOBJ_API[$__g_iChilkat_DLLVersion][$iChilkatObjectName_IDX][$CHILKATOBJ_ID_CLSID], _
 				$CHILKATOBJ_API[$__g_iChilkat_DLLVersion][$iChilkatObjectName_IDX][$CHILKATOBJ_ID_IID], _
 				$__g_hDll_CHILKAT)
+
+		; Some Chilkat ActiveX objects, for example Chilkat.BinData.10, do not expose the Version property.
+		; In that case the debug-only Version lookup may set
+		; @error=-2147352570 (DISP_E_UNKNOWNNAME) even though ObjCreate() succeeded.
+		; The fake COM error handler suppresses the COM interruption, so clear @error after this optional debug output to preserve the successful object creation state.
+		If Not @Compiled And IsObj($oObject) Then
+			__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & " Object Version=" & $oObject.Version)
+			SetError(0, @extended)
+			_Chilkat_ObjName_FlagsValue($oObject, @ScriptLineNumber)
+		EndIf
 	EndIf
 	If Not @Compiled Then __Chilkat_Log('ObjCreate: ' & $CHILKATOBJ_API[$__g_iChilkat_DLLVersion][$iChilkatObjectName_IDX][$CHILKATOBJ_ID_PROGID])
 
@@ -862,7 +888,7 @@ Func _Chilkat_GLOBAL_ObjCreate($iVerboseLogging = 0, $iVerboseTls = 0, $iDefault
 
 	$__g_oChilkat_GLOBAL = $oObject
 	$__g_oChilkat_GLOBAL.VerboseLogging = $iVerboseLogging
-	If _Chilkat_IsAtLeastThisVersion('9.5.0.78') Then $__g_oChilkat_GLOBAL.VerboseTls = $iVerboseTls
+	If _Chilkat_IsAtLeastThisVersion('9.5.0.78', "$__g_oChilkat_GLOBAL.VerboseTls") Then $__g_oChilkat_GLOBAL.VerboseTls = $iVerboseTls
 	$__g_oChilkat_GLOBAL.DefaultUtf8 = $iDefaultUtf8
 	$__g_oChilkat_GLOBAL.DefaultNtlmVersion = $iDefaultNtlmVersion
 	If IsString($sAnsiCodePage) Then _
@@ -1527,8 +1553,8 @@ EndFunc   ;==>_Chilkat_GetVersion
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_IsAtLeastThisVersion
 ; Description ...: Checks whether the loaded Chilkat version is at least the requested version.
-; Syntax ........: _Chilkat_IsAtLeastThisVersion($sVersionNumberToCompare)
-; Parameters ....: $sVersionNumberToCompare - [in] version string to compare with the loaded Chilkat version.
+; Syntax ........: _Chilkat_IsAtLeastThisVersion($sRequiredVersion)
+; Parameters ....: $sRequiredVersion - [in] version string to compare with the loaded Chilkat version.
 ; Return values .: Success: True if the loaded Chilkat version is high enough; otherwise False. Failure: sets @error/@extended.
 ; Author ........: mLipok
 ; Modified ......:
@@ -1537,14 +1563,14 @@ EndFunc   ;==>_Chilkat_GetVersion
 ; Link ..........:
 ; Example .......: No
 ; ===============================================================================================================================
-Func _Chilkat_IsAtLeastThisVersion($sVersionNumberToCompare)
+Func _Chilkat_IsAtLeastThisVersion($sRequiredVersion, $_Comment)
 ;~ https://www.autoitscript.com/forum/topic/166640-how-to-format-the-output-of-the-autoitversion-macro/?do=findComment&comment=1218031
 	Local Static $b_IsRequiredVersion = Default
-	Local Static $sVersionNumberToCompare_Last_static = Default
+	Local Static $sRequiredVersion_Last_static = Default
 	__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber)
-	If $b_IsRequiredVersion = Default Or $sVersionNumberToCompare_Last_static <> $sVersionNumberToCompare Then
+	If $b_IsRequiredVersion = Default Or $sRequiredVersion_Last_static <> $sRequiredVersion Then
 		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber)
-		$sVersionNumberToCompare_Last_static = $sVersionNumberToCompare
+		$sRequiredVersion_Last_static = $sRequiredVersion
 		Local $sChilkatVersion = _Chilkat_GetVersion()
 		If @error Then Return SetError(@error, @extended, $sChilkatVersion)
 		__Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber)
@@ -1555,11 +1581,11 @@ Func _Chilkat_IsAtLeastThisVersion($sVersionNumberToCompare)
 
 		Local $iCurrentVersion = Number(StringFormat("%03i%03i%03i%03i", $aChilkatVersion[0], $aChilkatVersion[1], $aChilkatVersion[2], $aChilkatVersion[3]))
 
-		Local $aVersionNumberToCompare = StringSplit($sVersionNumberToCompare, ".", $STR_NOCOUNT)
+		Local $aVersionNumberToCompare = StringSplit($sRequiredVersion, ".", $STR_NOCOUNT)
 		Local $iVersionNumberToCompare = Number(StringFormat("%03i%03i%03i%03i", $aVersionNumberToCompare[0], $aVersionNumberToCompare[1], $aVersionNumberToCompare[2], $aVersionNumberToCompare[3]))
 
 		$b_IsRequiredVersion = ($iCurrentVersion >= $iVersionNumberToCompare)
-		__Chilkat_Log(@ScriptLineNumber & ' COMPARE:    (' & $iCurrentVersion & ' >= ' & $iVersionNumberToCompare & ')    RESULT: ' & $b_IsRequiredVersion)
+		__Chilkat_Log(@ScriptLineNumber & ' _Chilkat_IsAtLeastThisVersion("' &$sRequiredVersion&'", "' &  $_Comment&'")   > COMPARE:    CURRENT>=REQUIRED (' & $iCurrentVersion & ' >= ' & $iVersionNumberToCompare & ')    RESULT: ' & $b_IsRequiredVersion)
 	EndIf
 
 	Return $b_IsRequiredVersion
