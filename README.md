@@ -27,6 +27,7 @@ The `0.2.x` changelog currently notes this line as modified with ChatGPT AI assi
 
 Recent development work on this branch includes:
 
+* expanded Chilkat ActiveX object metadata for the supported 9.5, 10 and 11 object-version settings, including ProgID / CLSID / IID entries used by wrapper-based object creation;
 * additional ProgID fallback object creators, including PKCS11, SCard, ScMinidriver, XmlDSig, XmlDSigGen and PrivateKey;
 * ZIP helper functions for file-based and binary/in-memory archive workflows;
 * FTP2 helper functions for connection, upload/download, binary transfer and directory listing as native AutoIt arrays;
@@ -34,7 +35,7 @@ Recent development work on this branch includes:
 * certificate helper functions, including qualified-policy detection and validity-date checks;
 * PAdES PDF signing and aggregate verification helpers, including binary PDF workflows;
 * XAdES-BES signing and verification helpers for external-file and binary XML workflows;
-* expanded examples and standardized example function documentation headers.
+* expanded examples, standardized example function documentation headers, and standardized object-creator documentation.
 
 ## Repository contents
 
@@ -66,7 +67,7 @@ Useful Chilkat references:
 
 The `the_way_to_0.2.0` branch is the active development branch for the next `0.2.x` line and may include script-breaking changes compared to earlier public versions.
 
-Known compatibility-sensitive changes include renamed internal/logging helper functions, refactoring around Chilkat object creation wrappers, and API renaming in newer ZIP and FTP2 helper functions.
+Known compatibility-sensitive changes include renamed internal/logging helper functions, refactoring around Chilkat object creation wrappers, expanded `$CHILKATOBJ_NAME_*` / `$CHILKATOBJ_API` metadata, and API renaming in newer ZIP and FTP2 helper functions.
 
 Use the development branch for testing, maintenance, documentation cleanup, and further development rather than as an assumed drop-in replacement without verification.
 
