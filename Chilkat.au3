@@ -11,7 +11,7 @@
 ; URL ...........: https://www.chilkatsoft.com/downloads_ActiveX.asp
 ; URL ...........: https://chilkatsoft.com/activex_dll_registration_tutorial.asp
 ; URL ...........: https://cknotes.com/category/release-notes/
-; Date ..........: 2024/XX/XX
+; Date ..........: 2026/07/09
 ; Version .......: 0.2.10 BETA - Work in progress
 ; ================================================================================
 
