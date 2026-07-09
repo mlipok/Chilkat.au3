@@ -1,1580 +1,1461 @@
-#AutoIt3Wrapper_UseX64=N
-
-#AutoIt3Wrapper_AutoIt3Dir=z:\AutoItPortable\AutoIt_3_3_14_5
-;~ #AutoIt3Wrapper_AutoIt3Dir=z:\AutoItPortable\AutoIt_3_3_18_0
-
-#AutoIt3Wrapper_Au3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6 -w 7
-;~ #AutoIt3Wrapper_Run_Debug_Mode=Y
-#Tidy_Parameters=/sort_funcs /reel
-
-#include <Array.au3>
-#include <Debug.au3>
-#include <StringConstants.au3>
-#include "..\Chilkat.au3"
-
-; #Region RELEASE NOTES
-;
-; Chilkat_Examples.au3 release notes
-;
-; v0.1.0
-; 2026/07/08
-; . Added: Separate RELEASE NOTES region for the examples file - AI / mLipok
-; . Changed: Standardized documentation headers for all _Example_XX_* functions - AI / mLipok
-; . Changed: Added explanatory step comments inside example functions, especially ZIP binary workflow - AI / mLipok
-; . Changed: Updated comments and messages to English where corrections were needed - AI / mLipok
-;
-; #EndRegion RELEASE NOTES
-
-Global $oErrorHandler = ObjEvent("AutoIt.Error", __Internal_COM_ERROR_HANDLER__for_Chilkat)
-
-_Example()
-MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, '', 'END')
-Exit
-
-Func _Example()
-
-	_DebugSetup("Chilkat_Examples", True) ; start displaying debug environment
-
-	_Chilkat_ErrorLogWrapper(_DebugOut)
-
-	_Example_Init()
-	If @error Then
-		MsgBox($MB_ICONERROR, 'UnlockBundle', '@error = ' & @error & @CRLF & '@extended = ' & @extended)
-		Return
-	EndIf
-
-	#cs
-		; example for: MyChilkatConfig.ini
-		[SMTP]
-		MyEmail=
-		SmtpHost=
-		SmtpUserName=
-		SmtpPassword=
-		SmtpSsl=
-		SmtpPort=
-	#ce
-
-	; Comment or uncomment one of the following example functions:
-
-	_Example_12_JsonObject_PrettyPrint()
-;~ 	_Example_13_JsonObject_IterateMembers()
-;~ 	_Example_14_JsonObject_CreateDocument()
-;~ 	_Example_15_CSV_ColumnNames()
-;~ 	_Example_16_CSV_ToArray()
-;~ 	_Example_17_CSV_ToArray('(?i).*?Urz.*?Skarb.*?', '(?i).*Jasło.*?')
-;~ 	_Example_17_CSV_ToArray('(?i).*?KRESOWY SZPITA.*?', '(?i).*Żary.*?')
-;~ 	_Example_17_CSV_ToArray('(?i).*?Urz.*?Skarb.*?', '(?i).*?Piekary.*?Śląskie')
-;~ 	_Example_17_CSV_ToArray('(?i)Drugi.*?urz.*?skarb', '(?i).*bielsko.*?')
-;~ 	_Example_18_CSV_ClipToArray()
-;~ 	_Example_19_CSV_CreateFile()
-;~ 	_Example_19b_CSV_CreateFile()
-;~ 	_Example_20_CKSTRING_HTMLEntity_EncodeDecode()
-;~ 	_Example_20b_CKSTRING_GetEncoded()511
-;~ 	_Example_21_JSONPaths()
-;~ 	_Example_22_JSONPaths_cookiemonster()
-;~ 	_Example_23_ATOM()
-;~ 	_Example_24_Simple_SMTP_Send()
-;~ 	_Example_25_Simple_IMAP_List_MailBoxes()
-;~ 	_Example_26_ZIP()
-;~ 	_Example_27_HTTP_DownloadBd()
-;~ 	_Example_28_HTTP_DownloadBdAsync()
-;~ 	_Example_29_IMAP()
-;~ 	_Example_30_SmartCards()
-;~ 	_Example_31_PDF()
-;~ 	_Example_32_ZIP_Binary_Workflow()
-;~ 	_Example_33_FTP2_ListDirectoryItems_AsArray()
-;~ 	_Example_34_FTP2_ZIP_Binary_Workflow()
-;~ 	_Example_35_SmartCards_PKCS11_List()
-	_Example_36_PDF_PAdES_Binary()
-;~ 	_Example_37_XADES_Binary()
-
-EndFunc   ;==>_Example
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_12_JsonObject_PrettyPrint
-; Description ...: Demonstrates loading JSON text and emitting it as formatted JSON.
-; Syntax ........: _Example_12_JsonObject_PrettyPrint()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Shows EmitCompact and EmitCrLf options.
-; ===============================================================================================================================
-Func _Example_12_JsonObject_PrettyPrint()
-	_Log_ChilkatExample('_Example_12_JsonObject_PrettyPrint')
-	; This example demonstrates loading JSON text and emitting it as formatted JSON.
-	; https://www.example-code.com/vbscript/json_pretty_print.asp
-	; Create the Chilkat JSON object used by this example.
-	Local $oJSON = _Chilkat_JSON_ObjCreate()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $sJSON_String = "{""name"": ""donut"",""image"":{""fname"": ""donut.jpg"",""w"": 200,""h"": 200},""thumbnail"":{""fname"": ""donutThumb.jpg"",""w"": 32,""h"": 32}}"
-
-	; Load the JSON text into the Chilkat JSON object.
-	Local $iSuccess = $oJSON.Load($sJSON_String)
-	If ($iSuccess <> 1) Then
-		ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText & @CRLF)
-		Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	EndIf
-
-	;  To pretty-print, set the EmitCompact property equal to 0
-	$oJSON.EmitCompact = 0
-
-	;  If bare-LF line endings are desired, turn off EmitCrLf
-	;  Otherwise CRLF line endings are emitted.
-	$oJSON.EmitCrLf = 0
-
-	;  Emit the formatted JSON:
-	ConsoleWrite($oJSON.Emit() & @CRLF)
-EndFunc   ;==>_Example_12_JsonObject_PrettyPrint
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_13_JsonObject_IterateMembers
-; Description ...: Demonstrates iterating over first-level JSON object members.
-; Syntax ........: _Example_13_JsonObject_IterateMembers()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Shows reading member names and values by index.
-; ===============================================================================================================================
-Func _Example_13_JsonObject_IterateMembers()
-	_Log_ChilkatExample('_Example_13_JsonObject_IterateMembers')
-	; This example demonstrates iterating over first-level JSON object members.
-	; https://www.example-code.com/vbscript/json_iterate_members.asp
-	Local $oJSON = _Chilkat_JSON_ObjCreate()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $sJSON_String = "{ ""id"": 1, ""name"": ""A green door"", ""tags"": [""home"", ""green""], ""price"": 125 }"
-
-	Local $iSuccess = $oJSON.Load($sJSON_String)
-	If ($iSuccess <> 1) Then
-		ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText & @CRLF)
-		Return SetError($CHILKAT_ERR_LOAD, @extended, $CHILKAT_RET_FAILURE)
-	EndIf
-
-	Local $sName = '', $sValue = ''
-	Local $iNumMembers = $oJSON.Size, $iValue = 0
-
-	For $iMember_idx = 0 To $iNumMembers - 1
-		$sName = $oJSON.NameAt($iMember_idx)
-		$sValue = $oJSON.StringAt($iMember_idx)
-		ConsoleWrite($sName & ": " & $sValue & @CRLF)
-
-		$iValue = $oJSON.IntAt($iMember_idx)
-		ConsoleWrite($sName & " as integer: " & $iValue & @CRLF)
-	Next
-EndFunc   ;==>_Example_13_JsonObject_IterateMembers
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_14_JsonObject_CreateDocument
-; Description ...: Demonstrates creating a JSON document programmatically.
-; Syntax ........: _Example_14_JsonObject_CreateDocument()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Builds JSON from code instead of parsing existing text.
-; ===============================================================================================================================
-Func _Example_14_JsonObject_CreateDocument()
-	_Log_ChilkatExample('_Example_14_JsonObject_CreateDocument')
-	; This example demonstrates creating a JSON document programmatically.
-	; https://www.example-code.com/vbscript/create_json.asp
-	Local $oJSON = _Chilkat_JSON_ObjCreate()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $iSuccess
-	$iSuccess = $oJSON.AddStringAt(-1, "Title", "Pan's Labyrinth")
-	ConsoleWrite("- $iSuccess=" & $iSuccess & @CRLF)
-	$iSuccess = $oJSON.AddStringAt(-1, "Director", "Guillermo del Toro")
-	ConsoleWrite("- $iSuccess=" & $iSuccess & @CRLF)
-	$iSuccess = $oJSON.AddStringAt(-1, "Original_Title", "El laberinto del fauno")
-	ConsoleWrite("- $iSuccess=" & $iSuccess & @CRLF)
-	$iSuccess = $oJSON.AddIntAt(-1, "Year_Released", 2006)
-	ConsoleWrite("- $iSuccess=" & $iSuccess & @CRLF)
-	$oJSON.EmitCompact = 0
-	ConsoleWrite($oJSON.Emit() & @CRLF)
-EndFunc   ;==>_Example_14_JsonObject_CreateDocument
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_15_CSV_ColumnNames
-; Description ...: Demonstrates loading CSV data and reading column names.
-; Syntax ........: _Example_15_CSV_ColumnNames()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Uses Chilkat CSV functionality to inspect header columns.
-; ===============================================================================================================================
-Func _Example_15_CSV_ColumnNames()
-	_Log_ChilkatExample('_Example_15_CSV_ColumnNames')
-	; This example demonstrates loading CSV data and reading column names.
-	; https://www.example-code.com/vbscript/csv_columnNames.asp
-
-	Local $sURL = 'http://www.chilkatsoft.com/testData/sample.csv'
-	InetGet($sURL, @ScriptDir & '\Example_Files\sample.csv')
-
-	Local $oCSV = _Chilkat_CSV_ObjCreate()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	;  Prior to loading the CSV file, indicate that the 1st row
-	;  should be treated as column names:
-	$oCSV.HasColumnNames = 1
-
-	; Load the $oCSV records from the file:
-	Local $iSuccess = $oCSV.LoadFile(@ScriptDir & "\Example_Files\sample.csv")
-	If ($iSuccess <> 1) Then
-		ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText & @CRLF)
-		Return SetError($CHILKAT_ERR_LOADFILE, @extended, $CHILKAT_RET_FAILURE)
-	EndIf
-
-	Local $iIndex = 0
-	Local $sColName = ''
-
-	; Display the column names:
-	For $iCol_idx = 0 To $oCSV.NumColumns - 1
-		$sColName = $oCSV.GetColumnName($iCol_idx)
-		ConsoleWrite($iCol_idx & ": " & $sColName & @CRLF)
-
-		; The following line demonstrates to to get the column
-		; index given a column name:
-		$iIndex = $oCSV.GetIndex($sColName)
-		ConsoleWrite($sColName & " is at column index " & $iIndex & @CRLF)
-	Next
-
-EndFunc   ;==>_Example_15_CSV_ColumnNames
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_16_CSV_ToArray
-; Description ...: Demonstrates converting CSV content to a native AutoIt array.
-; Syntax ........: _Example_16_CSV_ToArray()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Useful when further processing should be done by AutoIt array logic.
-; ===============================================================================================================================
-Func _Example_16_CSV_ToArray()
-	_Log_ChilkatExample('_Example_16_CSV_ToArray')
-	; This example demonstrates converting CSV content to a native AutoIt array.
-
-	Local $sURL = 'http://www.chilkatsoft.com/testData/sample.csv'
-	InetGet($sURL, @ScriptDir & '\Example_Files\sample.csv')
-
-	Local $oCSV = _Chilkat_CSV_ObjCreate()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	;  Prior to loading the CSV file, indicate that the 1st row
-	;  should be treated as column names:
-	$oCSV.HasColumnNames = 1
-
-	; Load the $oCSV records from the file:
-	Local $iSuccess = $oCSV.LoadFile(@ScriptDir & "\Example_Files\sample.csv")
-	If ($iSuccess <> 1) Then
-		ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText & @CRLF)
-		Return SetError($CHILKAT_ERR_LOADFILE, @extended, $CHILKAT_RET_FAILURE)
-	EndIf
-
-	Local $iNumColumns = $oCSV.NumColumns
-	Local $iNumRows = $oCSV.NumRows
-
-	Local $aResult[$iNumRows + 1][$iNumColumns]
-
-	; First get the column names
-	For $iCol_idx = 0 To $iNumColumns - 1
-		$aResult[0][$iCol_idx] = $oCSV.GetColumnName($iCol_idx)
-	Next
-
-	For $iRow_idx = 0 To $iNumRows - 1
-		For $iCol_idx = 0 To $iNumColumns - 1
-			$aResult[$iRow_idx + 1][$iCol_idx] = $oCSV.GetCell($iRow_idx, $iCol_idx)
-		Next
-	Next
-
-	_ArrayDisplay($aResult, '$aResult')
-
-EndFunc   ;==>_Example_16_CSV_ToArray
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_17_CSV_ToArray
-; Description ...: Demonstrates converting filtered CSV data to a native AutoIt array.
-; Syntax ........: _Example_17_CSV_ToArray($sName_RegExpPattern, $sCity_RegExpPattern)
-; Parameters ....: $sName_RegExpPattern - [in] Regular expression used to filter the name column.
-;                  $sCity_RegExpPattern - [in] Regular expression used to filter the city column.
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Uses regular expression filters supplied by the caller.
-; ===============================================================================================================================
-Func _Example_17_CSV_ToArray($sName_RegExpPattern, $sCity_RegExpPattern)
-	_Log_ChilkatExample('_Example_17_CSV_ToArray')
-	; This example demonstrates converting filtered CSV data to a native AutoIt array.
-	; https://www.example-code.com/vbscript/csv_columnNames.asp
-
-	Local $sURL = 'https://epuap.gov.pl/wps/wcm/connect/61e062b9-d981-4526-9f63-c2569263775a/RESP_2016-10-07.csv?MOD=AJPERES'
-	InetGet($sURL, @ScriptDir & '\Example_Files\ePUAP.csv')
-	ConsoleWrite("- Download completed" & @CRLF)
-
-	Local $oCSV = _Chilkat_CSV_ObjCreate()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	;  Prior to loading the CSV file, indicate that the 1st row
-	;  should be treated as column names:
-	$oCSV.HasColumnNames = 1
-
-	; Load the $oCSV records from the file:
-	Local $sCSVContent = FileRead(@ScriptDir & "\Example_Files\ePUAP.csv")
-	ConsoleWrite("- Load File completed" & @CRLF)
-	Local $iSuccess = $oCSV.LoadFromString($sCSVContent)
-	If ($iSuccess <> 1) Then
-		ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText & @CRLF)
-		Return SetError($CHILKAT_ERR_LOADFILE, @extended, $CHILKAT_RET_FAILURE)
-	EndIf
-	ConsoleWrite("- LoadFromString completed" & @CRLF)
-
-	Local $iNumColumns = $oCSV.NumColumns
-	Local $iNumRows = $oCSV.NumRows
-
-	Local $aResult[$iNumRows + 1][$iNumColumns]
-
-	; First get the column names
-	For $iCol_idx = 0 To $iNumColumns - 1
-		$aResult[0][$iCol_idx] = $oCSV.GetColumnName($iCol_idx)
-	Next
-
-	Local $iResult_RowCount = 1 ; First is ColumnName
-	For $iRow_idx = 0 To $iNumRows - 1
-		If _
-				StringRegExp($oCSV.GetCell($iRow_idx, 0), $sName_RegExpPattern, $STR_REGEXPMATCH) _
-				And _
-				StringRegExp($oCSV.GetCell($iRow_idx, 4), $sCity_RegExpPattern, $STR_REGEXPMATCH) _
-				Then
-			For $iCol_idx = 0 To $iNumColumns - 1
-				$aResult[$iResult_RowCount][$iCol_idx] = $oCSV.GetCell($iRow_idx, $iCol_idx)
-			Next
-			$iResult_RowCount += 1
-		EndIf
-	Next
-
-	; strip array size to Number of founds rows
-	ReDim $aResult[$iResult_RowCount][$iNumColumns]
-
-	ConsoleWrite("! $iNumRows = " & $iNumRows & @CRLF)
-	ConsoleWrite("! $iNumColumns = " & $iNumColumns & @CRLF)
-	ConsoleWrite("! $iResult_RowCount = " & $iResult_RowCount & @CRLF)
-	ConsoleWrite("! $iNumColumns = " & $iNumColumns & @CRLF)
-
-	ConsoleWrite("- Parsing completed" & @CRLF)
-
-	_ArrayDisplay($aResult, '$aResult')
-
-EndFunc   ;==>_Example_17_CSV_ToArray
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_18_CSV_ClipToArray
-; Description ...: Demonstrates reading CSV-like data from the clipboard into an AutoIt array.
-; Syntax ........: _Example_18_CSV_ClipToArray()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires suitable tabular clipboard content.
-; ===============================================================================================================================
-Func _Example_18_CSV_ClipToArray()
-	_Log_ChilkatExample('_Example_16_CSV_ToArray')
-
-	Local $sCSVContent = ClipGet()
-	Local $aResult = _Chilkat_CSV_StringToArray($sCSVContent, @TAB, 1)
-	If Not @error Then _ArrayDisplay($aResult, '$aResult: _Chilkat_CSV_StringToArray()')
-
-EndFunc   ;==>_Example_18_CSV_ClipToArray
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_19_CSV_CreateFile
-; Description ...: Demonstrates creating a CSV file with Chilkat CSV.
-; Syntax ........: _Example_19_CSV_CreateFile()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Writes sample rows to a CSV file.
-; ===============================================================================================================================
-Func _Example_19_CSV_CreateFile()
-	_Log_ChilkatExample('_Example_19_CSV_CreateFile')
-	; This example demonstrates creating a CSV file with Chilkat CSV.
-
-	; https://www.example-code.com/vbscript/csv_create.asp
-	Local $oCSV = _Chilkat_CSV_ObjCreate()
-	If @error Then MsgBox($MB_ICONERROR, 'CSV ObjectCreate', '@error = ' & @error & @CRLF & '@extended = ' & @extended)
-
-	;  Indicate that the 1st row
-	;  should be treated as column names:
-	$oCSV.HasColumnNames = True ;
-
-	Local $bSuccess = $oCSV.SetColumnName(0, "year")
-	$bSuccess = $oCSV.SetColumnName(1, "color")
-	$bSuccess = $oCSV.SetColumnName(2, "country")
-	$bSuccess = $oCSV.SetColumnName(3, "food")
-
-	$bSuccess = $oCSV.SetCell(0, 0, "2001")
-	$bSuccess = $oCSV.SetCell(0, 1, "red")
-	$bSuccess = $oCSV.SetCell(0, 2, "France")
-	$bSuccess = $oCSV.SetCell(0, 3, "cheese")
-
-	$bSuccess = $oCSV.SetCell(1, 0, "2005")
-	$bSuccess = $oCSV.SetCell(1, 1, "blue")
-	$bSuccess = $oCSV.SetCell(1, 2, "United States")
-	$bSuccess = $oCSV.SetCell(1, 3, "hamburger")
-
-	;  Write the CSV to a string and display:
-	Local $sCSV_String
-	$sCSV_String = $oCSV.SaveToString()
-	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, '', $sCSV_String)
-
-	;  Save the CSV to a file:
-	$bSuccess = $oCSV.SaveFile("_Example_19_CSV_CreateFile_Result.csv")
-	If Not $bSuccess Then ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText)
-
-EndFunc   ;==>_Example_19_CSV_CreateFile
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_19b_CSV_CreateFile
-; Description ...: Demonstrates creating CSV content through a helper API callback.
-; Syntax ........: _Example_19b_CSV_CreateFile()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Shows how data can be supplied by a small internal example helper.
-; ===============================================================================================================================
-Func _Example_19b_CSV_CreateFile()
-	_Log_ChilkatExample('_Example_19_CSV_CreateFile')
-
-	; https://www.example-code.com/vbscript/csv_create.asp
-
-	;  Indicate that the 1st row
-	;  should be treated as column names:
-	__Example_19b_API(Null)
-	__Example_19b_API("year", "color", "country", "food")
-	__Example_19b_API("2001", "red", "France", "cheese")
-	__Example_19b_API("2005", "blue", "United States", "hamburger")
-
-	Local $oCSV = __Example_19b_API()
-
-	;  Write the CSV to a string and display:
-;~ 	Local $sCSV_String = $oCSV.SaveToString()
-
-	;  Save the CSV to a file:
-	Local $bSuccess = $oCSV.SaveFile("_Example_19b_CSV_CreateFile_Result.csv")
-	If Not $bSuccess Then ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText)
-
-EndFunc   ;==>_Example_19b_CSV_CreateFile
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_20_CKSTRING_HTMLEntity_EncodeDecode
-; Description ...: Demonstrates HTML entity encoding and decoding with Chilkat String.
-; Syntax ........: _Example_20_CKSTRING_HTMLEntity_EncodeDecode()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Shows conversion between literal HTML text and encoded entity text.
-; ===============================================================================================================================
-Func _Example_20_CKSTRING_HTMLEntity_EncodeDecode()
-	_Log_ChilkatExample('_Example_20_CKSTRING_HTMLEntity_EncodeDecode')
-	; This example demonstrates HTML entity encoding and decoding with Chilkat String.
-
-	Local $oCKS = _Chilkat_CKSTRING_ObjCreate()
-
-	; HTML entity encode
-	$oCKS.Str = "<p> eèéê eèéê </p>1" & @CRLF & "2"
-	$oCKS.HtmlEntityEncode
-
-	; The string now contains: &lt ;p&gt; eèéê eèéê &lt;/p&gt;
-	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'HtmlEntityEncode > ResultString:', $oCKS.Str)
-
-	; HTML entity decode
-;~ 	$oCKS.Str = "&lt;p&gt; e&egrave;&eacute;&ecirc; e&#232;&#233;&#234; &lt;/p&gt;"
-	$oCKS.HtmlEntityDecode
-
-	; The string now contains: <p> eèéê eèéê </p>
-	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'HtmlEntityDecode > ResultString:', $oCKS.Str)
-
-EndFunc   ;==>_Example_20_CKSTRING_HTMLEntity_EncodeDecode
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_20b_CKSTRING_GetEncoded
-; Description ...: Demonstrates character encoding conversion with Chilkat String.
-; Syntax ........: _Example_20b_CKSTRING_GetEncoded()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Useful for checking how text is represented in different encodings.
-; ===============================================================================================================================
-Func _Example_20b_CKSTRING_GetEncoded()
-	_Log_ChilkatExample('_Example_20b_CKSTRING_GetEncoded')
-	; This example demonstrates character encoding conversion with Chilkat String.
-
-	Local $oCKS = _Chilkat_CKSTRING_ObjCreate()
-
-	; This example shows how to encode string, to different formats
-
-	; https://www.chilkatsoft.com/refdoc/xCkStringDoc.html#method68
-	$oCKS.Str = "Ã¨Ã¨Ã¨"
-	; Returns the character string in an encoding use the charsetEncoding specified.
-	; The binaryEncoding may be "base64", "hex", "url", or "quoted-printable".
-	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, '$oCKS.GetEncoded:', _
-			"Original:" & @CRLF & _
-			$oCKS.Str & @CRLF & _
-			@CRLF & _
-			"hex iso-8859-1:" & @CRLF & _
-			$oCKS.GetEncoded("hex", "iso-8859-1") & @CRLF & _
-			@CRLF & _
-			"hex utf-8:" & @CRLF & _
-			$oCKS.GetEncoded("hex", "utf-8") & @CRLF & _
-			@CRLF & _
-			"hex unicode:" & @CRLF & _
-			$oCKS.GetEncoded("hex", "unicode") & @CRLF & _
-			@CRLF & _
-			"quoted-printable utf-8:" & @CRLF & _
-			$oCKS.GetEncoded("quoted-printable", "utf-8") & @CRLF & _
-			@CRLF & _
-			"url utf-8:" & @CRLF & _
-			$oCKS.GetEncoded("url", "utf-8") & @CRLF & _
-			@CRLF & _
-			"base64 utf-8:" & @CRLF & _
-			$oCKS.GetEncoded("base64", "utf-8") & @CRLF & _
-			"")
-
-	; This example shows how to encode string, and decode strings
-	Local $sOriginal = "Ruda Śląska"
-	$oCKS.Str = $sOriginal
-	Local $sQPrintable = $oCKS.GetEncoded("quoted-printable", "utf-8")
-	$oCKS.Str = ''
-	$oCKS.AppendEncoded($sQPrintable, "quoted-printable", "utf-8")
-	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'Encode/Decode example', _
-			'Original:' & @CRLF & _
-			$sOriginal & @CRLF & @CRLF & _
-			'quoted-printable:' & @CRLF & _
-			$sQPrintable & @CRLF & @CRLF & _
-			'Decoded:' & @CRLF & _
-			$oCKS.Str & @CRLF & @CRLF & _
-			'')
-
-	; One more example - Maria Konopnicka - poem "Beetle"
-	; http://www.wiersze.juniora.pl/konopnicka/konopnicka_zk1.html
-	Local $sBase64 = "V3lzemVkxYIgxbx1Y3playBuYSBzxYJvbmVjemtvIA0KVyB6aWVsb255bSBwxYJhc3pjenlrdS4gDQrigJ5OaWUgYmllcnrFvGUgbW5pZSB6YSBza3J6eWRlxYJrYSwgDQpNacWCeSBtw7NqIGNoxYJvcGN6eWt1LiANCk5pZSBiaWVyesW8ZSBtbmllIHphIHNrcnp5ZGXFgmthLCANCkJvIG1hbSBwxYJhc3pjenlrIG5vd3k7IA0KU3p5xYJ5IG1pIGdvIGR3YSBjaHJhYsSFc3pjemUsIA0KQSBrcmFqYcWCeSBzb3d5Lg0KDQpaYSB0byBpbSBtdXNpYcWCZW0gcMWCYWNpxIcgDQpQbyBkd2FuYcWbY2llIGdyb3N6eSANCkkgamVzemN6ZW0gc2llIHphcG/FvHljennFgiANClUgdGVqIHBzdHJlaiBrb2tvc3p5LiANCkphayB1c3p5xYJ5LCB3eWtyb2nFgnksIA0KVGFrIHDFgmFzemN6eWsgemEga3LDs3RraTsgDQpKZXN6Y3plIGltIG11c2lhxYJlbSBkb2RhxIcgDQpQbyBraWVsaXN6a3Ugd8OzZGtp4oCdLg=="
-	$oCKS.Str = ""
-	$oCKS.AppendEncoded($sBase64, "base64", "utf-8")
-	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'Decoded from base64', $oCKS.Str)
-	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, '$oCKS.GetEncoded("quoted-printable", "utf-8")', $oCKS.GetEncoded("quoted-printable", "utf-8"))
-
-EndFunc   ;==>_Example_20b_CKSTRING_GetEncoded
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_21_JSONPaths
-; Description ...: Demonstrates JSON path based access to nested data.
-; Syntax ........: _Example_21_JSONPaths()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Shows reading selected data from a JSON document using paths.
-; ===============================================================================================================================
-Func _Example_21_JSONPaths()
-	_Log_ChilkatExample('_Example_21_JSONPaths')
-	; This example demonstrates JSON path based access to nested data.
-
-;~ 	https://www.example-code.com/vbscript/json_paths.asp
-
-	Local $oJSON = _Chilkat_JSON_ObjCreate()
-	$oJSON.LoadFile(@ScriptDir & '\Example_Files\JSON_paths.json')
-
-	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'JSON_paths.json', _Chilkat_JSON_ObjToString($oJSON))
-
-	;  First, let's get the value of "cc1"
-	;  The path to this value is: nestedObject.aaa.bb1.cc1
-	ConsoleWrite(@ScriptLineNumber & ": " & $oJSON.StringOf("nestedObject.aaa.bb1.cc1") & @CRLF)
-
-	;  Now let's get number 18 from the nestedArray.
-	;  It is located at nestedArray[1][2][1]
-	;  (remember: Indexing is 0-based)
-	ConsoleWrite(@ScriptLineNumber & ": " & "This should be 18: " & $oJSON.IntOf("nestedArray[1][2][1]") & @CRLF)
-
-	;  We can do the same thing in a more roundabout way using the
-	;  I, J, and K properties.  (The I,J,K properties will be convenient
-	;  for iterating over arrays, as we'll see later.)
-	$oJSON.I = 1
-	$oJSON.J = 2
-	$oJSON.K = 1
-	ConsoleWrite(@ScriptLineNumber & ": " & "This should be 18: " & $oJSON.IntOf("nestedArray[i][j][k]") & @CRLF)
-
-	;  Let's iterate over the array containing the numbers 17, 18, 19, 20.
-	;  First, use the SizeOfArray method to get the array size:
-	Local $iSize = $oJSON.SizeOfArray("nestedArray[1][2]")
-	;  The size should be 4.
-	ConsoleWrite(@ScriptLineNumber & ": " & "size of array = " & $iSize & " (should equal 4)" & @CRLF)
-
-	;  Now iterate...
-	For $iArray_idx = 0 To $iSize - 1
-		$oJSON.I = $iArray_idx
-		ConsoleWrite(@ScriptLineNumber & ": " & $oJSON.IntOf("nestedArray[1][2][i]") & @CRLF)
-	Next
-
-	;  Let's use a triple-nested loop to iterate over the nestedArray:
-
-	;  $iSizeI should equal 1.
-	Local $iSizeI = $oJSON.SizeOfArray("nestedArray")
-	Local $iSizeJ = 0, $iSizeK = 0
-	For $iArrayI_idx = 0 To $iSizeI - 1
-		$oJSON.I = $iArrayI_idx
-
-		$iSizeJ = $oJSON.SizeOfArray("nestedArray[i]")
-		For $iArrayJ_idx = 0 To $iSizeJ - 1
-			$oJSON.J = $iArrayJ_idx
-
-			$iSizeK = $oJSON.SizeOfArray("nestedArray[i][j]")
-			For $iArrayK_idx = 0 To $iSizeK - 1
-				$oJSON.K = $iArrayK_idx
-
-				ConsoleWrite(@ScriptLineNumber & ": " & $oJSON.IntOf("nestedArray[i][j][k]") & @CRLF)
-			Next
-		Next
-	Next
-
-	;  Now let's examine how to navigate to JSON objects contained within JSON arrays.
-	;  This line of code gets the value "kiwi" contained within "mixture"
-	ConsoleWrite(@ScriptLineNumber & ": " & $oJSON.StringOf("mixture.arrayA[2].fruit") & @CRLF)
-
-	;  This line of code gets the color "yellow"
-	ConsoleWrite(@ScriptLineNumber & ": " & $oJSON.StringOf("mixture.arrayA[1].colors[0]") & @CRLF)
-
-	;  Getting an object at a path:
-	;  This gets the 2nd object in "arrayA"
-	; $oJSON2 is a Chilkat_9_5_0.JsonObject
-	Local $oJSON2 = $oJSON.ObjectOf("mixture.arrayA[1]")
-	;  This object's "animal" should be "plankton"
-	ConsoleWrite(@ScriptLineNumber & ": " & $oJSON2.StringOf("animal") & @CRLF)
-
-	;  Note that paths are relative to the object, not the absolute root of the JSON document.
-	;  Starting from $oJSON2, "purple" is at "colors[2]"
-	ConsoleWrite(@ScriptLineNumber & ": " & $oJSON2.StringOf("colors[2]") & @CRLF)
-
-	;  Getting an array at a path:
-	; This gets the array containing the colors red, green, blue:
-	; $aJsonArray is a Chilkat_9_5_0.JsonArray
-	Local $aJsonArray = $oJSON.ArrayOf("mixture.array[0].colors")
-	Local $iSizeOfJsonArray = $aJsonArray.Size
-	For $iArray_idx = 0 To $iSizeOfJsonArray - 1
-		ConsoleWrite(@ScriptLineNumber & ": " & $iArray_idx & ": " & $aJsonArray.StringAt($iArray_idx) & @CRLF)
-	Next
-
-	;  The Chilkat JSON path uses ".", "[", and "]" chars for separators.  When a name
-	;  contains one of these chars, use double-quotes in the path:
-	ConsoleWrite(@ScriptLineNumber & ": " & $oJSON.StringOf("""name.with.dots"".grain") & @CRLF)
-
-EndFunc   ;==>_Example_21_JSONPaths
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_22_JSONPaths_cookiemonster
-; Description ...: Demonstrates JSON path access on a Cookie Monster sample document.
-; Syntax ........: _Example_22_JSONPaths_cookiemonster()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: A small focused JSON path example.
-; ===============================================================================================================================
-Func _Example_22_JSONPaths_cookiemonster()
-	_Log_ChilkatExample('_Example_22_JSONPaths_cookiemonster')
-	; This example demonstrates JSON path access on a Cookie Monster sample document.
-
-;~ 	https://www.autoitscript.com/forum/topic/187104-json-to-array/
-
-	Local $oJSON = _Chilkat_JSON_ObjCreate()
-	$oJSON.LoadFile(@ScriptDir & '\Example_Files\cookiemonster.json')
-
-	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'cookiemonster.json', _Chilkat_JSON_ObjToString($oJSON))
-
-	Local $iClientSize = $oJSON.SizeOfArray("client")
-	Local $sJSON_Path = ''
-	For $iClient_idx = 0 To $iClientSize - 1
-		$sJSON_Path = "client[" & $iClient_idx & "].client_info.info.name"
-		ConsoleWrite("+ " & $sJSON_Path & " = " & $oJSON.StringOf($sJSON_Path) & @CRLF)
-	Next
-EndFunc   ;==>_Example_22_JSONPaths_cookiemonster
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_23_ATOM
-; Description ...: Demonstrates parsing an Atom feed document.
-; Syntax ........: _Example_23_ATOM()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Shows basic Atom XML loading and access.
-; ===============================================================================================================================
-Func _Example_23_ATOM()
-	_Log_ChilkatExample('_Example_23_ATOM')
-	; This example demonstrates parsing an Atom feed document.
-
-;~ 	https://www.chilkatsoft.com/refdoc/xChilkatAtomRef.html
-
-	Local $oATOM = _Chilkat_ATOM_ObjCreate()
-	$oATOM.DownloadAtom('https://status.teamviewer.com/history.atom')
-	Local $iATOM_NumEntries = $oATOM.NumEntries
-	ConsoleWrite("> $iATOM_NumEntries = " & $iATOM_NumEntries & @CRLF)
-	ClipPut($oATOM.ToXmlString())
-	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, '$oATOM.ToXmlString()', $oATOM.ToXmlString())
-
-	ConsoleWrite(@CRLF)
-	Local $oATOMEntry = Null
-	For $iEntry_idx = 0 To $iATOM_NumEntries - 1
-		$oATOMEntry = $oATOM.GetEntry($iEntry_idx)
-;~ 		ConsoleWrite($oATOMEntry.GetElementCount('id') & @CRLF)
-		ConsoleWrite("+ ID: " & $oATOMEntry.GetElement('id', 0) & @CRLF)
-		ConsoleWrite("+ Published: " & $oATOMEntry.GetElement('published', 0) & @CRLF)
-		ConsoleWrite("+ Updated: " & $oATOMEntry.GetElement('updated', 0) & @CRLF)
-		ConsoleWrite("+ Title: " & $oATOMEntry.GetElement('title', 0) & @CRLF)
-		ConsoleWrite("> Content Type: " & $oATOMEntry.GetElementAttr('content', 0, 'type') & @CRLF)
-		ConsoleWrite("> Content: " & $oATOMEntry.GetElement('content', 0) & @CRLF)
-		ConsoleWrite(@CRLF)
-	Next
-
-EndFunc   ;==>_Example_23_ATOM
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_24_Simple_SMTP_Send
-; Description ...: Demonstrates sending a simple email message via SMTP.
-; Syntax ........: _Example_24_Simple_SMTP_Send()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires SMTP configuration values before running.
-; ===============================================================================================================================
-Func _Example_24_Simple_SMTP_Send()
-	_Log_ChilkatExample('_Example_24_Simple_SMTP_Send')
-	; This example demonstrates sending a simple email message via SMTP.
-
-;~ 	http://www.chilkatsoft.com/refdoc/xChilkatMailManRef.html
-;~ https://www.example-code.com/vbscript/smtp_send_email_with_attachments.asp
-
-	; we will use __Chilkat_LogOnError instead following reporting model
-	; Set outFile = fso.CreateTextFile("output.txt", True)
-
-	;  The mailman object is used for sending (SMTP) and receiving (POP3) email.
-	Local $oMailMan = _Chilkat_MailMan_ObjCreate()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $sMyEmail = IniRead(@ScriptDir & '\MyChilkatConfig.ini', 'SMTP', 'MyEmail', '')
-	If $sMyEmail = '' Then $sMyEmail = "youremail@domain.com"
-
-	Local $sSmtpHost = IniRead(@ScriptDir & '\MyChilkatConfig.ini', 'SMTP', 'SmtpHost', '')
-	If $sSmtpHost = '' Then $sSmtpHost = "smtp.my-tls-mail-server.com"
-
-	Local $sSmtpUserName = IniRead(@ScriptDir & '\MyChilkatConfig.ini', 'SMTP', 'SmtpUserName', '')
-	If $sSmtpUserName = '' Then $sSmtpUserName = "MY_SMTP_USER"
-
-	Local $sSmtpPassword = IniRead(@ScriptDir & '\MyChilkatConfig.ini', 'SMTP', 'SmtpPassword', '')
-	If $sSmtpPassword = '' Then $sSmtpPassword = "MY_SMTP_PASSWORD"
-
-	Local $iSmtpSsl = IniRead(@ScriptDir & '\MyChilkatConfig.ini', 'SMTP', 'SmtpSsl', '')
-	If $iSmtpSsl = '' Then $iSmtpSsl = "1"
-
-	Local $iSmtpPort = IniRead(@ScriptDir & '\MyChilkatConfig.ini', 'SMTP', 'SmtpPort', '')
-	If $iSmtpPort = '' Then $iSmtpPort = "465"
-
-	;  Any string argument automatically begins the 30-day trial.
-
-	#cs
-		; this is already unlocked on begining of this example
-		success = $oMailMan.UnlockComponent("30-day trial")
-		If (success <> 1) Then
-		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-		Return ; @TODO - refactoring
-		EndIf
-
-	#ce
-
-	;  Set the SMTP server.
-	$oMailMan.SmtpHost = $sSmtpHost
-
-	;  Set the SMTP login/password (if required)
-	$oMailMan.SmtpUsername = $sSmtpUserName
-	$oMailMan.SmtpPassword = $sSmtpPassword
-
-	;  Connect to SMTP port 465 using TLS.
-	$oMailMan.SmtpSsl = $iSmtpSsl
-	$oMailMan.SmtpPort = $iSmtpPort
-
-	;  Create a new email object
-	Local $oEmail = _Chilkat_Email_ObjCreate()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	$oEmail.Subject = "This is a test"
-	$oEmail.Body = "This is a test from: " & @ComputerName
-	$oEmail.From = $sMyEmail
-	Local $iSuccess = $oEmail.AddTo("My Email Testing", $sMyEmail)
-	;  To add more recipients, call AddTo, AddCC, or AddBcc once per recipient.
-
-	;  Add some attachments.
-	;  The AddFileAttachment method returns the value of the content-type it chose for the attachment.
-;~ 	Local $iContentType = $oEmail.AddFileAttachment(@ScriptFullPath)
-;~ 	#forceref $iContentType
-	If ($oEmail.LastMethodSuccess <> 1) Then
-		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-		Return ; @TODO - refactoring
-	EndIf
-
-;~ 	$iContentType = $oEmail.AddFileAttachment(@ScriptFullPath)
-	If ($oEmail.LastMethodSuccess <> 1) Then
-		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-		Return ; @TODO - refactoring
-	EndIf
-
-	;  Call SendEmail to connect to the SMTP server and send.
-	;  The connection (i.e. session) to the SMTP server remains
-	;  open so that subsequent SendEmail calls may use the
-	;  same connection.
-	$iSuccess = $oMailMan.SendEmail($oEmail)
-	_DebugOut('--- $iSuccess = ' & $iSuccess)
-	_DebugOut('$__g_oChilkat_GLOBAL.LastErrorText = ' & $__g_oChilkat_GLOBAL.LastErrorText)
-	__Chilkat_LogOnError('$iSuccess = ' & $iSuccess)
-	__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-	If ($iSuccess <> 1) Then
-		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-		Return ; @TODO - refactoring
-	EndIf
-
-	$iSuccess = $oMailMan.CloseSmtpConnection()
-	If ($iSuccess <> 1) Then
-		__Chilkat_LogOnError("Connection to SMTP server not closed cleanly.")
-	EndIf
-
-	__Chilkat_LogOnError("Mail with attachments sent!")
-
-EndFunc   ;==>_Example_24_Simple_SMTP_Send
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_25_Simple_IMAP_List_MailBoxes
-; Description ...: Demonstrates connecting to IMAP and listing mailboxes.
-; Syntax ........: _Example_25_Simple_IMAP_List_MailBoxes()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires IMAP credentials before running.
-; ===============================================================================================================================
-Func _Example_25_Simple_IMAP_List_MailBoxes()
-	_Log_ChilkatExample('_Example_25_Simple_IMAP_List_MailBoxes')
-	; This example demonstrates connecting to IMAP and listing mailboxes.
-
-;~ 	https://www.example-code.com/vbscript/imap_listMailboxes.asp
-;~ 	https://www.example-code.com/vbscript/imap_listMailboxes2.asp
-
-	; we will use __Chilkat_LogOnError instead following reporting model
-	; Set outFile = fso.CreateTextFile("output.txt", True)
-
-	ConsoleWrite(@ScriptLineNumber & @CRLF)
-	Local $oImap = _Chilkat_Imap_ObjCreate()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	ConsoleWrite(@ScriptLineNumber & @CRLF)
-	Local $sMyEmail = IniRead(@ScriptDir & '\!!!_MY_SECRET_DATA\MyChilkatConfig.ini', 'IMAP', 'MyEmail', '')
-	If $sMyEmail = '' Then $sMyEmail = "youremail@domain.com"
-
-	Local $sImapServer = IniRead(@ScriptDir & '\!!!_MY_SECRET_DATA\MyChilkatConfig.ini', 'IMAP', 'ImapServer', '')
-	If $sImapServer = '' Then $sImapServer = "imap.my-tls-mail-server.com"
-
-	Local $sImapUserName = IniRead(@ScriptDir & '\!!!_MY_SECRET_DATA\MyChilkatConfig.ini', 'IMAP', 'ImapUserName', '')
-	If $sImapUserName = '' Then $sImapUserName = "MY_SMTP_USER"
-
-	Local $sImapPassword = IniRead(@ScriptDir & '\!!!_MY_SECRET_DATA\MyChilkatConfig.ini', 'IMAP', 'ImapPassword', '')
-	If $sImapPassword = '' Then $sImapPassword = "MY_SMTP_PASSWORD"
-
-	Local $iImapSsl = IniRead(@ScriptDir & '\!!!_MY_SECRET_DATA\MyChilkatConfig.ini', 'IMAP', 'ImapSsl', '')
-	If $iImapSsl = '' Then $iImapSsl = "1"
-	ConsoleWrite("! " & $iImapSsl & @CRLF)
-
-	Local $iImapPort = IniRead(@ScriptDir & '\!!!_MY_SECRET_DATA\MyChilkatConfig.ini', 'IMAP', 'ImapPort', '')
-	If $iImapPort = '' Then $iImapPort = "143"
-	ConsoleWrite("! " & $iImapPort & @CRLF)
-
-	ConsoleWrite(@ScriptLineNumber & @CRLF)
-	;  Any string argument automatically begins the 30-day trial.
-
-	#cs
-		; this is already unlocked on begining of this example
-		success = $oImap.UnlockComponent("30-day trial")
-		If (success <> 1) Then
-		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-		Return ; @TODO - refactoring
-		EndIf
-
-	#ce
-
-	;  Connect to an IMAP server.
-	;  Use TLS
-	$oImap.ssl = $iImapSsl
-	$oImap.Port = $iImapPort
-	$oImap.Connect($sImapServer)
-	If ($oImap.LastMethodSuccess <> 1) Then
-		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-		Return ; @TODO - refactoring
-	EndIf
-
-	ConsoleWrite(@ScriptLineNumber & @CRLF)
-	;  Login using login/password
-	$oImap.Login($sImapUserName, $sImapPassword)
-	If ($oImap.LastMethodSuccess <> 1) Then
-		ConsoleWrite(@ScriptLineNumber & ' LOGIN: ' & $oImap.LastErrorText & @CRLF)
-		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-		Return ; @TODO - refactoring
-	EndIf
-	ConsoleWrite(@ScriptLineNumber & ' LOGIN: ' & $oImap.LastErrorText & @CRLF)
-
-	;  The ListMailboxes method returns a Mailboxes object that contains the collection of mailboxes.
-	;  It accepts two arguments: a refName and a wildcardedMailbox.
-	Local $s_refName = ''
-	;  refName is usually set to an empty string.
-	;  A non-empty reference name argument is the name of a mailbox or a level of mailbox hierarchy,
-	;	and indicates the context in which the mailbox name is interpreted.
-
-	;  Select all mailboxes matching this pattern:
-	Local $s_wildcardedMailbox = '*'
-
-	Local $oMBoxes = $oImap.ListMailboxes($s_refName, $s_wildcardedMailbox)
-;~ 	If ($oImap.LastMethodSuccess <> 1) Or $oMBoxes = Null Then
-;~ 		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-;~ 		Return ; @TODO - refactoring
-;~ 	EndIf
-	ConsoleWrite(@ScriptLineNumber & ' ' & $oImap.LastErrorText & @CRLF)
-	ConsoleWrite('! ' & IsObj($oMBoxes) & @CRLF)
-	ConsoleWrite('! ' & ObjName($oMBoxes, $OBJ_STRING) & @CRLF)
-	ConsoleWrite('! ' & VarGetType($oMBoxes) & @CRLF)
-
-	ConsoleWrite('! Count MBoxes = ' & $oMBoxes.Count & @CRLF)
-	__Chilkat_LogOnError("Get ListMailboxes")
-	__Chilkat_LogOnError("Mailboxes has been listed : " & $oMBoxes.Count)
-	ConsoleWrite(@ScriptLineNumber & @CRLF)
-	ConsoleWrite("Mailboxes has been listed : " & $oMBoxes.Count & @CRLF)
-
-	; https://www.example-code.com/csharp/imap_find_sent_mailbox.asp
-
-	For $iMailbox_idx = 0 To $oMBoxes.Count - 1
-;~ 		ConsoleWrite('! ' & $oMBoxes.GetName($iMailbox_idx) & @CRLF)
-;~         ConsoleWrite(">> mboxes.GetNthFlag(i,0)=" & $oMBoxes.GetNthFlag($iMailbox_idx, 0)& @CRLF)
-;~         ConsoleWrite(">> mboxes.GetNthFlag(i,1)=" & $oMBoxes.GetNthFlag($iMailbox_idx, 1)& @CRLF)
-
-		If $oMBoxes.GetName($iMailbox_idx) = "Sent" Then
-			__Chilkat_LogOnError(@ScriptLineNumber & ' ' & $oMBoxes.GetName($iMailbox_idx))
-		ElseIf $oMBoxes.HasFlag($iMailbox_idx, '\\Junk') Then
-			__Chilkat_LogOnError(@ScriptLineNumber & ' ' & $oMBoxes.GetName($iMailbox_idx))
-		ElseIf $oMBoxes.HasFlag($iMailbox_idx, '\Junk') Then
-			__Chilkat_LogOnError(@ScriptLineNumber & ' ' & $oMBoxes.GetName($iMailbox_idx))
-		EndIf
-	Next
-	__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-
-	Local $iSuccess = $oImap.SelectMailbox('INBOX')
-	If ($iSuccess <> 1) Then
-		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
-		Return ; @TODO - refactoring
-	EndIf
-
-	Local $bUid = 0
-	Local $iNumMessages = $oImap.NumMessages
-
-	__Chilkat_LogOnError('$oImap.NumMessages = ' & $iNumMessages)
-
-	Local $oEmail = Null, $sHtml = ''
-	For $iMessage_idx = $iNumMessages To 1 Step -1
-		$oEmail = $oImap.FetchSingle($iMessage_idx, $bUid)
-		__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-		$sHtml = $oEmail.GetHtmlBody()
-		__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-		If IsString($sHtml) And $sHtml <> '' Then
-			MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, '$sHtml', $sHtml)
-			_Chilkat_ViewHTML($sHtml)
-		EndIf
-	Next
-
-EndFunc   ;==>_Example_25_Simple_IMAP_List_MailBoxes
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_26_ZIP
-; Description ...: Demonstrates basic in-memory ZIP creation, listing and extraction.
-; Syntax ........: _Example_26_ZIP()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Uses native AutoIt Binary data and ZIP object wrappers.
-; ===============================================================================================================================
-Func _Example_26_ZIP()
-	_Log_ChilkatExample('_Example_26_ZIP')
-	; This example demonstrates basic in-memory ZIP creation, listing and extraction.
-
-	; Create an in-memory ZIP object for the example.
-	Local $oZIP = _Chilkat_ZIP_NewInMemory()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $dReadme = StringToBinary('This file was added to an in-memory ZIP object.', $SB_UTF8)
-	_Chilkat_ZIP_AddEntryBinary($oZIP, 'docs/readme.txt', $dReadme)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $aList = _Chilkat_ZIP_ListEntriesFromObject_AsArray($oZIP)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	_ArrayDisplay($aList, '_Chilkat_ZIP_ListEntriesFromObject_AsArray')
-
-	Local $dZipBinary = _Chilkat_ZIP_ObjectToBinary($oZIP)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $aBinaryList = _Chilkat_ZIP_ListEntriesFromBinary_AsArray($dZipBinary)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	_ArrayDisplay($aBinaryList, '_Chilkat_ZIP_ListEntriesFromBinary_AsArray')
-
-	Local $dExtracted = _Chilkat_ZIP_Binary_GetEntry($dZipBinary, 'docs/readme.txt')
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	ConsoleWrite('Extracted from binary ZIP: ' & BinaryToString($dExtracted, $SB_UTF8) & @CRLF)
-
-EndFunc   ;==>_Example_26_ZIP
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_27_HTTP_DownloadBd
-; Description ...: Demonstrates downloading HTTP content directly into Chilkat BinData.
-; Syntax ........: _Example_27_HTTP_DownloadBd()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Writes the downloaded binary data to a local file only after the in-memory download.
-; ===============================================================================================================================
-Func _Example_27_HTTP_DownloadBd()
-	_Log_ChilkatExample('_Example_27_HTTP_DownloadBd')
-	; This example demonstrates downloading HTTP content directly into Chilkat BinData.
-
-;~ 	https://www.example-code.com/vbscript/box_download_binary_to_memory.asp
-
-	Local $oHttp = _Chilkat_HTTP_ObjCreate()
-	__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-	ConsoleWrite(@ScriptLineNumber & @CRLF & $oHttp.LastErrorText)
-
-	Local $oBinData = _Chilkat_BINDATA_ObjCreate()
-	__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-
-	Local $hTimer = TimerInit() ; Begin the timer and store the handle in a variable.
-;~ 	Local $oTask = $oHttp.DownloadBdAsync("https://www.autoitscript.com/cgi-bin/getfile.pl?autoit3/autoit-v3-setup.exe", $oBinData)
-	Local $iSuccess = $oHttp.DownloadBd("https://upgrades.michaelo.pl/ML_Programy/KK_ePUAP_2020-05-07_v2.exe", $oBinData)
-
-	If $iSuccess <> 1 Then
-		__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-	Else
-		__Chilkat_LogOnError("Downloaded into an object holding the binary data.")
-		__Chilkat_LogOnError("Number of bytes: " & $oBinData.NumBytes)
-
-		Local $hFileOpen = FileOpen(@ScriptDir & '\autoit-v3-setup.exe', $FO_BINARY + $FO_OVERWRITE)
-		FileWrite($hFileOpen, $oBinData.GetBinary())
-		FileClose($hFileOpen)
-
-		Local $fDiff = TimerDiff($hTimer) ; Find the difference in time from the previous call of TimerInit. The variable we stored the TimerInit handlem is passed as the "handle" to TimerDiff.
-
-		MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'DownloadBd speed', _
-				'Downloaded: ' & $oBinData.NumBytes & ' bytes' & @CRLF & _
-				'Time: ' & $fDiff / 1000 & ' seconds' & @CRLF & _
-				@CRLF & _
-				'Speed: ' & ($oBinData.NumBytes / 1024) / ($fDiff / 1000) & ' KBytes/seconds' & @CRLF & _
-				@CRLF & _
-				'')
-
-	EndIf
-
-EndFunc   ;==>_Example_27_HTTP_DownloadBd
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_28_HTTP_DownloadBdAsync
-; Description ...: Demonstrates asynchronous HTTP download into Chilkat BinData.
-; Syntax ........: _Example_28_HTTP_DownloadBdAsync()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Shows task startup, waiting and final binary data handling.
-; ===============================================================================================================================
-Func _Example_28_HTTP_DownloadBdAsync()
-	_Log_ChilkatExample('_Example_28_HTTP_DownloadBdAsync')
-	; This example demonstrates asynchronous HTTP download into Chilkat BinData.
-
-;~ 	https://www.example-code.com/vbscript/box_download_binary_to_memory.asp
-
-	Local $oHttp = _Chilkat_HTTP_ObjCreate()
-	__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-	ConsoleWrite(@ScriptLineNumber & @CRLF & $oHttp.LastErrorText)
-
-	Local $oBinData = _Chilkat_BINDATA_ObjCreate()
-	__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-	ConsoleWrite(@ScriptLineNumber & @CRLF & $oBinData.LastErrorText)
-
-	Local $hTimer = TimerInit() ; Begin the timer and store the handle in a variable.
-;~ 	Local $oTask = $oHttp.DownloadBdAsync("https://www.autoitscript.com/cgi-bin/getfile.pl?autoit3/autoit-v3-setup.exe", $oBinData)
-;~ 	Local $oTask = $oHttp.DownloadBdAsync("https://upgrades.michaelo.pl/ML_Programy/KK_ePUAP_2020-05-07_v2.exe", $oBinData)
-;~ 	Local $oTask = $oHttp.DownloadBdAsync("https://upgrades.michaelo.pl/ML_Downloader/KK_Upgrades/2018-08-03__36_41_Small.zip", $oBinData)
-	ConsoleWrite('! 11111' & @CRLF)
-;~ 	Local $oTaskMy = _Chilkat_TASK_ObjCreate()
-;~ 	_Chilkat_ObjName_FlagsValue($oTaskMy)
-
-	Local $oTask = $oHttp.DownloadBdAsync("https://upgrades.michaelo.pl/ByteScout_OCRData/pol_fast.traineddata", $oBinData)
-	_Chilkat_ObjName_FlagsValue($oTask)
-	ConsoleWrite(@ScriptLineNumber & @CRLF & $oHttp.LastErrorText)
-
-	Local $iSuccess = $oTask.Run()
-	If $iSuccess <> 1 Then
-		__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-	Else
-		Local $iCurPctDone = 0
-		While $oTask.Finished <> 1 And $oTask.StatusInt < 5
-
-			If ($oTask.PercentDone <> $iCurPctDone) Then
-				$iCurPctDone = $oTask.PercentDone
-				ConsoleWrite("+ Downloading progress = " & $iCurPctDone & '%' & ' Status = ' & $oTask.Status & @CRLF)
-			EndIf
-
-			$oTask.SleepMs(100)
-		WEnd
-		__Chilkat_LogOnError("Downloaded into an object holding the binary data.")
-		__Chilkat_LogOnError("Number of bytes: " & $oBinData.NumBytes)
-
-		Local $hFileOpen = FileOpen("z:\TOOLs\Macro\PROGRAMY\Skaner\OCRData\pol_fast.traineddata", $FO_BINARY + $FO_OVERWRITE)
-		FileWrite($hFileOpen, $oBinData.GetBinary())
-		FileClose($hFileOpen)
-
-		Local $fDiff = TimerDiff($hTimer) ; Find the difference in time from the previous call of TimerInit. The variable we stored the TimerInit handlem is passed as the "handle" to TimerDiff.
-
-		MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'DownloadBdAsync speed', _
-				'Downloaded: ' & $oBinData.NumBytes & ' bytes' & @CRLF & _
-				'Time: ' & $fDiff / 1000 & ' seconds' & @CRLF & _
-				@CRLF & _
-				'Speed: ' & ($oBinData.NumBytes / 1024) / ($fDiff / 1000) & ' KBytes/seconds' & @CRLF & _
-				@CRLF & _
-				'')
-
-	EndIf
-
-EndFunc   ;==>_Example_28_HTTP_DownloadBdAsync
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_30_SmartCards
-; Description ...: Demonstrates basic smart card certificate loading.
-; Syntax ........: _Example_30_SmartCards()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires a configured smart card environment.
-; ===============================================================================================================================
-Func _Example_30_SmartCards()
-	; https://www.example-code.com/vbscript/list_cryptographic_service_providers.asp
-	Local $aProvidersList = _Chilkat_Csp_GetProvidersList()
-	_ArrayDisplay($aProvidersList, '$aProvidersList')
-
-;~ 	https://www.example-code.com/vbscript/load_certificate_on_smartcard_in_reader.asp
-;~ 	"CryptoCertum3 Csp"
-	Local $s_CspName = "cryptoCertum3 CSP"
-	Local $oCert = _Chilkat_Cert_LoadFromSmartCard($s_CspName)
-	#forceref $oCert
-
-	Local $s_PIN = __Chilkat_PIN_Request(@ScriptLineNumber)
-	Local $i_pinValid = _Chilkat_Cert_ValidateSmartCard_PIN($s_CspName, $s_PIN)
-	#forceref $i_pinValid
-
-EndFunc   ;==>_Example_30_SmartCards
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_31_PDF
-; Description ...: Demonstrates basic PDF loading and information retrieval.
-; Syntax ........: _Example_31_PDF()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires a local PDF file selected by the user.
-; ===============================================================================================================================
-Func _Example_31_PDF()
-;~ 	z:\!!!_SVN_AU3\PROGRAMY\KK_ePUAP\DOKUMENTY\TEST_PODPISU\TEST PODPISU - CERTUM.pdf
-	Local $s_PDF_FileFullPath = FileOpenDialog('ChooseFile', '', 'PDF (*.pdf)')
-
-	Local $oPDF = _Chilkat_Pdf_ObjCreate()
-	If @error Then Return SetError(@error, @extended, $oPDF)
-
-	Local $bSuccess = $oPDF.LoadFile($s_PDF_FileFullPath)
-	#forceref $bSuccess
-	If @error Then
-		MsgBox($MB_ICONERROR, '$oPdf.LoadFile', '@error = ' & @error & @CRLF & '@extended = ' & @extended)
-		Exit
-	EndIf
-	MsgBox($MB_TOPMOST, "Success", '$oPdf.LoadFile($s_PDF_FileFullPath)')
-
-	Local $dFileContent = _File_ReadHexData($s_PDF_FileFullPath)
-	If @error Then Return SetError(@error, @extended, '')
-
-	Local $bVerification = _Chilkat_PDF_VerifySignatureInBd_AsBool($dFileContent, 0)
-	#forceref $bVerification
-	If @error Then
-		MsgBox($MB_ICONERROR, '_Chilkat_PDF_VerifySignatureInBd_AsBool', '@error = ' & @error & @CRLF & '@extended = ' & @extended)
-		Exit
-	EndIf
-	MsgBox($MB_TOPMOST, "Success", '$oPDF.LoadBd($oBinData)')
-
-EndFunc   ;==>_Example_31_PDF
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_32_ZIP_Binary_Workflow
-; Description ...: Demonstrates the complete Binary -> ZIP object -> Binary workflow.
-; Syntax ........: _Example_32_ZIP_Binary_Workflow()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Shows adding, listing, deleting and updating ZIP content without a local ZIP file.
-; ===============================================================================================================================
-Func _Example_32_ZIP_Binary_Workflow()
-	_Log_ChilkatExample('_Example_32_ZIP_Binary_Workflow')
-	; This example demonstrates the complete Binary -> ZIP object -> Binary workflow.
-
-	; Create an empty ZIP object that exists only in memory.
-	Local $oZIP = _Chilkat_ZIP_NewInMemory()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	; Prepare the first text payload as a native AutoIt Binary value.
-	Local $dData1 = StringToBinary('First payload', $SB_UTF8)
-
-	; Prepare the second text payload as a native AutoIt Binary value.
-	Local $dData2 = StringToBinary('Second payload', $SB_UTF8)
-
-	; Add the first Binary payload to the in-memory ZIP object.
-	_Chilkat_ZIP_AddEntryBinary($oZIP, 'data/first.txt', $dData1)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	; Add the second Binary payload to the in-memory ZIP object.
-	_Chilkat_ZIP_AddEntryBinary($oZIP, 'data/second.txt', $dData2)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	; List ZIP entries from the ZIP object before converting it to Binary.
-	Local $aList = _Chilkat_ZIP_ListEntriesFromObject_AsArray($oZIP)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	_ArrayDisplay($aList, 'ZIP object entries')
-
-	; Remove one entry from the ZIP object while it is still in memory.
-	_Chilkat_ZIP_DeleteEntry($oZIP, 'data/first.txt')
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	; Serialize the modified ZIP object back to a native AutoIt Binary value.
-	Local $dZipBinary = _Chilkat_ZIP_ObjectToBinary($oZIP)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	; Prepare a third payload to demonstrate direct Binary ZIP modification.
-	Local $dThird = StringToBinary('Third payload added directly to binary ZIP', $SB_UTF8)
-	; Add a new entry directly to the Binary ZIP without manually keeping the ZIP object.
-	$dZipBinary = _Chilkat_ZIP_Binary_AddEntry($dZipBinary, 'data/third.txt', $dThird)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	; List entries again from the final Binary ZIP to verify the result.
-	Local $aBinaryList = _Chilkat_ZIP_ListEntriesFromBinary_AsArray($dZipBinary)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	_ArrayDisplay($aBinaryList, 'ZIP binary entries')
-
-EndFunc   ;==>_Example_32_ZIP_Binary_Workflow
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_33_FTP2_ListDirectoryItems_AsArray
-; Description ...: Demonstrates FTP directory listing returned as a native AutoIt array.
-; Syntax ........: _Example_33_FTP2_ListDirectoryItems_AsArray()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires FTP connection settings before running.
-; ===============================================================================================================================
-Func _Example_33_FTP2_ListDirectoryItems_AsArray()
-	_Log_ChilkatExample('_Example_33_FTP2_ListDirectoryItems_AsArray')
-	; This example demonstrates FTP directory listing returned as a native AutoIt array.
-
-	Local $sHostName = ''
-	Local $sUsername = ''
-	Local $sPassword = ''
-	Local $sRemoteDir = '/'
-
-	If $sHostName = '' Then
-		MsgBox($MB_ICONINFORMATION, '_Example_33_FTP2_ListDirectoryItems_AsArray', 'Set FTP credentials in the example before running it.')
-		Return
-	EndIf
-
-	; Connect to the FTP server using the credentials configured above.
-	Local $oFTP = _Chilkat_FTP2_Connect($sHostName, $sUsername, $sPassword)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	; List remote directory items as a native AutoIt array.
-	Local $aItems = _Chilkat_FTP2_ListDirectoryItems_AsArray($oFTP, $sRemoteDir, '*', _
-			$CHILKAT_FTP2_LIST_RETURN_ALL, _
-			$CHILKAT_FTP2_LIST_RECUR_RECUR, _
-			$CHILKAT_FTP2_LIST_SORT_ASC, _
-			$CHILKAT_FTP2_LIST_RELPATH)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	_ArrayDisplay($aItems, 'FTP directory items')
-	_Chilkat_FTP2_Disconnect($oFTP)
-
-EndFunc   ;==>_Example_33_FTP2_ListDirectoryItems_AsArray
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_34_FTP2_ZIP_Binary_Workflow
-; Description ...: Demonstrates downloading a ZIP from FTP, editing it in memory and uploading it back.
-; Syntax ........: _Example_34_FTP2_ZIP_Binary_Workflow()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires FTP connection settings and remote ZIP paths before running.
-; ===============================================================================================================================
-Func _Example_34_FTP2_ZIP_Binary_Workflow()
-	_Log_ChilkatExample('_Example_34_FTP2_ZIP_Binary_Workflow')
-	; This example demonstrates downloading a ZIP from FTP, editing it in memory and uploading it back.
-
-	Local $sHostName = ''
-	Local $sUsername = ''
-	Local $sPassword = ''
-	Local $sRemoteInputZip = '/in/archive.zip'
-	Local $sRemoteOutputZip = '/out/archive.zip'
-
-	If $sHostName = '' Then
-		MsgBox($MB_ICONINFORMATION, '_Example_34_FTP2_ZIP_Binary_Workflow', 'Set FTP credentials and remote paths in the example before running it.')
-		Return
-	EndIf
-
-	Local $oFTP = _Chilkat_FTP2_Connect($sHostName, $sUsername, $sPassword)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $oZIP = _Chilkat_FTP2_DownloadZipToObject($oFTP, $sRemoteInputZip)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $aBefore = _Chilkat_ZIP_ListEntriesFromObject_AsArray($oZIP)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	_ArrayDisplay($aBefore, 'ZIP downloaded from FTP')
-
-	Local $dAdded = StringToBinary('Added without using a local ZIP file.', $SB_UTF8)
-	_Chilkat_ZIP_AddEntryBinary($oZIP, 'added/from-memory.txt', $dAdded)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	_Chilkat_FTP2_UploadZipObject($oFTP, $oZIP, $sRemoteOutputZip)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	_Chilkat_FTP2_Disconnect($oFTP)
-
-EndFunc   ;==>_Example_34_FTP2_ZIP_Binary_Workflow
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_35_SmartCards_PKCS11_List
-; Description ...: Demonstrates listing PC/SC readers, PKCS#11 slots and certificates with private keys.
-; Syntax ........: _Example_35_SmartCards_PKCS11_List()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires a PKCS#11 module path and optional PIN for the certificate part.
-; ===============================================================================================================================
-Func _Example_35_SmartCards_PKCS11_List()
-	_Log_ChilkatExample('_Example_35_SmartCards_PKCS11_List')
-	; This example demonstrates listing PC/SC readers, PKCS#11 slots and certificates with private keys.
-
-	; List PC/SC readers available in the current system.
-	Local $aReaders = _Chilkat_SCARD_ListReaders_AsArray()
-	If Not @error Then
-		_ArrayDisplay($aReaders, 'PC/SC readers')
-	Else
-		MsgBox($MB_ICONINFORMATION, '_Example_35_SmartCards_PKCS11_List', 'There is no readers found')
-		Return
-	EndIf
-
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\System32\'
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\SysWOW64\'
-;~
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\System32\aetpkss1.dll'
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\SysWOW64\aetpkss1.dll'
-;~
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\System32\eps2003csp11.dll'
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\SysWOW64\eps2003csp11.dll'
-;~
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\System32\CCGraphiteP1164p.dll'
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\SysWOW64\CCGraphiteP1164p.dll'
-;~ 	Local $sPkcs11DllFullPath = 'c:\Program Files\Krajowa Izba Rozliczeniowa S.A\Szafir 2.0\bin\CCGraphiteP11p.x64.dll'
-;~ 	Local $sPkcs11DllFullPath = 'c:\Program Files\Krajowa Izba Rozliczeniowa S.A\Szafir 2.0\bin\libgraphite64.dll'
-;~
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\System32\CCP1164p.dll'
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\SysWOW64\CCP1164p.dll'
-;~
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\System32\CloudSingerP1164.dll'
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\SysWOW64\CloudSingerP1164.dll'
-;~
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\System32\crypto3PKCS.dll'
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\SysWOW64\crypto3PKCS.dll'
-;~
-;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\System32\cryptoCertum3PKCS.dll'
-	Local $sPkcs11DllFullPath = 'C:\Windows\SysWOW64\cryptoCertum3PKCS.dll'
-
-	Local $s_PIN = __Chilkat_PIN_Request(@ScriptLineNumber)
-	If $sPkcs11DllFullPath = '' Then
-		MsgBox($MB_ICONINFORMATION, '_Example_35_SmartCards_PKCS11_List', 'Set PKCS#11 DLL path and PIN in the example before running the PKCS#11 part.')
-		Return
-	EndIf
-
-	Local $aSlots = _Chilkat_PKCS11_DiscoverSlots_AsArray($sPkcs11DllFullPath)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	_ArrayDisplay($aSlots, 'PKCS#11 slots')
-
-	Local $aCerts = _Chilkat_PKCS11_ListCertsWithPrivateKey_AsArray($sPkcs11DllFullPath, $s_PIN)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	_ArrayDisplay($aCerts, 'Certificates with private key', Default, Default, Default, _
-		'Slot ID|Token Label|Certificate Label|Subject CN|Subject DN|Serial Number|Issuer CN|Issuer DN|Valid From|Valid To')
-
-EndFunc   ;==>_Example_35_SmartCards_PKCS11_List
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_36_PDF_PAdES_Binary
-; Description ...: Demonstrates PAdES signing and verification using binary PDF data.
-; Syntax ........: _Example_36_PDF_PAdES_Binary()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires a PDF file and a smart card PIN for signing.
-; ===============================================================================================================================
-Func _Example_36_PDF_PAdES_Binary()
-	_Log_ChilkatExample('_Example_36_PDF_PAdES_Binary')
-	; This example demonstrates PAdES signing and verification using binary PDF data.
-
-	; Ask the user to select the PDF file used by this example.
-	Local $sPDF_FileFullPath = FileOpenDialog('Choose PDF', '', 'PDF (*.pdf)')
-	If @error Or $sPDF_FileFullPath = '' Then Return
-
-	Local $dPDF = _File_ReadHexData($sPDF_FileFullPath)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $s_PIN = __Chilkat_PIN_Request(@ScriptLineNumber)
-	If $s_PIN = '' Then
-		MsgBox($MB_ICONINFORMATION, '_Example_36_PDF_PAdES_Binary', 'Set smart card PIN in the example before signing. Verification will be shown only.')
-		Local $oVerifyJson = _Chilkat_PDF_VerifySignaturesInBinary_AsJson($dPDF)
-		If Not @error Then ConsoleWrite($oVerifyJson.Emit() & @CRLF)
-		Return
-	EndIf
-
-	Local $oOptions = _Chilkat_PDF_PAdES_CreateOptions()
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $dSignedPDF = _Chilkat_PDF_SignPAdES_Binary_BySmartCard($dPDF, $s_PIN, '', $oOptions)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $sOutput = StringTrimRight($sPDF_FileFullPath, 4) & '.pades.pdf'
-	Local $hFile = FileOpen($sOutput, $FO_BINARY + $FO_OVERWRITE)
-	FileWrite($hFile, $dSignedPDF)
-	FileClose($hFile)
-
-	MsgBox($MB_ICONINFORMATION, '_Example_36_PDF_PAdES_Binary', 'Signed PDF saved to:' & @CRLF & $sOutput)
-
-EndFunc   ;==>_Example_36_PDF_PAdES_Binary
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Example_37_XADES_Binary
-; Description ...: Demonstrates detached XAdES signing and verification using binary payload data.
-; Syntax ........: _Example_37_XADES_Binary()
-; Parameters ....: None
-; Return values .: Success - None.
-;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires a file payload and a smart card PIN for signing.
-; ===============================================================================================================================
-Func _Example_37_XADES_Binary()
-	_Log_ChilkatExample('_Example_37_XADES_Binary')
-	; This example demonstrates detached XAdES signing and verification using binary payload data.
-
-	; Ask the user to select the payload file used by this detached XAdES example.
-	Local $sFileFullPath = FileOpenDialog('Choose file to sign with detached XAdES', '', 'All (*.*)')
-	If @error Or $sFileFullPath = '' Then Return
-
-	Local $dPayload = _File_ReadHexData($sFileFullPath)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $s_PIN = __Chilkat_PIN_Request(@ScriptLineNumber)
-	If $s_PIN = '' Then
-		MsgBox($MB_ICONINFORMATION, '_Example_37_XADES_Binary', 'Set smart card PIN in the example before running it.')
-		Return
-	EndIf
-
-	Local $sReferenceUri = StringRegExpReplace($sFileFullPath, '^.*[\\/]', '')
-	Local $dXadesXml = _Chilkat_XADES_SignExternalBinary_BES_BySmartCard($dPayload, $s_PIN, '', $sReferenceUri)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Local $oVerifyJson = _Chilkat_XADES_VerifyBinary_AsJson($dXadesXml, $dPayload, $sReferenceUri)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	ConsoleWrite($oVerifyJson.Emit() & @CRLF)
-
-	Local $sOutput = $sFileFullPath & '.xades.xml'
-	Local $hFile = FileOpen($sOutput, $FO_BINARY + $FO_OVERWRITE)
-	FileWrite($hFile, $dXadesXml)
-	FileClose($hFile)
-
-	MsgBox($MB_ICONINFORMATION, '_Example_37_XADES_Binary', 'XAdES XML saved to:' & @CRLF & $sOutput)
-
-EndFunc   ;==>_Example_37_XADES_Binary
-
-Func _Example_Init()
-
-	_Chilkat_ErrorLogWrapper(ConsoleWrite)
-;~ 	_Chilkat_DllVersion($CHILKATOBJ_VERSION_950)
-	_Chilkat_DllVersion($CHILKATOBJ_VERSION_10)
-;~ 	_Chilkat_DllVersion($CHILKATOBJ_VERSION_11)
-
-;~ 	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-win32_9.5.98.dll", "_Example_Init")
-	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-win32_10.1.2.0.dll", "_Example_Init")
-;~ 	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-win32_11.0.0.0.dll", "_Example_Init")
-;~ 	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-win32_11.1.0.0.dll", "_Example_Init")
-;~ 	_Chilkat_StartUp(@ScriptDir & "\ChilkatAx-win32_11.5.0.0.dll", "_Example_Init")
-	If @error Then
-		MsgBox($MB_ICONERROR, '_Chilkat_StartUp', '@error = ' & @error & @CRLF & '@extended = ' & @extended)
-		If Not @compiled Then _ArrayDisplay($CHILKATOBJ_API, '$CHILKATOBJ_API')
-	EndIf
-
-	$__g_oChilkat_GLOBAL = _Chilkat_GLOBAL_ObjCreate()
-	If @error Then MsgBox($MB_ICONERROR, 'GLOBAL Declaration', '@error = ' & @error & @CRLF & '@extended = ' & @extended)
-	_Chilkat_ObjName_FlagsValue($__g_oChilkat_GLOBAL)
-
-;~ 	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'IsObj', IsObj($__g_oChilkat_GLOBAL))
-;~ 	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'VarGetType', VarGetType($__g_oChilkat_GLOBAL))
-;~ 	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, 'OBJNAME', ObjName($__g_oChilkat_GLOBAL,2))
-	; try to load UnlockCode from pre defined file or use Trial
-	Local $sUnlockCode = FileRead(@ScriptDir & '\!!!_MY_SECRET_DATA\MyLicenseKey.txt')
-	If @error Then $sUnlockCode = "Anything for 30-day trial"
-	If Not @Compiled Then MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, '$sUnlockCode', $sUnlockCode)
-
-	_Chilkat_GLOBAL_UnlockBundle($__g_oChilkat_GLOBAL, $sUnlockCode)
-	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-
-	Return $__g_oChilkat_GLOBAL
-EndFunc   ;==>_Example_Init
-
-Func _Log_ChilkatExample($sData)
-	ConsoleWrite('>+ ' & $sData & @CRLF)
-EndFunc   ;==>_Log_ChilkatExample
-#Region - Internal
-
-
-Func __Chilkat_PIN_Request($_ScriptLineNumber)
-	Return InputBox("PIN", "Provide PIN" & @CRLF & "REF LINE=" & $_ScriptLineNumber, "", "*")
-EndFunc   ;==>__Chilkat_PIN_Request
-Func __Example_19b_API($vCol0 = Default, $vCol1 = Default, $vCol2 = Default, $vCol3 = Default)
-	Local Static $oCSV = Null
-
-	If $vCol0 = Null Or $oCSV = Null Then ; Create New Object
-		$oCSV = _Chilkat_CSV_ObjCreate()
-		$oCSV.HasColumnNames = True
-	ElseIf $vCol0 = Default And $vCol1 = Default And $vCol2 = Default And $vCol3 = Default Then
-		Return $oCSV
-	ElseIf $oCSV.NumColumns = 0 Then
-		$oCSV.SetColumnName(0, $vCol0)
-		$oCSV.SetColumnName(1, $vCol1)
-		$oCSV.SetColumnName(2, $vCol2)
-		$oCSV.SetColumnName(3, $vCol3)
-	Else
-		Local $iRow = $oCSV.NumRows
-		$oCSV.SetCell($iRow, 0, $vCol0)
-		$oCSV.SetCell($iRow, 1, $vCol1)
-		$oCSV.SetCell($iRow, 2, $vCol2)
-		$oCSV.SetCell($iRow, 3, $vCol3)
-	EndIf
-
-EndFunc   ;==>__Example_19b_API
-
-Func _File_ReadHexData($sFileFullPath, $iFileOpenMode = $FO_READ)
-	Local $hFile = FileOpen($sFileFullPath, $FO_BINARY + $iFileOpenMode)
-	If @error Then Return SetError(@error, @extended, $hFile)
-
-	Local $dBinaryData = FileRead($hFile)
-	FileClose($hFile)
-
-	Return $dBinaryData
-EndFunc   ;==>_File_ReadHexData
-#EndRegion - Internal
+#include-once
+
+#Region - ChilkatConstants.au3 - Declarations
+
+Global Enum _
+		$CHILKAT_ERR_SUCCESS, _
+		$CHILKAT_ERR_GENERAL, _
+		$CHILKAT_ERR_OBJECTCREATE, _
+		$CHILKAT_ERR_DLLVERSIONNOTSET, _
+		$CHILKAT_ERR_ISNOTOBJ, _
+		$CHILKAT_ERR_ISNOTCHILKAT, _
+		$CHILKAT_ERR_UNLOCK, _
+		$CHILKAT_ERR_COMERROR, _
+		$CHILKAT_ERR_INVALIDPARAMETERTYPE, _
+		$CHILKAT_ERR_INVALIDPARAMETERVALUE, _
+		$CHILKAT_ERR_FILENOTEXIST, _
+		$CHILKAT_ERR_FAILURE, _
+		$CHILKAT_ERR_LOAD, _
+		$CHILKAT_ERR_LOADFILE, _
+		$CHILKAT_ERR_UNKNOWN, _
+		$CHILKAT_ERR_NOTFOUND, _
+		$CHILKAT_ERR_MAILMAN_0 = $CHILKAT_ERR_SUCCESS + 100, _
+		$CHILKAT_ERR_EMAIL_0 = $CHILKAT_ERR_SUCCESS + 200, _
+		$CHILKAT_ERR_IMAP_0 = $CHILKAT_ERR_SUCCESS + 300, _
+		$CHILKAT_ERR_HTTP_0 = $CHILKAT_ERR_SUCCESS + 400, _
+		$CHILKAT_ERR_FTP_0 = $CHILKAT_ERR_SUCCESS + 500, _
+		$CHILKAT_ERR_SSH_0 = $CHILKAT_ERR_SUCCESS + 600, _
+		$CHILKAT_ERR_ATOM_0 = $CHILKAT_ERR_SUCCESS + 700, _
+		$CHILKAT_ERR_CSV_0 = $CHILKAT_ERR_SUCCESS + 1000, _
+		$CHILKAT_ERR_JSON_0 = $CHILKAT_ERR_SUCCESS + 2000, _
+		$CHILKAT_ERR_ZIP_0 = $CHILKAT_ERR_SUCCESS + 3000, _
+		$CHILKAT_ERR_COUNTER
+
+Global Enum _
+		$CHILKAT_EXT_DEFAULT, _
+		$CHILKAT_EXT_PARAM1, _
+		$CHILKAT_EXT_PARAM2, _
+		$CHILKAT_EXT_PARAM3, _
+		$CHILKAT_EXT_COUNTER
+
+; Additional @extended values used by newer wrapper helpers.
+; Kept as Global Const values to avoid changing the original Global Enum numbering above.
+Global Const $CHILKAT_EXT_GENERAL = $CHILKAT_EXT_DEFAULT
+Global Const $CHILKAT_EXT_PARAM4 = 4
+Global Const $CHILKAT_EXT_PARAM5 = 5
+Global Const $CHILKAT_EXT_PARAM6 = 6
+Global Const $CHILKAT_EXT_PARAM7 = 7
+
+Global Enum _
+		$CHILKAT_RET_FAILURE = -1, _
+		$CHILKAT_RET_SUCCESS = 1, _
+		$CHILKAT_RET_COUNTER
+
+Global Enum _ ; https://www.example-code.com/autoit/pdf_validate_signatures.asp
+		$CHILKAT_PDF_Verification_certSerialNumber, _
+		$CHILKAT_PDF_Verification_certIssuerCN, _
+		$CHILKAT_PDF_Verification_certDigestAlgOid, _
+		$CHILKAT_PDF_Verification_certDigestAlgName, _
+		$CHILKAT_PDF_Verification_contentType, _
+		$CHILKAT_PDF_Verification_signingTime, _
+		$CHILKAT_PDF_Verification_messageDigest, _
+		$CHILKAT_PDF_Verification_signingAlgOid, _
+		$CHILKAT_PDF_Verification_signingAlgName, _
+		$CHILKAT_PDF_Verification_AuthAttr1_2_840_113583_1_1_8Der, _
+		$CHILKAT_PDF_Verification_AuthAttrContentTypeName, _
+		$CHILKAT_PDF_Verification_AuthAttrContentTypeOid, _
+		$CHILKAT_PDF_Verification_AuthAttrMessageDigestName, _
+		$CHILKAT_PDF_Verification_AuthAttrMessageDigestDigest, _
+		$CHILKAT_PDF_Verification_UnauthAttrTimestampTokenName, _
+		$CHILKAT_PDF_Verification_UnauthAttrTimestampTokenDer, _
+		$CHILKAT_PDF_Verification_UnauthAttrTimestampTokenTimestampSignatureVerified, _
+		$CHILKAT_PDF_Verification_UnauthAttrTimestampTokenTstInfoTsaPolicyId, _
+		$CHILKAT_PDF_Verification_UnauthAttrTimestampTokenTstInfoMessageImprintHashAlg, _
+		$CHILKAT_PDF_Verification_UnauthAttrTimestampTokenTstInfoMessageImprintDigest, _
+		$CHILKAT_PDF_Verification_UnauthAttrTimestampTokenTstInfoMessageImprintDigestMatches, _
+		$CHILKAT_PDF_Verification_UnauthAttrTimestampTokenTstInfoSerialNumber, _
+		$CHILKAT_PDF_Verification_, _ ; #TODO suplement enumartion
+		$CHILKAT_PDF_Verification__Counter
+
+#EndRegion - ChilkatConstants.au3 - Declarations
+
+#Region - ChilkatConstants.au3 - Declarations - AX Object
+Global $__g_hDll_CHILKAT = 0
+Global $__g_iChilkat_DLLVersion = $CHILKAT_RET_FAILURE ; pre set - default is not set
+
+Global Enum _
+		$CHILKATOBJ_VERSION_950, _
+		$CHILKATOBJ_VERSION_10, _
+		$CHILKATOBJ_VERSION_11, _
+		$CHILKATOBJ_VERSION_COUNTER
+
+Global Enum _
+		$CHILKATOBJ_NAME_GLOBAL, _
+		$CHILKATOBJ_NAME_CSV, _
+		$CHILKATOBJ_NAME_JSON, _
+		$CHILKATOBJ_NAME_XML, _
+		$CHILKATOBJ_NAME_SSHTUNEL, _
+		$CHILKATOBJ_NAME_CKSTRING, _
+		$CHILKATOBJ_NAME_STRINGBUILDER, _
+		$CHILKATOBJ_NAME_IMAP, _
+		$CHILKATOBJ_NAME_MAILBOXES, _
+		$CHILKATOBJ_NAME_MAILMAN, _
+		$CHILKATOBJ_NAME_EMAIL, _
+		$CHILKATOBJ_NAME_ZIP, _
+		$CHILKATOBJ_NAME_ZIPCRC, _
+		$CHILKATOBJ_NAME_ZIPENTRY, _
+		$CHILKATOBJ_NAME_ATOM, _
+		$CHILKATOBJ_NAME_SFTP, _
+		$CHILKATOBJ_NAME_SFTPDIR, _
+		$CHILKATOBJ_NAME_SFTPFILE, _
+		$CHILKATOBJ_NAME_FTP2, _
+		$CHILKATOBJ_NAME_SCP, _
+		$CHILKATOBJ_NAME_HTTP, _
+		$CHILKATOBJ_NAME_BINDATA, _
+		$CHILKATOBJ_NAME_TASK, _
+		$CHILKATOBJ_NAME_TASKCHAIN, _
+		$CHILKATOBJ_NAME_CERT, _
+		$CHILKATOBJ_NAME_CERTSTORE, _
+		$CHILKATOBJ_NAME_CSP, _
+		$CHILKATOBJ_NAME_STRINGTABLE, _
+		$CHILKATOBJ_NAME_PDF, _
+		$CHILKATOBJ_NAME_CODESIGN, _
+		$CHILKATOBJ_NAME_ASN, _
+		$CHILKATOBJ_NAME_AUTHAWS, _
+		$CHILKATOBJ_NAME_AUTHAZUREAD, _
+		$CHILKATOBJ_NAME_AUTHAZURESAS, _
+		$CHILKATOBJ_NAME_AUTHAZURESTORAGE, _
+		$CHILKATOBJ_NAME_AUTHGOOGLE, _
+		$CHILKATOBJ_NAME_AUTHUTIL, _
+		$CHILKATOBJ_NAME_BOUNCE, _
+		$CHILKATOBJ_NAME_BZ2, _
+		$CHILKATOBJ_NAME_CACHE, _
+		$CHILKATOBJ_NAME_CERTCHAIN, _
+		$CHILKATOBJ_NAME_CGI, _
+		$CHILKATOBJ_NAME_CHARSET, _
+		$CHILKATOBJ_NAME_CKDATETIME, _
+		$CHILKATOBJ_NAME_COMPRESSION, _
+		$CHILKATOBJ_NAME_CREATECS, _
+		$CHILKATOBJ_NAME_CRYPT2, _
+		$CHILKATOBJ_NAME_CSR, _
+		$CHILKATOBJ_NAME_DH, _
+		$CHILKATOBJ_NAME_DIRTREE, _
+		$CHILKATOBJ_NAME_DKIM, _
+		$CHILKATOBJ_NAME_DNS, _
+		$CHILKATOBJ_NAME_DSA, _
+		$CHILKATOBJ_NAME_DTOBJ, _
+		$CHILKATOBJ_NAME_ECC, _
+		$CHILKATOBJ_NAME_EDDSA, _
+		$CHILKATOBJ_NAME_EMAILBUNDLE, _
+		$CHILKATOBJ_NAME_FILEACCESS, _
+		$CHILKATOBJ_NAME_GZIP, _
+		$CHILKATOBJ_NAME_HASHTABLE, _
+		$CHILKATOBJ_NAME_HTMLTOTEXT, _
+		$CHILKATOBJ_NAME_HTMLTOXML, _
+		$CHILKATOBJ_NAME_HTTPREQUEST, _
+		$CHILKATOBJ_NAME_HTTPRESPONSE, _
+		$CHILKATOBJ_NAME_JAVAKEYSTORE, _
+		$CHILKATOBJ_NAME_JSONARRAY, _
+		$CHILKATOBJ_NAME_JSONOBJECT, _
+		$CHILKATOBJ_NAME_JWE, _
+		$CHILKATOBJ_NAME_JWS, _
+		$CHILKATOBJ_NAME_JWT, _
+		$CHILKATOBJ_NAME_KEYCONTAINER, _
+		$CHILKATOBJ_NAME_LOG, _
+		$CHILKATOBJ_NAME_MESSAGESET, _
+		$CHILKATOBJ_NAME_MHT, _
+		$CHILKATOBJ_NAME_MIME, _
+		$CHILKATOBJ_NAME_NTLM, _
+		$CHILKATOBJ_NAME_OAUTH1, _
+		$CHILKATOBJ_NAME_OAUTH2, _
+		$CHILKATOBJ_NAME_PEM, _
+		$CHILKATOBJ_NAME_PFX, _
+		$CHILKATOBJ_NAME_PKCS11, _
+		$CHILKATOBJ_NAME_PRIVATEKEY, _
+		$CHILKATOBJ_NAME_PRNG, _
+		$CHILKATOBJ_NAME_PUBLICKEY, _
+		$CHILKATOBJ_NAME_REST, _
+		$CHILKATOBJ_NAME_RSA, _
+		$CHILKATOBJ_NAME_RSS, _
+		$CHILKATOBJ_NAME_SCARD, _
+		$CHILKATOBJ_NAME_SCMINIDRIVER, _
+		$CHILKATOBJ_NAME_SECURESTRING, _
+		$CHILKATOBJ_NAME_SERVERSENTEVENT, _
+		$CHILKATOBJ_NAME_SOCKET, _
+		$CHILKATOBJ_NAME_SPIDER, _
+		$CHILKATOBJ_NAME_SSH, _
+		$CHILKATOBJ_NAME_SSHKEY, _
+		$CHILKATOBJ_NAME_STREAM, _
+		$CHILKATOBJ_NAME_STRINGARRAY, _
+		$CHILKATOBJ_NAME_TAR, _
+		$CHILKATOBJ_NAME_TRUSTEDROOTS, _
+		$CHILKATOBJ_NAME_UNIXCOMPRESS, _
+		$CHILKATOBJ_NAME_UPLOAD, _
+		$CHILKATOBJ_NAME_URL, _
+		$CHILKATOBJ_NAME_WEBSOCKET, _
+		$CHILKATOBJ_NAME_XMLCERTVAULT, _
+		$CHILKATOBJ_NAME_XMLDSIG, _
+		$CHILKATOBJ_NAME_XMLDSIGGEN, _
+		$CHILKATOBJ_NAME_XMP, _
+		$CHILKATOBJ_NAME_SECRETS, _
+		$CHILKATOBJ_NAME_AI, _
+		$CHILKATOBJ_NAME_HTTPCURL, _
+		$CHILKATOBJ_NAME_JS, _
+		$CHILKATOBJ_NAME_COUNTER
+
+Global Enum _
+		$CHILKATOBJ_ID_PROGID, _
+		$CHILKATOBJ_ID_CLSID, _
+		$CHILKATOBJ_ID_IID, _
+		$CHILKATOBJ_ID_COUNTER
+
+Global $CHILKATOBJ_API[$CHILKATOBJ_VERSION_COUNTER][$CHILKATOBJ_NAME_COUNTER][$CHILKATOBJ_ID_COUNTER]
+
+#Region ; filling up $CHILKATOBJ_API for - Chilkat AX 9.5.0
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_GLOBAL][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Global'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_GLOBAL][$CHILKATOBJ_ID_CLSID] = '{B2429147-23BE-4A55-8EAE-2AFF2635815B}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_GLOBAL][$CHILKATOBJ_ID_IID] = '{4995C839-42F3-4D4F-8A08-1BA24B5F5E8F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ASN][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Asn'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ASN][$CHILKATOBJ_ID_CLSID] = '{2935F301-12A9-47A9-97C4-8B7879124EF1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ASN][$CHILKATOBJ_ID_IID] = '{4A129764-F661-4DD9-B357-8F523B17FF94}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ATOM][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Atom'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ATOM][$CHILKATOBJ_ID_CLSID] = '{3D80DB49-232B-4139-8697-E0202E8B8B8E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ATOM][$CHILKATOBJ_ID_IID] = '{784E1D7C-F1E5-472F-AA06-AA6F1563ED94}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAWS][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.AuthAws'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAWS][$CHILKATOBJ_ID_CLSID] = '{0481098A-742F-4E3C-BBF5-B1D94EC62CE0}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAWS][$CHILKATOBJ_ID_IID] = '{4E737594-4147-4E1D-A1A9-8A55E3FE603E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAZUREAD][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.AuthAzureAD'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAZUREAD][$CHILKATOBJ_ID_CLSID] = '{B1BB04F7-7CA9-4BD7-AE19-EA936D611F91}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAZUREAD][$CHILKATOBJ_ID_IID] = '{B2AA3D60-500A-4725-8430-3A5F16D97D58}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAZURESAS][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.AuthAzureSAS'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAZURESAS][$CHILKATOBJ_ID_CLSID] = '{6999AD77-7D2B-4929-B8BA-A253EDE63752}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAZURESAS][$CHILKATOBJ_ID_IID] = '{4558E02C-E015-41EC-89A3-0A71BC70E627}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAZURESTORAGE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.AuthAzureStorage'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAZURESTORAGE][$CHILKATOBJ_ID_CLSID] = '{66ABCD9E-0B52-4AEC-872C-837C3D7CC9C1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHAZURESTORAGE][$CHILKATOBJ_ID_IID] = '{C9BEAC5F-76C4-4011-9ED3-BD92D8DC577D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHGOOGLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.AuthGoogle'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHGOOGLE][$CHILKATOBJ_ID_CLSID] = '{6EBA710B-0C0F-4E86-859A-94829089E436}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHGOOGLE][$CHILKATOBJ_ID_IID] = '{30444DA6-9559-43D3-876F-E6C0FC709D18}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHUTIL][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.AuthUtil'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHUTIL][$CHILKATOBJ_ID_CLSID] = '{5915A8E1-EF48-44C5-B6C0-5D2433A00400}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_AUTHUTIL][$CHILKATOBJ_ID_IID] = '{FE065188-0A9D-4822-9017-05A5A68CE33C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_BINDATA][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.BinData'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_BINDATA][$CHILKATOBJ_ID_CLSID] = '{FF6CA005-E9AA-418C-9555-3842B8BD54BB}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_BINDATA][$CHILKATOBJ_ID_IID] = '{DDD8463D-2F40-43F8-8C05-F9090816D65D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_BOUNCE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Bounce'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_BOUNCE][$CHILKATOBJ_ID_CLSID] = '{01AFB62C-BE3C-4706-B77E-CB20DEDA1D4D}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_BOUNCE][$CHILKATOBJ_ID_IID] = '{32C35CC7-1CA6-4897-B21A-116D6DD42381}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_BZ2][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Bz2'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_BZ2][$CHILKATOBJ_ID_CLSID] = '{647EC4D1-B7EE-494D-9AE8-823C7FF683D9}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_BZ2][$CHILKATOBJ_ID_IID] = '{E597F80D-BF1A-44AD-A038-D6AC9881B335}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CACHE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Cache'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CACHE][$CHILKATOBJ_ID_CLSID] = '{68993996-4448-4B92-99B7-3715CE60D316}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CACHE][$CHILKATOBJ_ID_IID] = '{064748FA-01E3-4ACD-8DAD-859556B263BD}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CERT][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Cert'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CERT][$CHILKATOBJ_ID_CLSID] = '{B4EC2631-0DC1-4791-B691-BE333E574CC2}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CERT][$CHILKATOBJ_ID_IID] = '{2CABA7DB-F1DD-4E6D-943B-330CF27F6A5D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CERTCHAIN][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.CertChain'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CERTCHAIN][$CHILKATOBJ_ID_CLSID] = '{30CE0223-B0E1-49CA-97A7-9FC0B49DDB13}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CERTCHAIN][$CHILKATOBJ_ID_IID] = '{E05C10E0-F9E3-4E4E-8784-E4DA4285A085}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CERTSTORE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.CertStore'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CERTSTORE][$CHILKATOBJ_ID_CLSID] = '{00E685A8-7AE9-4DC5-8C78-54C03A8646FC}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CERTSTORE][$CHILKATOBJ_ID_IID] = '{8CBE1840-52FA-4404-824C-139577309528}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CGI][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Cgi'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CGI][$CHILKATOBJ_ID_CLSID] = '{F21F7AF3-32B0-48D9-B99D-A08159D2B463}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CGI][$CHILKATOBJ_ID_IID] = '{C71DB905-E991-4089-9FFB-BB692A8A8D1D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CHARSET][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Charset'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CHARSET][$CHILKATOBJ_ID_CLSID] = '{DF519DD3-CF6D-4BC1-A68C-9049FFF6713D}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CHARSET][$CHILKATOBJ_ID_IID] = '{54E9A3A9-44F6-4E38-AA16-F27FB906EE7A}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CKDATETIME][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.CkDateTime'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CKDATETIME][$CHILKATOBJ_ID_CLSID] = '{0B30402C-CDB2-45D2-B7BC-7C1F78C72C1C}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CKDATETIME][$CHILKATOBJ_ID_IID] = '{F063D06F-1395-4CB0-AB8A-3C86C80F077E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CKSTRING][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.CkString'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CKSTRING][$CHILKATOBJ_ID_CLSID] = '{70A93698-84F4-4B7A-9D04-B354DBC6C3F9}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CKSTRING][$CHILKATOBJ_ID_IID] = '{47F0E40C-D2E5-4E14-8133-750275823B82}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CODESIGN][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.CodeSign'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CODESIGN][$CHILKATOBJ_ID_CLSID] = '{284ADFDE-C8E0-4EDC-A26D-674A0A762751}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CODESIGN][$CHILKATOBJ_ID_IID] = '{0066815D-86BC-4553-8A82-5C315E854F30}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_COMPRESSION][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Compression'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_COMPRESSION][$CHILKATOBJ_ID_CLSID] = '{D6CEA276-E79C-4026-BD46-933E3C8F88D8}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_COMPRESSION][$CHILKATOBJ_ID_IID] = '{73B5832B-AACE-4975-9238-09579CB89232}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CREATECS][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.CreateCS'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CREATECS][$CHILKATOBJ_ID_CLSID] = '{E98C2D0C-6053-4568-9BCE-D6350C39CD93}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CREATECS][$CHILKATOBJ_ID_IID] = '{08114E7A-8556-40E9-8CE1-0BE2E7A041A8}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CRYPT2][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Crypt2'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CRYPT2][$CHILKATOBJ_ID_CLSID] = '{1AF44DC7-C896-46BA-B45B-C168FA7612A6}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CRYPT2][$CHILKATOBJ_ID_IID] = '{380B144D-5AF4-4DC3-BBDF-AD8E25F16188}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CSP][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Csp'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CSP][$CHILKATOBJ_ID_CLSID] = '{6A10A7BB-7828-4050-9BD3-F4D2D97C6AB5}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CSP][$CHILKATOBJ_ID_IID] = '{26377592-38BD-42DC-9C8B-CB38900F250B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CSR][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Csr'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CSR][$CHILKATOBJ_ID_CLSID] = '{BA1083B2-D377-4650-8688-B7972CD5B570}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CSR][$CHILKATOBJ_ID_IID] = '{1129D7E0-450F-40E6-875F-5CA923E84CA2}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CSV][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Csv'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CSV][$CHILKATOBJ_ID_CLSID] = '{E9464A9F-B8D4-443D-88C3-DF3E9C6308AA}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_CSV][$CHILKATOBJ_ID_IID] = '{3B8C1209-EEFB-408B-8FA3-A59EE8034072}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DH][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Dh'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DH][$CHILKATOBJ_ID_CLSID] = '{F19E7679-F483-46D4-9E87-0253F0820A02}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DH][$CHILKATOBJ_ID_IID] = '{9EDDA6C9-A95E-4CE6-B4A3-6C4FE24B08C9}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DIRTREE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.DirTree'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DIRTREE][$CHILKATOBJ_ID_CLSID] = '{ABC37F7C-0423-42E4-BBD2-E713B8BD3BA1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DIRTREE][$CHILKATOBJ_ID_IID] = '{C8B4F6DF-1E35-43B9-913C-B235F91B6D4D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DKIM][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Dkim'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DKIM][$CHILKATOBJ_ID_CLSID] = '{B70D813F-5CE3-4C93-A793-B21CD8CE133A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DKIM][$CHILKATOBJ_ID_IID] = '{2D924A0F-A828-4482-A1DB-DD80E2FF35EF}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DNS][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Dns'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DNS][$CHILKATOBJ_ID_CLSID] = '{CFDD424F-0F3D-4743-BB19-06B359AD13FC}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DNS][$CHILKATOBJ_ID_IID] = '{95AD0D0D-874B-4EC4-B6CD-DB035B5D1D76}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DSA][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Dsa'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DSA][$CHILKATOBJ_ID_CLSID] = '{628C899B-7559-4062-9E65-A47386343965}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DSA][$CHILKATOBJ_ID_IID] = '{D39623DD-417F-4651-8E8B-3BAE5A8F4D4D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DTOBJ][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.DtObj'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DTOBJ][$CHILKATOBJ_ID_CLSID] = '{1D304D4B-3E7F-475C-800E-16177166E43A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_DTOBJ][$CHILKATOBJ_ID_IID] = '{1ACAAAB7-E818-41AE-AF3F-8F6911A91467}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ECC][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Ecc'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ECC][$CHILKATOBJ_ID_CLSID] = '{FA61EA29-BFF4-4CC4-AEC6-C7BA6590178F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ECC][$CHILKATOBJ_ID_IID] = '{A1F4B713-D40B-4B92-BAB8-016AD671ACE8}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_EDDSA][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.EdDSA'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_EDDSA][$CHILKATOBJ_ID_CLSID] = '{1CE47E56-B8E4-4964-83E2-D14BEE0AED03}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_EDDSA][$CHILKATOBJ_ID_IID] = '{AD9E69CC-E2E6-4C63-90A9-29084032D024}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_EMAIL][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Email'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_EMAIL][$CHILKATOBJ_ID_CLSID] = '{78EBC21F-0841-4D47-9DD4-E324F122205F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_EMAIL][$CHILKATOBJ_ID_IID] = '{3EC2BC0F-8ECB-4008-AEB7-758972455492}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_EMAILBUNDLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.EmailBundle'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_EMAILBUNDLE][$CHILKATOBJ_ID_CLSID] = '{DE9FC63E-73D2-4952-BB8B-9C37A7ADE1E6}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_EMAILBUNDLE][$CHILKATOBJ_ID_IID] = '{A325D50D-6A7D-423F-9087-4242DC382181}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_FILEACCESS][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.FileAccess'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_FILEACCESS][$CHILKATOBJ_ID_CLSID] = '{A3F78ADD-62C2-475F-9040-80ACBFD412FA}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_FILEACCESS][$CHILKATOBJ_ID_IID] = '{CDA20F7F-7E23-471E-82E6-7609EE84CD54}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_FTP2][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Ftp2'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_FTP2][$CHILKATOBJ_ID_CLSID] = '{32BD32D3-66EA-4EE6-A684-20CE86F757C1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_FTP2][$CHILKATOBJ_ID_IID] = '{3A2BC588-F8E2-4BE3-A154-A3A99CF51E9F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_GZIP][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Gzip'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_GZIP][$CHILKATOBJ_ID_CLSID] = '{D647A429-3349-47B5-B62D-7EF758000363}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_GZIP][$CHILKATOBJ_ID_IID] = '{409F23C5-B973-4611-93DD-8FE839BC5860}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HASHTABLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Hashtable'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HASHTABLE][$CHILKATOBJ_ID_CLSID] = '{F28D37F7-F537-45B0-BD88-A5877FC649DD}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HASHTABLE][$CHILKATOBJ_ID_IID] = '{D9F89B84-C49F-432A-82BF-F44C1BF16871}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTMLTOTEXT][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.HtmlToText'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTMLTOTEXT][$CHILKATOBJ_ID_CLSID] = '{540054E6-D577-4E92-B730-86E83ADD9172}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTMLTOTEXT][$CHILKATOBJ_ID_IID] = '{7919C172-F7FD-40BB-9A28-ACC2EA4ED66F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTMLTOXML][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.HtmlToXml'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTMLTOXML][$CHILKATOBJ_ID_CLSID] = '{907F3EC0-A455-4B36-8FDC-F3A2B22F1BD2}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTMLTOXML][$CHILKATOBJ_ID_IID] = '{FE82184C-B69F-4B58-9DBC-463FB2F6A422}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTTP][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Http'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTTP][$CHILKATOBJ_ID_CLSID] = '{A74C26D2-2429-4099-8672-2250B15E327F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTTP][$CHILKATOBJ_ID_IID] = '{C754C4B4-6B0A-4664-ADDD-45467F0BCB7E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTTPREQUEST][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.HttpRequest'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTTPREQUEST][$CHILKATOBJ_ID_CLSID] = '{D66A2F08-A267-4593-ACD4-3EF65255E005}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTTPREQUEST][$CHILKATOBJ_ID_IID] = '{495F8CD2-9F03-4A83-A9BC-FEEAE2182D9B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTTPRESPONSE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.HttpResponse'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTTPRESPONSE][$CHILKATOBJ_ID_CLSID] = '{65EA825E-648E-4BF0-8AA3-4E7724F75B07}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_HTTPRESPONSE][$CHILKATOBJ_ID_IID] = '{C143C715-0FED-4392-B207-1CA3CDF84C88}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_IMAP][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Imap'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_IMAP][$CHILKATOBJ_ID_CLSID] = '{CEDB6B70-ED7D-4F9E-A0BC-66AFB42F7735}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_IMAP][$CHILKATOBJ_ID_IID] = '{2E0EB5F9-CD80-407B-B5F3-60AE67679967}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JAVAKEYSTORE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.JavaKeyStore'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JAVAKEYSTORE][$CHILKATOBJ_ID_CLSID] = '{0B7700DB-79D8-40FB-95B9-03FCC9646439}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JAVAKEYSTORE][$CHILKATOBJ_ID_IID] = '{ACB125C6-B8C9-46E1-8B9F-2DB44DB1B5EE}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JSONARRAY][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.JsonArray'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JSONARRAY][$CHILKATOBJ_ID_CLSID] = '{F8CB82D2-BECB-41EA-8356-B1F1A89E9DF1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JSONARRAY][$CHILKATOBJ_ID_IID] = '{06F8688C-465F-45DB-A2F5-E1E4EF222D39}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JSONOBJECT][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.JsonObject'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JSONOBJECT][$CHILKATOBJ_ID_CLSID] = '{82DF90A6-29B8-4BFC-9433-76A7BC3E0E82}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JSONOBJECT][$CHILKATOBJ_ID_IID] = '{BDAB5180-01A8-4D6C-AD56-CFD444EA4C07}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JWE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Jwe'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JWE][$CHILKATOBJ_ID_CLSID] = '{FF4DF009-0001-41ED-BABB-5B4967515601}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JWE][$CHILKATOBJ_ID_IID] = '{C7309141-CCF2-45D0-A672-FFB26648B94F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JWS][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Jws'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JWS][$CHILKATOBJ_ID_CLSID] = '{F9B4FBE1-4059-4C53-8342-585BC9D68947}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JWS][$CHILKATOBJ_ID_IID] = '{623BCB7F-A659-48E0-8310-630137759D2B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JWT][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Jwt'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JWT][$CHILKATOBJ_ID_CLSID] = '{9FC3155D-8F03-459F-9D96-65ADE17D3615}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_JWT][$CHILKATOBJ_ID_IID] = '{09718276-04D7-4A84-B699-42FA9A49A645}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_KEYCONTAINER][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.KeyContainer'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_KEYCONTAINER][$CHILKATOBJ_ID_CLSID] = '{5B9D28CC-9FE1-4601-89E3-681DD583B290}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_KEYCONTAINER][$CHILKATOBJ_ID_IID] = '{C374E6D6-2B8E-4030-89EC-3DE7FC67257F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_LOG][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Log'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_LOG][$CHILKATOBJ_ID_CLSID] = '{38F12EC7-0910-485F-8938-6BF2CA2B5C02}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_LOG][$CHILKATOBJ_ID_IID] = '{53162CD7-EADA-4DA9-BEB2-E899CAFF3A63}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MAILBOXES][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Mailboxes'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MAILBOXES][$CHILKATOBJ_ID_CLSID] = '{2F332CE0-6FCA-41B7-80BB-07D9D2AC86C7}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MAILBOXES][$CHILKATOBJ_ID_IID] = '{2DB04566-D0BC-4FCF-926A-3E11B37E0B01}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MAILMAN][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.MailMan'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MAILMAN][$CHILKATOBJ_ID_CLSID] = '{10F9AFBB-94CF-4556-A066-DD457D3254CF}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MAILMAN][$CHILKATOBJ_ID_IID] = '{7998B064-06E7-4960-ACEF-AAFF0A262487}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MESSAGESET][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.MessageSet'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MESSAGESET][$CHILKATOBJ_ID_CLSID] = '{2B5DD740-5E3F-420C-9526-976596516B4C}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MESSAGESET][$CHILKATOBJ_ID_IID] = '{0F01CF8C-CE79-4812-8D55-3BD7CC34A318}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MHT][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Mht'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MHT][$CHILKATOBJ_ID_CLSID] = '{188354F0-DC78-49C2-8390-5FCA2D6B3876}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MHT][$CHILKATOBJ_ID_IID] = '{F1089DE8-926E-4BB9-ADAF-9E312F1BBD78}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MIME][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Mime'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MIME][$CHILKATOBJ_ID_CLSID] = '{13D60A54-46AE-4B1A-86F3-652A79EA88C6}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_MIME][$CHILKATOBJ_ID_IID] = '{45484EC9-E196-492F-8C1F-6D311F89036E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_NTLM][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Ntlm'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_NTLM][$CHILKATOBJ_ID_CLSID] = '{47A6DFB7-4A42-434A-B794-59F6FB26563B}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_NTLM][$CHILKATOBJ_ID_IID] = '{B7C0253A-251F-4BC7-98D1-31A045DCE65D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_OAUTH1][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.OAuth1'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_OAUTH1][$CHILKATOBJ_ID_CLSID] = '{E59035A9-E94D-47E8-92BF-59A4EB1AAC83}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_OAUTH1][$CHILKATOBJ_ID_IID] = '{47C1D4CA-692B-46D4-A127-5691075D0F6A}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_OAUTH2][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.OAuth2'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_OAUTH2][$CHILKATOBJ_ID_CLSID] = '{CC3B92E4-C58C-40FE-A271-E407A7775848}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_OAUTH2][$CHILKATOBJ_ID_IID] = '{DD2EABF5-8988-4A8E-908C-AD7FFA38AE59}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PDF][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Pdf'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PDF][$CHILKATOBJ_ID_CLSID] = '{D8706DCB-91E3-409C-AAEF-082CE6F9B905}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PDF][$CHILKATOBJ_ID_IID] = '{451414D2-10F9-47D9-8078-0D10C55B4D26}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PEM][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Pem'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PEM][$CHILKATOBJ_ID_CLSID] = '{0D35E491-3CD9-470D-9373-D1B8BFC7A298}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PEM][$CHILKATOBJ_ID_IID] = '{011A33C5-ABFF-431E-A08C-D6038DDA1CAA}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PFX][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Pfx'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PFX][$CHILKATOBJ_ID_CLSID] = '{4A512F1D-8554-4EE4-A0C1-68AC4C2C517E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PFX][$CHILKATOBJ_ID_IID] = '{1B708D67-5ED0-4A1E-8894-144C531FB095}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PKCS11][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Pkcs11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PKCS11][$CHILKATOBJ_ID_CLSID] = '{F27B0378-FAE6-4A75-A018-697CFB5B9864}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PKCS11][$CHILKATOBJ_ID_IID] = '{9AA01786-63E0-45E4-8676-24B49937318E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PRIVATEKEY][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.PrivateKey'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PRIVATEKEY][$CHILKATOBJ_ID_CLSID] = '{DFFB3371-78AA-45C5-B8A2-32BB1DD5C846}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PRIVATEKEY][$CHILKATOBJ_ID_IID] = '{C791AB84-B72F-4DEF-82ED-156F4B027876}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PRNG][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Prng'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PRNG][$CHILKATOBJ_ID_CLSID] = '{78953289-3055-4D28-880A-AA9B61BAD3BD}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PRNG][$CHILKATOBJ_ID_IID] = '{9C1C50C2-C003-4348-BD42-BF6D51852D7D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PUBLICKEY][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.PublicKey'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PUBLICKEY][$CHILKATOBJ_ID_CLSID] = '{3EDACCBC-87DE-45C5-8885-94B6820BE11A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_PUBLICKEY][$CHILKATOBJ_ID_IID] = '{D1EC207F-F466-4114-A304-DF34751223A1}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_REST][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Rest'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_REST][$CHILKATOBJ_ID_CLSID] = '{5BE34693-974D-41B8-931C-73506CDEE2BE}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_REST][$CHILKATOBJ_ID_IID] = '{D985C806-44A2-4BBD-9FC4-EDD1CD82F03E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_RSA][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Rsa'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_RSA][$CHILKATOBJ_ID_CLSID] = '{28309D42-1299-4797-AED4-64FD33B47923}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_RSA][$CHILKATOBJ_ID_IID] = '{C931B7DB-71FB-45CE-BA70-36BEF6CEAF1E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_RSS][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Rss'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_RSS][$CHILKATOBJ_ID_CLSID] = '{CC55FCB9-0500-45C2-8FED-CCB7D1A54A24}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_RSS][$CHILKATOBJ_ID_IID] = '{270A27B7-1D62-490D-82E4-A35269722E23}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SCARD][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.SCard'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SCARD][$CHILKATOBJ_ID_CLSID] = '{498AFA88-75B4-4860-AFCC-9FE560444B88}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SCARD][$CHILKATOBJ_ID_IID] = '{8AB7C0CF-D2E0-4136-AD0D-8BEFA9E29F4D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SCMINIDRIVER][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.ScMinidriver'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SCMINIDRIVER][$CHILKATOBJ_ID_CLSID] = '{DF989EA3-0F71-4201-87BE-4EAC008F4340}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SCMINIDRIVER][$CHILKATOBJ_ID_IID] = '{472C650D-C892-415C-AA6F-B0B82DEEBCFF}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SCP][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Scp'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SCP][$CHILKATOBJ_ID_CLSID] = '{73E12250-549F-4799-9D6A-0F23C279BD6E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SCP][$CHILKATOBJ_ID_IID] = '{416E33A0-BD55-4CD8-936B-7EEAF8850D0F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SECURESTRING][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.SecureString'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SECURESTRING][$CHILKATOBJ_ID_CLSID] = '{5930D6DE-C26E-4543-B971-ED01FD1C7472}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SECURESTRING][$CHILKATOBJ_ID_IID] = '{0652E658-CB05-447B-95E5-0FB06EB8C23B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SERVERSENTEVENT][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.ServerSentEvent'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SERVERSENTEVENT][$CHILKATOBJ_ID_CLSID] = '{439AD464-8F0D-46EC-8D98-A32DE09D8C5B}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SERVERSENTEVENT][$CHILKATOBJ_ID_IID] = '{E1DCA282-3782-4320-AEBE-B739755E6746}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SFTP][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.SFtp'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SFTP][$CHILKATOBJ_ID_CLSID] = '{345A5644-4F8E-4BCC-8E65-389B3C9D52B6}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SFTP][$CHILKATOBJ_ID_IID] = '{2701FB1F-7865-4CD0-8E1B-2BB97F701946}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SFTPDIR][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.SFtpDir'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SFTPDIR][$CHILKATOBJ_ID_CLSID] = '{E385A6A7-3557-47F5-9763-252278262C41}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SFTPDIR][$CHILKATOBJ_ID_IID] = '{38C0D3A8-6FB8-42B1-BDC0-077177D72323}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SFTPFILE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.SFtpFile'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SFTPFILE][$CHILKATOBJ_ID_CLSID] = '{7D106007-79F8-4D80-9CB7-B6CC4000F0B1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SFTPFILE][$CHILKATOBJ_ID_IID] = '{62E25622-219C-4569-97FA-89594674076A}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SOCKET][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Socket'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SOCKET][$CHILKATOBJ_ID_CLSID] = '{C3FC6EA1-3982-45AA-8CB8-B3BFC9DFDDC7}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SOCKET][$CHILKATOBJ_ID_IID] = '{93FCA31B-08C3-4E72-836B-B31123F7C2CC}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SPIDER][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Spider'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SPIDER][$CHILKATOBJ_ID_CLSID] = '{58BD963E-12A4-427E-9500-3A4FCEB545B2}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SPIDER][$CHILKATOBJ_ID_IID] = '{CB3E07ED-EBD4-4CEA-949F-53EDE8806F8F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SSH][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Ssh'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SSH][$CHILKATOBJ_ID_CLSID] = '{D67AF44C-0AA8-424A-AF73-2070B4C11781}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SSH][$CHILKATOBJ_ID_IID] = '{792D2027-B40F-4894-9248-5E9A3FA09F36}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SSHKEY][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.SshKey'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SSHKEY][$CHILKATOBJ_ID_CLSID] = '{06B36116-235B-4AB9-987D-3B4C7E689247}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SSHKEY][$CHILKATOBJ_ID_IID] = '{C574CD73-D2A4-43C4-8A00-3A8A8FC3FA79}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SSHTUNEL][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.SshTunnel'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SSHTUNEL][$CHILKATOBJ_ID_CLSID] = '{D01DB5A3-B9B7-4837-9874-FBA5BA171976}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_SSHTUNEL][$CHILKATOBJ_ID_IID] = '{B777D3CD-07A8-4E22-9AB2-EC62B7160ABF}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STREAM][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Stream'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STREAM][$CHILKATOBJ_ID_CLSID] = '{FCC90B64-42F9-47A7-84D3-0DD681A6CA07}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STREAM][$CHILKATOBJ_ID_IID] = '{9DF35ADF-B748-4435-B6A5-0EA8397114D7}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STRINGARRAY][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.StringArray'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STRINGARRAY][$CHILKATOBJ_ID_CLSID] = '{60646F46-D0EA-4BDA-945A-57BD988F1C37}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STRINGARRAY][$CHILKATOBJ_ID_IID] = '{6DF65A40-F292-4D8D-8738-4814084CCD6B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STRINGBUILDER][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.StringBuilder'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STRINGBUILDER][$CHILKATOBJ_ID_CLSID] = '{92B5CBD6-68B3-4C17-A717-696CC27D893E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STRINGBUILDER][$CHILKATOBJ_ID_IID] = '{78C0A2E3-8712-4C8E-9FD0-24FB3E003A72}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STRINGTABLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.StringTable'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STRINGTABLE][$CHILKATOBJ_ID_CLSID] = '{4E17ECD2-EA48-4BB4-8F30-94D74C577034}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_STRINGTABLE][$CHILKATOBJ_ID_IID] = '{589D07F4-1FED-450D-B896-87C88DC56F70}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TAR][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Tar'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TAR][$CHILKATOBJ_ID_CLSID] = '{E54CDB98-DD19-4155-841C-6DBA6618D5D8}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TAR][$CHILKATOBJ_ID_IID] = '{6D9CB79B-EDFF-4B36-8A2B-E24A0D94838C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TASK][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Task'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TASK][$CHILKATOBJ_ID_CLSID] = '{EFA96FEC-9371-4C3B-AB6D-DA9CDEF3CC41}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TASK][$CHILKATOBJ_ID_IID] = '{F312552A-2E77-4866-95CA-A3699D7D6ED2}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TASKCHAIN][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.TaskChain'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TASKCHAIN][$CHILKATOBJ_ID_CLSID] = '{39FFE2A9-BBF3-48ED-AB97-11F202615954}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TASKCHAIN][$CHILKATOBJ_ID_IID] = '{CCAD6703-0549-4DDE-8127-97D073A8CCF9}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TRUSTEDROOTS][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.TrustedRoots'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TRUSTEDROOTS][$CHILKATOBJ_ID_CLSID] = '{64A034EA-ACEB-4D48-8A00-2E7662A41154}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_TRUSTEDROOTS][$CHILKATOBJ_ID_IID] = '{8B32E2E7-6846-4B3F-B686-A2E62F6A85C4}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_UNIXCOMPRESS][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.UnixCompress'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_UNIXCOMPRESS][$CHILKATOBJ_ID_CLSID] = '{F8295E9E-9E5B-486E-AA93-33E5726C4EE6}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_UNIXCOMPRESS][$CHILKATOBJ_ID_IID] = '{68CB048E-A120-4A99-B9DC-650775764421}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_UPLOAD][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Upload'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_UPLOAD][$CHILKATOBJ_ID_CLSID] = '{AC217674-DB08-4F7E-AB20-9F5F1026C464}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_UPLOAD][$CHILKATOBJ_ID_IID] = '{D72E7F04-7817-4BA7-8FC2-6C890E94BC86}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_URL][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Url'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_URL][$CHILKATOBJ_ID_CLSID] = '{C604DBFD-657D-438D-8399-4B990CB1819C}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_URL][$CHILKATOBJ_ID_IID] = '{26823E1F-8672-4404-955F-87A5A6E3D80E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_WEBSOCKET][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.WebSocket'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_WEBSOCKET][$CHILKATOBJ_ID_CLSID] = '{5968F990-ECED-40C1-B461-C0C8540BF607}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_WEBSOCKET][$CHILKATOBJ_ID_IID] = '{01A80A1C-F3CB-4837-B577-2C67E275D441}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XML][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Xml'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XML][$CHILKATOBJ_ID_CLSID] = '{501B9600-382D-454D-AA0A-3BC22A87C485}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XML][$CHILKATOBJ_ID_IID] = '{2077C1B5-FBD0-40DF-B7AA-E07CBA589CB0}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMLCERTVAULT][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.XmlCertVault'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMLCERTVAULT][$CHILKATOBJ_ID_CLSID] = '{DA61F111-C1C4-432F-819D-6EDA9DEFEA67}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMLCERTVAULT][$CHILKATOBJ_ID_IID] = '{4C963716-FB14-4D7F-A176-1AC6E30BDEDA}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMLDSIG][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.XmlDSig'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMLDSIG][$CHILKATOBJ_ID_CLSID] = '{3A0FA677-D32D-4A7D-A809-9E39F6CB7E88}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMLDSIG][$CHILKATOBJ_ID_IID] = '{A488AA74-6A93-440C-B18D-26751B20625C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMLDSIGGEN][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.XmlDSigGen'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMLDSIGGEN][$CHILKATOBJ_ID_CLSID] = '{88958592-6B2D-4CF1-9652-B9803F41990A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMLDSIGGEN][$CHILKATOBJ_ID_IID] = '{07530635-48E4-4E43-B3C5-7BF9FF08C2C5}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMP][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Xmp'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMP][$CHILKATOBJ_ID_CLSID] = '{96B3C4B8-9F07-469D-ADAA-E1D14BF50341}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_XMP][$CHILKATOBJ_ID_IID] = '{17F00BC0-F47D-4AC2-9C20-16D73BA9D42D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ZIP][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.Zip'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ZIP][$CHILKATOBJ_ID_CLSID] = '{C95EAE19-C7B8-4297-A6C6-B4B973A8B867}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ZIP][$CHILKATOBJ_ID_IID] = '{EFE9ADE4-0851-49E2-BC0B-AB26E0353B1B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ZIPCRC][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.ZipCrc'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ZIPCRC][$CHILKATOBJ_ID_CLSID] = '{78AB3AA4-28A5-449B-959E-FFCC2602854D}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ZIPCRC][$CHILKATOBJ_ID_IID] = '{8C819F76-4B5C-4E9C-A49A-D6BF2190C09C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ZIPENTRY][$CHILKATOBJ_ID_PROGID] = 'Chilkat_9_5_0.ZipEntry'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ZIPENTRY][$CHILKATOBJ_ID_CLSID] = '{69E3A666-7F49-4B53-A77F-A8D14217E442}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_950][$CHILKATOBJ_NAME_ZIPENTRY][$CHILKATOBJ_ID_IID] = '{C68497C9-2779-48A4-9062-6DAD6EA5E1C6}'
+#EndRegion ; filling up $CHILKATOBJ_API for - Chilkat AX 9.5.0
+
+#Region ; filling up $CHILKATOBJ_API for - Chilkat AX 10.x.x
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_GLOBAL][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Global.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_GLOBAL][$CHILKATOBJ_ID_CLSID] = '{99E4E348-A550-4A7C-B692-B67E34BC6FFF}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_GLOBAL][$CHILKATOBJ_ID_IID] = '{51EE14BE-FF40-46EC-BB8B-069E3EB22C94}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ASN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Asn.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ASN][$CHILKATOBJ_ID_CLSID] = '{9B59C46F-400D-4AF2-A2FE-AF831721FD94}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ASN][$CHILKATOBJ_ID_IID] = '{CB3F5673-9100-464E-B831-C2854DF14113}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ATOM][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Atom.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ATOM][$CHILKATOBJ_ID_CLSID] = '{D4DC09AB-4809-4531-8DC6-DCF6D1BD4F06}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ATOM][$CHILKATOBJ_ID_IID] = '{2EFF0C0B-E141-4346-AD30-C156F694E5E8}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHAWS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.AuthAws.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHAWS][$CHILKATOBJ_ID_CLSID] = '{D0C40DE6-2C8F-4E6A-B899-6A4235AF50E4}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHAWS][$CHILKATOBJ_ID_IID] = '{F4704DC5-34AB-4AAD-86CB-5FAF15853EA0}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHAZURESAS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.AuthAzureSAS.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHAZURESAS][$CHILKATOBJ_ID_CLSID] = '{DA9CDF9C-2924-43DE-A3DA-AC776C4423DC}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHAZURESAS][$CHILKATOBJ_ID_IID] = '{D12F4513-0B95-45D8-A7CF-E2757A550DEA}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHAZURESTORAGE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.AuthAzureStorage.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHAZURESTORAGE][$CHILKATOBJ_ID_CLSID] = '{723C1FA4-A391-439B-B407-CF5CBB1D3FD4}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHAZURESTORAGE][$CHILKATOBJ_ID_IID] = '{2A48CBF6-1786-4688-8791-E5877E801212}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHGOOGLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.AuthGoogle.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHGOOGLE][$CHILKATOBJ_ID_CLSID] = '{1450D264-1DE9-4141-94E4-F97591AA3EFA}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHGOOGLE][$CHILKATOBJ_ID_IID] = '{5FBFE30D-F622-4020-9D70-42BBC4E511D2}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHUTIL][$CHILKATOBJ_ID_PROGID] = 'Chilkat.AuthUtil.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHUTIL][$CHILKATOBJ_ID_CLSID] = '{383FD506-F6C8-4A8A-9AAF-23FF3AE19C2C}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_AUTHUTIL][$CHILKATOBJ_ID_IID] = '{F37233DB-4DAE-4B12-8910-79C4448FF1FE}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_BINDATA][$CHILKATOBJ_ID_PROGID] = 'Chilkat.BinData.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_BINDATA][$CHILKATOBJ_ID_CLSID] = '{9B94CBAA-93FE-42DD-8246-5299E5FC8639}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_BINDATA][$CHILKATOBJ_ID_IID] = '{2936E89A-BAF1-4F7E-86C9-7EF167832F35}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_BOUNCE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Bounce.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_BOUNCE][$CHILKATOBJ_ID_CLSID] = '{15018142-2D50-487C-B31B-5149DFDAAF5A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_BOUNCE][$CHILKATOBJ_ID_IID] = '{2B424923-CB71-41BA-BE71-C49D2CDF1D8C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_BZ2][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Bz2.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_BZ2][$CHILKATOBJ_ID_CLSID] = '{CFDB9C89-9DC4-4488-9C8C-7161A1A39A10}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_BZ2][$CHILKATOBJ_ID_IID] = '{CD15A98C-1986-4FC6-994D-670B19F5E8FF}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CACHE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Cache.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CACHE][$CHILKATOBJ_ID_CLSID] = '{83F684F7-96EA-44AD-8DA0-532153622D10}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CACHE][$CHILKATOBJ_ID_IID] = '{65DC9AE6-72D3-4FC3-9F5F-DD29DF0243D7}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CERT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Cert.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CERT][$CHILKATOBJ_ID_CLSID] = '{E6981C5B-1CB5-4ADD-919D-FE7435139441}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CERT][$CHILKATOBJ_ID_IID] = '{25F1A112-F1B1-499F-BB67-61BB97123880}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CERTCHAIN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.CertChain.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CERTCHAIN][$CHILKATOBJ_ID_CLSID] = '{05E8ABE3-3D35-494E-8C8E-D2982876EF4E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CERTCHAIN][$CHILKATOBJ_ID_IID] = '{6DC2746B-AE5E-48CC-BEEA-24AE1AB28A77}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CERTSTORE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.CertStore.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CERTSTORE][$CHILKATOBJ_ID_CLSID] = '{83C7948A-7723-4B2C-AA3D-2945070B22A1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CERTSTORE][$CHILKATOBJ_ID_IID] = '{AB9A3DE1-F8EA-42EC-838F-6CC7B578C103}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CGI][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Cgi.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CGI][$CHILKATOBJ_ID_CLSID] = '{46E04CAB-7223-4AA0-B478-A731CC1B1AB1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CGI][$CHILKATOBJ_ID_IID] = '{1B64418F-3E99-49D0-BAB9-C72217991A97}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CHARSET][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Charset.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CHARSET][$CHILKATOBJ_ID_CLSID] = '{515BAF9A-B788-423F-9B59-164321D1DE3E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CHARSET][$CHILKATOBJ_ID_IID] = '{7A10D454-2001-4AD3-A55F-14C2BE70D3F5}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CKDATETIME][$CHILKATOBJ_ID_PROGID] = 'Chilkat.CkDateTime.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CKDATETIME][$CHILKATOBJ_ID_CLSID] = '{275179DE-27CC-4E0B-9650-9AC0F3E8869F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CKDATETIME][$CHILKATOBJ_ID_IID] = '{B2129A54-B1A5-4327-B1C8-360284753553}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CKSTRING][$CHILKATOBJ_ID_PROGID] = 'Chilkat.CkString.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CKSTRING][$CHILKATOBJ_ID_CLSID] = '{978079B0-486B-4589-BB35-52107403879D}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CKSTRING][$CHILKATOBJ_ID_IID] = '{030B5220-A678-4657-B0C7-23D18E36B5B8}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CODESIGN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.CodeSign.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CODESIGN][$CHILKATOBJ_ID_CLSID] = '{8711226D-A68E-4BAF-BDCF-BF2242E6E2A5}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CODESIGN][$CHILKATOBJ_ID_IID] = '{819C708F-2463-472D-8049-BAB4510F328A}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_COMPRESSION][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Compression.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_COMPRESSION][$CHILKATOBJ_ID_CLSID] = '{A8744E82-260E-4BE3-A522-E59E5E01D0D3}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_COMPRESSION][$CHILKATOBJ_ID_IID] = '{065C4F28-7EFD-4163-8E2F-F03EC219C640}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CRYPT2][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Crypt2.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CRYPT2][$CHILKATOBJ_ID_CLSID] = '{75D57DA6-48D3-4A84-8020-56B83AE9D5B7}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CRYPT2][$CHILKATOBJ_ID_IID] = '{C36B18C7-94FF-45F8-92F3-CFFABAE0A0A6}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CSR][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Csr.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CSR][$CHILKATOBJ_ID_CLSID] = '{0B2FC2B9-4BF5-4943-B68D-B681064AED1D}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CSR][$CHILKATOBJ_ID_IID] = '{4E487176-656C-4EA4-A7DF-C31E29F56BEF}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CSV][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Csv.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CSV][$CHILKATOBJ_ID_CLSID] = '{583778FF-91B2-414E-BAA3-BCE59438E48C}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_CSV][$CHILKATOBJ_ID_IID] = '{1FE8BD77-268E-4832-9D05-0075C67057F7}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DH][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Dh.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DH][$CHILKATOBJ_ID_CLSID] = '{B026D6E6-4CC2-4BC8-AE07-8DA2B488C09A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DH][$CHILKATOBJ_ID_IID] = '{E932D285-56EB-498C-A316-583EE18B9BCD}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DIRTREE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.DirTree.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DIRTREE][$CHILKATOBJ_ID_CLSID] = '{6A9E4DD4-6ACA-4214-83D6-248799DC1BFC}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DIRTREE][$CHILKATOBJ_ID_IID] = '{A2401BB2-376F-4647-B8AD-894C1319954F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DKIM][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Dkim.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DKIM][$CHILKATOBJ_ID_CLSID] = '{D3147872-AE87-40E3-A527-C5BEB74D8F03}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DKIM][$CHILKATOBJ_ID_IID] = '{B5E88EFB-4AED-4E9B-96FE-F3D6119A9FA6}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DNS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Dns.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DNS][$CHILKATOBJ_ID_CLSID] = '{C2852821-D52D-4DB0-8491-70C7A9A6269D}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DNS][$CHILKATOBJ_ID_IID] = '{8F2B2CB6-E211-405A-B6AC-CB260FE144DC}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DSA][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Dsa.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DSA][$CHILKATOBJ_ID_CLSID] = '{84B6E12C-5A68-4B3E-88F0-EF9985AEAA1A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DSA][$CHILKATOBJ_ID_IID] = '{4D2B3FBD-24C0-4BC9-9F1B-ECDFD2760D73}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DTOBJ][$CHILKATOBJ_ID_PROGID] = 'Chilkat.DtObj.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DTOBJ][$CHILKATOBJ_ID_CLSID] = '{17FBFCA3-90C1-4B04-9D71-058E67AC28C9}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_DTOBJ][$CHILKATOBJ_ID_IID] = '{BBC1A7B3-F751-4BDC-9F25-462EC326A776}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ECC][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Ecc.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ECC][$CHILKATOBJ_ID_CLSID] = '{019DAA55-FA95-442F-AFA1-C9D922CC1B64}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ECC][$CHILKATOBJ_ID_IID] = '{77021EF8-0E7F-492E-A8A7-2210C948F26D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_EDDSA][$CHILKATOBJ_ID_PROGID] = 'Chilkat.EdDSA.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_EDDSA][$CHILKATOBJ_ID_CLSID] = '{95D609CA-CA45-4196-9485-7FEAF332E1B1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_EDDSA][$CHILKATOBJ_ID_IID] = '{D3BA650C-5054-4250-81AD-FF66F0FEEE37}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_EMAIL][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Email.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_EMAIL][$CHILKATOBJ_ID_CLSID] = '{C1D8A204-C977-4C76-AC99-E0334DD7379F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_EMAIL][$CHILKATOBJ_ID_IID] = '{111F51BA-3FC3-4BFF-9194-BE090F8F6266}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_EMAILBUNDLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.EmailBundle.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_EMAILBUNDLE][$CHILKATOBJ_ID_CLSID] = '{569C0DB7-3809-4765-8FA0-EFE30707DA14}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_EMAILBUNDLE][$CHILKATOBJ_ID_IID] = '{FB8CDD72-70EC-4BF9-9EEE-806AA9B2BB3F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_FILEACCESS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.FileAccess.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_FILEACCESS][$CHILKATOBJ_ID_CLSID] = '{40626520-7E15-4EE2-A12E-D0A50AEA2C36}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_FILEACCESS][$CHILKATOBJ_ID_IID] = '{0E97AFC3-D3DD-48A0-BBE5-515A00122810}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_FTP2][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Ftp2.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_FTP2][$CHILKATOBJ_ID_CLSID] = '{2977DB5E-B4FC-41A0-9323-1519F7E50697}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_FTP2][$CHILKATOBJ_ID_IID] = '{812BE226-CB7A-462A-B8B3-A3AB82BB13E9}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_GZIP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Gzip.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_GZIP][$CHILKATOBJ_ID_CLSID] = '{FC5AFF9E-88CA-449C-94CD-5E6922D5CDAB}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_GZIP][$CHILKATOBJ_ID_IID] = '{F248FF48-47A4-4607-BCC8-E6EC2D4D33C6}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HASHTABLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Hashtable.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HASHTABLE][$CHILKATOBJ_ID_CLSID] = '{1FB1CDF5-C969-49F6-954A-BC8977AA0D83}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HASHTABLE][$CHILKATOBJ_ID_IID] = '{215AAA90-DEFA-40D7-AE1F-B94489FDAD84}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTMLTOTEXT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.HtmlToText.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTMLTOTEXT][$CHILKATOBJ_ID_CLSID] = '{60F2C1B7-2250-49B3-B84C-C52F9695A9BB}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTMLTOTEXT][$CHILKATOBJ_ID_IID] = '{24E1F1DD-BB9A-4957-A400-1EED3D294B3E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTMLTOXML][$CHILKATOBJ_ID_PROGID] = 'Chilkat.HtmlToXml.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTMLTOXML][$CHILKATOBJ_ID_CLSID] = '{9348A1CA-A6EA-4A41-84CC-D3CF89E78C54}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTMLTOXML][$CHILKATOBJ_ID_IID] = '{594B0993-E8BF-4390-BD6C-9B098C871C80}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTTP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Http.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTTP][$CHILKATOBJ_ID_CLSID] = '{5AA619DD-B188-4986-8991-3ED9C41BA427}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTTP][$CHILKATOBJ_ID_IID] = '{52165494-2FD3-4C1A-9CEE-E8BF95D7B152}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTTPREQUEST][$CHILKATOBJ_ID_PROGID] = 'Chilkat.HttpRequest.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTTPREQUEST][$CHILKATOBJ_ID_CLSID] = '{D96AE9C9-3810-4BD0-862E-1F41320E96BB}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTTPREQUEST][$CHILKATOBJ_ID_IID] = '{8DF1AAD0-07E9-4DAA-A3DE-CDFD3A837917}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTTPRESPONSE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.HttpResponse.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTTPRESPONSE][$CHILKATOBJ_ID_CLSID] = '{E5189A86-9EBB-4925-B5DB-D78915A320E0}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_HTTPRESPONSE][$CHILKATOBJ_ID_IID] = '{740EF3BE-6B1B-4B35-9E80-F90B2097A674}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_IMAP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Imap.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_IMAP][$CHILKATOBJ_ID_CLSID] = '{68B58087-F1DD-4F9A-8944-E6528BBDBEE2}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_IMAP][$CHILKATOBJ_ID_IID] = '{8F340BE3-C723-4234-8829-7A1519DE5B96}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JAVAKEYSTORE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.JavaKeyStore.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JAVAKEYSTORE][$CHILKATOBJ_ID_CLSID] = '{E0CDC631-B5E4-4093-AB06-7B121DDEED65}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JAVAKEYSTORE][$CHILKATOBJ_ID_IID] = '{F3A8D802-F2F5-49A5-9148-D6BC8E35EC46}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JSONARRAY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.JsonArray.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JSONARRAY][$CHILKATOBJ_ID_CLSID] = '{7A29628B-73D1-4C0C-9F4C-5747CCD22578}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JSONARRAY][$CHILKATOBJ_ID_IID] = '{C1708ACA-9B25-4077-9233-3D5E06B82CF0}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JSONOBJECT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.JsonObject.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JSONOBJECT][$CHILKATOBJ_ID_CLSID] = '{AC00DEFE-0DCD-4B3E-B3FE-EC9555291186}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JSONOBJECT][$CHILKATOBJ_ID_IID] = '{76BBEC0C-45E7-4139-B381-BF105F10B03C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JWE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Jwe.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JWE][$CHILKATOBJ_ID_CLSID] = '{81A5BA7A-19DD-48F2-99E8-1B7FEFC97EF8}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JWE][$CHILKATOBJ_ID_IID] = '{4D3EA787-A394-40CA-AE8B-52BAA77DEEBF}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JWS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Jws.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JWS][$CHILKATOBJ_ID_CLSID] = '{B801034D-51C0-4058-A649-2BCB9E2EC362}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JWS][$CHILKATOBJ_ID_IID] = '{4210893D-FB9C-4EDF-9AA5-06DE273365DA}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JWT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Jwt.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JWT][$CHILKATOBJ_ID_CLSID] = '{2BD013BB-7E9F-43BC-832F-808FDC08F9F1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_JWT][$CHILKATOBJ_ID_IID] = '{5DF4E0C0-D6AB-4DE4-93BD-ED67B08F469B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_LOG][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Log.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_LOG][$CHILKATOBJ_ID_CLSID] = '{D716DB9A-424A-4D2B-BD26-88190A75C5C7}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_LOG][$CHILKATOBJ_ID_IID] = '{574A55B2-F56F-465A-97BC-EDEE16409C0C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MAILBOXES][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Mailboxes.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MAILBOXES][$CHILKATOBJ_ID_CLSID] = '{C0D5CC8F-47C0-469C-9E83-96BC00F60922}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MAILBOXES][$CHILKATOBJ_ID_IID] = '{648D1024-9B1F-4225-8A77-B1E39C452DC7}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MAILMAN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.MailMan.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MAILMAN][$CHILKATOBJ_ID_CLSID] = '{108F42A1-2832-41D4-8150-E4AD1C5AB4C5}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MAILMAN][$CHILKATOBJ_ID_IID] = '{422931B4-845D-48E2-AA84-0F7AE13EDBC6}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MESSAGESET][$CHILKATOBJ_ID_PROGID] = 'Chilkat.MessageSet.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MESSAGESET][$CHILKATOBJ_ID_CLSID] = '{87A5AE83-9FE6-4AA4-9620-9F4DC920359E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MESSAGESET][$CHILKATOBJ_ID_IID] = '{B54DE474-A50D-49E6-A153-61B4F7B6C18B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MHT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Mht.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MHT][$CHILKATOBJ_ID_CLSID] = '{E5096370-0D13-413B-A044-C4BE6164421C}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MHT][$CHILKATOBJ_ID_IID] = '{D234D724-85BC-4D94-A22D-63F28CD6B7B0}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MIME][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Mime.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MIME][$CHILKATOBJ_ID_CLSID] = '{069AEBA0-C218-4814-8A15-95A65144C5CD}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_MIME][$CHILKATOBJ_ID_IID] = '{14B2ABD1-5787-47AD-9B43-BB401A185AD3}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_NTLM][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Ntlm.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_NTLM][$CHILKATOBJ_ID_CLSID] = '{BFED365C-A6BA-4F1D-885F-BE5D216EAAA4}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_NTLM][$CHILKATOBJ_ID_IID] = '{C1DC83FF-649A-4507-B647-0350D1967F16}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_OAUTH1][$CHILKATOBJ_ID_PROGID] = 'Chilkat.OAuth1.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_OAUTH1][$CHILKATOBJ_ID_CLSID] = '{D14B04FD-577E-4451-BE5C-639417F70953}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_OAUTH1][$CHILKATOBJ_ID_IID] = '{25698640-98C2-47F5-AC2E-EABF502B83A0}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_OAUTH2][$CHILKATOBJ_ID_PROGID] = 'Chilkat.OAuth2.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_OAUTH2][$CHILKATOBJ_ID_CLSID] = '{54EC5A49-6986-4A66-95AA-6BEA6CA17373}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_OAUTH2][$CHILKATOBJ_ID_IID] = '{5BF68D41-443F-4FC6-A51F-08474A20BE9A}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PDF][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Pdf.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PDF][$CHILKATOBJ_ID_CLSID] = '{4D9D5E7F-7890-4BAA-808F-1F71B9DA2C42}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PDF][$CHILKATOBJ_ID_IID] = '{20603817-DC7D-4851-A8C2-740E76E0D37B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PEM][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Pem.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PEM][$CHILKATOBJ_ID_CLSID] = '{459BD6CE-76A4-4B84-9B20-47E1AEC5F833}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PEM][$CHILKATOBJ_ID_IID] = '{54F219AD-8020-441E-8A74-1999A008D89F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PFX][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Pfx.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PFX][$CHILKATOBJ_ID_CLSID] = '{7E40347F-3E30-45FF-B78A-28CE5EB5FBCA}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PFX][$CHILKATOBJ_ID_IID] = '{7C8717C4-128B-4C7A-A61B-E875FACB97E6}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PKCS11][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Pkcs11.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PKCS11][$CHILKATOBJ_ID_CLSID] = '{34B7324A-30D1-4BDF-BCA2-2F0735BD4D23}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PKCS11][$CHILKATOBJ_ID_IID] = '{DB69EDD0-C039-439D-9F5E-A760FE6D46E5}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PRIVATEKEY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.PrivateKey.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PRIVATEKEY][$CHILKATOBJ_ID_CLSID] = '{49D6EA9D-7A89-4EEF-8706-B0115B5A8704}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PRIVATEKEY][$CHILKATOBJ_ID_IID] = '{AA53E588-8831-4D83-87D3-D9CED76F0D10}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PRNG][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Prng.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PRNG][$CHILKATOBJ_ID_CLSID] = '{2EF316B2-1C96-47FC-97BC-3E533FCB4BEA}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PRNG][$CHILKATOBJ_ID_IID] = '{9D98C0BF-920A-481C-9A7E-96E483AEADA7}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PUBLICKEY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.PublicKey.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PUBLICKEY][$CHILKATOBJ_ID_CLSID] = '{02DBB81F-FB79-4616-8846-952EA0B968EC}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_PUBLICKEY][$CHILKATOBJ_ID_IID] = '{61A25F99-63EF-47F6-BAA1-7EA121EB6A02}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_REST][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Rest.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_REST][$CHILKATOBJ_ID_CLSID] = '{4F15539D-379B-4E6E-A230-41AB6DBFE493}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_REST][$CHILKATOBJ_ID_IID] = '{E86FF697-E5BF-470F-9E92-CDCAF040B8A4}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_RSA][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Rsa.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_RSA][$CHILKATOBJ_ID_CLSID] = '{F0D30BB2-9533-4127-9381-1D5C02DE1104}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_RSA][$CHILKATOBJ_ID_IID] = '{8E4A067D-4684-43ED-9131-5841D527DE8E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_RSS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Rss.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_RSS][$CHILKATOBJ_ID_CLSID] = '{E1400BC2-D019-42CD-9412-4EC85060AC72}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_RSS][$CHILKATOBJ_ID_IID] = '{53208C42-8C18-4ED3-B76E-3E8473AB0B93}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SCARD][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SCard.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SCARD][$CHILKATOBJ_ID_CLSID] = '{3671F75A-BB70-4B4C-BEAC-907AF12D0669}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SCARD][$CHILKATOBJ_ID_IID] = '{9942967B-15FD-437A-BF74-AECD3A445A95}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SCMINIDRIVER][$CHILKATOBJ_ID_PROGID] = 'Chilkat.ScMinidriver.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SCMINIDRIVER][$CHILKATOBJ_ID_CLSID] = '{4552B51D-6BB5-4A61-A8A5-60402F74A2F6}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SCMINIDRIVER][$CHILKATOBJ_ID_IID] = '{C391399D-F549-413A-B651-D2B60074CD0F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SCP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Scp.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SCP][$CHILKATOBJ_ID_CLSID] = '{0A38EAD9-F461-4511-831C-81EC666BCECB}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SCP][$CHILKATOBJ_ID_IID] = '{0B740949-B41D-4B9A-9FFB-7907417A4136}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SECRETS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Secrets.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SECRETS][$CHILKATOBJ_ID_CLSID] = '{DEBB50A6-AA93-4997-8FAF-799A3F968C6C}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SECRETS][$CHILKATOBJ_ID_IID] = '{A40F5ED0-5B7F-45E8-96AB-5BE92FB6D56E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SECURESTRING][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SecureString.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SECURESTRING][$CHILKATOBJ_ID_CLSID] = '{8442AAB9-5949-47E5-BCC0-2585B2575120}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SECURESTRING][$CHILKATOBJ_ID_IID] = '{101C0DCA-B0ED-401B-AEE3-65F54B8C6359}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SERVERSENTEVENT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.ServerSentEvent.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SERVERSENTEVENT][$CHILKATOBJ_ID_CLSID] = '{1DA1B369-DAFF-4C3E-B1E9-90C658963EF2}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SERVERSENTEVENT][$CHILKATOBJ_ID_IID] = '{FBDEEDA2-5235-4164-A6EB-A66D6E7B4C36}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SFTP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SFtp.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SFTP][$CHILKATOBJ_ID_CLSID] = '{342D7898-E035-493D-8114-1F6882964000}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SFTP][$CHILKATOBJ_ID_IID] = '{DADD90B3-8662-4016-AFFE-3FF7B4AEDE8F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SFTPDIR][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SFtpDir.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SFTPDIR][$CHILKATOBJ_ID_CLSID] = '{18D8FBA9-A76B-46D6-B65C-641555669E15}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SFTPDIR][$CHILKATOBJ_ID_IID] = '{FC2A92D4-F418-4394-AD37-5495C34C2A4B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SFTPFILE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SFtpFile.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SFTPFILE][$CHILKATOBJ_ID_CLSID] = '{C4C35535-CB6C-421A-9155-26F8AA3F20A7}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SFTPFILE][$CHILKATOBJ_ID_IID] = '{ED0F277C-29EC-47D7-95AF-F7519D809CD5}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SOCKET][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Socket.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SOCKET][$CHILKATOBJ_ID_CLSID] = '{6E89FFBD-78E8-427A-8D1C-DADF8982687F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SOCKET][$CHILKATOBJ_ID_IID] = '{9B38E611-1749-4B53-9E07-F7665A3DF099}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SPIDER][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Spider.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SPIDER][$CHILKATOBJ_ID_CLSID] = '{6C085D62-48D8-4E77-A74D-016CF070D758}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SPIDER][$CHILKATOBJ_ID_IID] = '{3B71D5C8-0CF6-4A0A-A5D4-D5055EC61E18}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SSH][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Ssh.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SSH][$CHILKATOBJ_ID_CLSID] = '{187FE2CA-F5DB-41FF-806A-4A5220E8017F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SSH][$CHILKATOBJ_ID_IID] = '{62A3CAD3-8495-4166-BA37-97CE2BE60AB9}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SSHKEY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SshKey.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SSHKEY][$CHILKATOBJ_ID_CLSID] = '{AFCBD6F2-6EFC-489F-8131-B356ABD55058}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SSHKEY][$CHILKATOBJ_ID_IID] = '{8177A216-AD43-4021-9F3E-6A44D835594F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SSHTUNEL][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SshTunnel.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SSHTUNEL][$CHILKATOBJ_ID_CLSID] = '{B84AE7A8-EB87-48D1-934D-747FC790A5A1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_SSHTUNEL][$CHILKATOBJ_ID_IID] = '{76086DB5-CAE4-4C9D-A552-07FD16E03A25}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STREAM][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Stream.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STREAM][$CHILKATOBJ_ID_CLSID] = '{D15EF94F-3480-40B9-81A3-A20714209CC6}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STREAM][$CHILKATOBJ_ID_IID] = '{94E85FAF-C4CB-4ADE-AF66-EDB2B94D3761}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STRINGARRAY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.StringArray.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STRINGARRAY][$CHILKATOBJ_ID_CLSID] = '{80D834AE-25F1-4DAA-A7CC-92B3528A1F15}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STRINGARRAY][$CHILKATOBJ_ID_IID] = '{0C7F30E6-73DA-4700-B5C9-43141EB74BE6}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STRINGBUILDER][$CHILKATOBJ_ID_PROGID] = 'Chilkat.StringBuilder.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STRINGBUILDER][$CHILKATOBJ_ID_CLSID] = '{46E43039-66F2-4A6F-93F6-A0A783A5F4AB}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STRINGBUILDER][$CHILKATOBJ_ID_IID] = '{FEEA17B9-CD17-4A53-9B1B-B245C76062A5}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STRINGTABLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.StringTable.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STRINGTABLE][$CHILKATOBJ_ID_CLSID] = '{9BFFF029-26B9-47AA-BF86-A05F37C0331C}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_STRINGTABLE][$CHILKATOBJ_ID_IID] = '{BCB31C05-FCE3-45C8-91D5-32DF26B74638}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TAR][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Tar.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TAR][$CHILKATOBJ_ID_CLSID] = '{E4AA4141-ECE6-4A26-A2AA-AA40CF0C8BAE}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TAR][$CHILKATOBJ_ID_IID] = '{CB260012-7C15-495E-BC9A-9B0AB58DFC4F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TASK][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Task.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TASK][$CHILKATOBJ_ID_CLSID] = '{F0381E13-3F4D-4138-ADD5-4E0B8CB5F5EE}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TASK][$CHILKATOBJ_ID_IID] = '{0E1890D7-EF23-4664-BC21-E7F8EF949F5F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TASKCHAIN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.TaskChain.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TASKCHAIN][$CHILKATOBJ_ID_CLSID] = '{037C7F5B-BCE3-46A1-94B3-8B0E935B65B8}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TASKCHAIN][$CHILKATOBJ_ID_IID] = '{D74A7213-7125-45D3-B7AB-5CB4C4341FB5}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TRUSTEDROOTS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.TrustedRoots.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TRUSTEDROOTS][$CHILKATOBJ_ID_CLSID] = '{CC243AA7-D036-4A48-A19E-9A7805694E43}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_TRUSTEDROOTS][$CHILKATOBJ_ID_IID] = '{AC768B9A-6D6B-488D-ABEF-487162F34EAE}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_UNIXCOMPRESS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.UnixCompress.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_UNIXCOMPRESS][$CHILKATOBJ_ID_CLSID] = '{726C048C-DC6B-4047-AA51-87147E4479B3}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_UNIXCOMPRESS][$CHILKATOBJ_ID_IID] = '{BE5FDF8B-D9C5-4AA7-9A7B-24AC488118EC}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_UPLOAD][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Upload.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_UPLOAD][$CHILKATOBJ_ID_CLSID] = '{57D7607F-E8F6-44F8-AC90-4CAE41F46BBF}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_UPLOAD][$CHILKATOBJ_ID_IID] = '{8F8E7BFD-CF46-4CEF-9910-76A35837E230}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_URL][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Url.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_URL][$CHILKATOBJ_ID_CLSID] = '{DC5AFB0C-154C-41C8-BE5F-808EE298D983}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_URL][$CHILKATOBJ_ID_IID] = '{565B4DF4-1E20-4602-ADA9-D23DF91F374D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_WEBSOCKET][$CHILKATOBJ_ID_PROGID] = 'Chilkat.WebSocket.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_WEBSOCKET][$CHILKATOBJ_ID_CLSID] = '{2FF0FB67-6FFC-413E-B6A8-FB89569C9515}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_WEBSOCKET][$CHILKATOBJ_ID_IID] = '{15142255-D4EC-418B-B5A1-755E7D73313B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XML][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Xml.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XML][$CHILKATOBJ_ID_CLSID] = '{D4F42BB9-FE62-4BA4-96D0-51514365CE08}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XML][$CHILKATOBJ_ID_IID] = '{C34515FB-B76A-405B-B0B4-8C8AB07A2F5C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMLCERTVAULT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.XmlCertVault.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMLCERTVAULT][$CHILKATOBJ_ID_CLSID] = '{5FD55788-FC1D-4170-9A0D-872DECCD75E9}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMLCERTVAULT][$CHILKATOBJ_ID_IID] = '{CC69763E-E391-40DE-982D-CB18948347BC}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMLDSIG][$CHILKATOBJ_ID_PROGID] = 'Chilkat.XmlDSig.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMLDSIG][$CHILKATOBJ_ID_CLSID] = '{B55EBFD8-CAB0-48E1-A3D9-B703F4C0C851}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMLDSIG][$CHILKATOBJ_ID_IID] = '{2E81F54E-2483-4726-B549-1CAEAFC6DE48}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMLDSIGGEN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.XmlDSigGen.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMLDSIGGEN][$CHILKATOBJ_ID_CLSID] = '{81B25D70-5E7F-4E19-A9B4-34530187C8DD}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMLDSIGGEN][$CHILKATOBJ_ID_IID] = '{CB5AEB39-D81F-417B-B688-5D6E01C1832B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Xmp.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMP][$CHILKATOBJ_ID_CLSID] = '{7376DA30-790F-4E26-97D7-B7E74DF4C9BA}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_XMP][$CHILKATOBJ_ID_IID] = '{B67E92B3-3334-4ACF-BC68-D491E2AAD159}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ZIP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Zip.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ZIP][$CHILKATOBJ_ID_CLSID] = '{E73AD304-EC5E-439E-9B6C-C7A7ED47EEFB}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ZIP][$CHILKATOBJ_ID_IID] = '{6FB01A24-2F65-4E38-8F14-54A122B0819C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ZIPCRC][$CHILKATOBJ_ID_PROGID] = 'Chilkat.ZipCrc.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ZIPCRC][$CHILKATOBJ_ID_CLSID] = '{40AFBA31-3419-4747-9C20-A2625921279C}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ZIPCRC][$CHILKATOBJ_ID_IID] = '{0E767BE8-08A8-42A2-AAB7-A049D7DC7E80}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ZIPENTRY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.ZipEntry.10'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ZIPENTRY][$CHILKATOBJ_ID_CLSID] = '{2131FD26-E88A-43D9-89BD-D8D19F4347D5}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_10][$CHILKATOBJ_NAME_ZIPENTRY][$CHILKATOBJ_ID_IID] = '{3F967D64-F300-4DB0-974E-B97103482E10}'
+#EndRegion ; filling up $CHILKATOBJ_API for - Chilkat AX 10.1.2.0
+
+#Region ; filling up $CHILKATOBJ_API for - Chilkat AX 11.X.X
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_GLOBAL][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Global.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_GLOBAL][$CHILKATOBJ_ID_CLSID] = '{2025628D-A119-4F52-960B-3F98EEFB2941}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_GLOBAL][$CHILKATOBJ_ID_IID] = '{3EBDBBA7-B937-4220-8A49-547B752BDC5D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AI][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Ai.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AI][$CHILKATOBJ_ID_CLSID] = '{290CC0E1-1870-40E7-B301-F7E40E4E7257}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AI][$CHILKATOBJ_ID_IID] = '{AC804419-D324-4C5A-804F-B5FADF37AB0E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ASN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Asn.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ASN][$CHILKATOBJ_ID_CLSID] = '{FD235A0E-19E1-4B81-A357-AB7FD876E93E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ASN][$CHILKATOBJ_ID_IID] = '{9A1D2D72-8BE4-4BA7-A712-C1A17FECF593}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHAWS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.AuthAws.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHAWS][$CHILKATOBJ_ID_CLSID] = '{FE2E5621-1528-49DC-8C19-E4DAC6F6C29A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHAWS][$CHILKATOBJ_ID_IID] = '{810BFF94-10BB-48C2-838B-B479A6644EE0}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHAZURESAS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.AuthAzureSAS.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHAZURESAS][$CHILKATOBJ_ID_CLSID] = '{5992220F-73F8-4103-B2D6-241B34FB5FA1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHAZURESAS][$CHILKATOBJ_ID_IID] = '{9B6E62F8-53C6-4057-9B89-3E6919C981C4}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHAZURESTORAGE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.AuthAzureStorage.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHAZURESTORAGE][$CHILKATOBJ_ID_CLSID] = '{06E62ECD-6C1E-4028-AAF5-C317200EB95D}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHAZURESTORAGE][$CHILKATOBJ_ID_IID] = '{DE76D403-7293-467D-A68C-FB09417E9619}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHGOOGLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.AuthGoogle.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHGOOGLE][$CHILKATOBJ_ID_CLSID] = '{47407CDC-FA1F-4C39-A8EC-AB29113599BE}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_AUTHGOOGLE][$CHILKATOBJ_ID_IID] = '{E92F2E7A-A657-41CB-AAD9-1BBF7C648F21}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_BINDATA][$CHILKATOBJ_ID_PROGID] = 'Chilkat.BinData.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_BINDATA][$CHILKATOBJ_ID_CLSID] = '{7153ED55-213B-4128-90F6-54D2554F9114}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_BINDATA][$CHILKATOBJ_ID_IID] = '{EEB377D7-7E0E-4CF3-A481-E0DDC4B4166B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_BZ2][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Bz2.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_BZ2][$CHILKATOBJ_ID_CLSID] = '{274AA761-F874-4EDD-BE71-A1A62747C77F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_BZ2][$CHILKATOBJ_ID_IID] = '{CA0BCD48-1F87-47D9-9A39-952A7116B7CD}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CACHE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Cache.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CACHE][$CHILKATOBJ_ID_CLSID] = '{51AFCB45-B065-4BB3-8973-813DCCC4CECC}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CACHE][$CHILKATOBJ_ID_IID] = '{CDF42D86-CC67-4DCB-B49D-37F4FF372FBF}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CERT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Cert.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CERT][$CHILKATOBJ_ID_CLSID] = '{6508A6C9-17EF-4E7D-81DA-8DA6FE6C0BF4}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CERT][$CHILKATOBJ_ID_IID] = '{5E3CE399-1DA7-4BD5-B48C-E32C6EBEC302}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CERTCHAIN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.CertChain.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CERTCHAIN][$CHILKATOBJ_ID_CLSID] = '{9372F6F8-D2D8-499A-ADBD-DD16475427C9}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CERTCHAIN][$CHILKATOBJ_ID_IID] = '{EC4701F0-D2A4-4842-B1DA-82DA24A259CB}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CERTSTORE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.CertStore.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CERTSTORE][$CHILKATOBJ_ID_CLSID] = '{23E66694-5727-4E4E-B46A-4A02A738C0B6}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CERTSTORE][$CHILKATOBJ_ID_IID] = '{E4FD739B-DD22-406D-B53C-5C5A893F8869}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CHARSET][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Charset.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CHARSET][$CHILKATOBJ_ID_CLSID] = '{265989F2-3748-4576-91F7-1D9A271B4842}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CHARSET][$CHILKATOBJ_ID_IID] = '{4FFB7DF3-2B92-4A7D-84F3-8B518D7A8654}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CKDATETIME][$CHILKATOBJ_ID_PROGID] = 'Chilkat.CkDateTime.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CKDATETIME][$CHILKATOBJ_ID_CLSID] = '{7C2C8D0B-E250-4653-9618-293CA3B66B10}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CKDATETIME][$CHILKATOBJ_ID_IID] = '{85A0D2E1-B532-4A56-95DC-A208BB26BDC7}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CKSTRING][$CHILKATOBJ_ID_PROGID] = 'Chilkat.CkString.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CKSTRING][$CHILKATOBJ_ID_CLSID] = '{A935E476-592E-42BA-8833-2918B4AF740E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CKSTRING][$CHILKATOBJ_ID_IID] = '{1A76AD98-50C9-4EF3-9CBE-FED986CF01A9}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CODESIGN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.CodeSign.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CODESIGN][$CHILKATOBJ_ID_CLSID] = '{083767E9-A465-402E-8CD3-20F1882F2AEC}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CODESIGN][$CHILKATOBJ_ID_IID] = '{B15FA69D-3639-4DCA-BB72-3438C79DE827}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_COMPRESSION][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Compression.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_COMPRESSION][$CHILKATOBJ_ID_CLSID] = '{AAAB419D-CD6C-482E-B4BF-A40725CEA7C9}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_COMPRESSION][$CHILKATOBJ_ID_IID] = '{4EE1BB31-1F21-4A84-99EA-D8628829074F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CRYPT2][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Crypt2.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CRYPT2][$CHILKATOBJ_ID_CLSID] = '{6B892D31-299E-4AB6-93E4-DA32472EE672}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CRYPT2][$CHILKATOBJ_ID_IID] = '{F0D44F77-5EAF-426F-85A5-16DDD37099D5}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CSR][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Csr.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CSR][$CHILKATOBJ_ID_CLSID] = '{9E9ABA18-C91E-4BD1-95B3-D18A960590D9}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CSR][$CHILKATOBJ_ID_IID] = '{74F46287-AC22-4163-BF39-6A85F31D31B1}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CSV][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Csv.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CSV][$CHILKATOBJ_ID_CLSID] = '{2DEC53FF-3B33-4044-BE93-30E67D83D31B}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_CSV][$CHILKATOBJ_ID_IID] = '{1F6FD8BC-63AA-4C5A-8D2A-973111B76EF0}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DH][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Dh.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DH][$CHILKATOBJ_ID_CLSID] = '{90282118-0C0B-4A61-B9E6-7107B7893B58}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DH][$CHILKATOBJ_ID_IID] = '{EEDBF208-C4A3-4E91-B0DA-AF47F84C67FD}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DIRTREE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.DirTree.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DIRTREE][$CHILKATOBJ_ID_CLSID] = '{8730F26E-0CA5-497D-B127-9530AB979002}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DIRTREE][$CHILKATOBJ_ID_IID] = '{64F2D53F-2191-4809-86B9-5268339D459A}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DKIM][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Dkim.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DKIM][$CHILKATOBJ_ID_CLSID] = '{6A509810-3B93-4E92-9EBC-AF8741742058}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DKIM][$CHILKATOBJ_ID_IID] = '{CB2F97E4-1C9A-44F4-B560-14C5E6A739CB}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DNS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Dns.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DNS][$CHILKATOBJ_ID_CLSID] = '{A7592925-A9F4-4564-BA12-251BE089DEAE}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DNS][$CHILKATOBJ_ID_IID] = '{B92B8DD6-0092-4008-83B8-A1B8268EF2E0}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DSA][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Dsa.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DSA][$CHILKATOBJ_ID_CLSID] = '{739F2F1D-5DC6-450C-A320-99928EB35EE0}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DSA][$CHILKATOBJ_ID_IID] = '{C53E631F-2561-4F26-AE9E-EB22B69C78F6}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DTOBJ][$CHILKATOBJ_ID_PROGID] = 'Chilkat.DtObj.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DTOBJ][$CHILKATOBJ_ID_CLSID] = '{9301D229-F737-40F0-8731-EABAABC90990}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_DTOBJ][$CHILKATOBJ_ID_IID] = '{F062D42E-EAE3-4B1C-B927-116E6A6E5072}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ECC][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Ecc.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ECC][$CHILKATOBJ_ID_CLSID] = '{35FF3E5C-C3B0-4F1B-B306-AF2E5B994117}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ECC][$CHILKATOBJ_ID_IID] = '{783459EA-AEE8-44CA-849C-D7E78CD321C5}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_EDDSA][$CHILKATOBJ_ID_PROGID] = 'Chilkat.EdDSA.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_EDDSA][$CHILKATOBJ_ID_CLSID] = '{56DCF3CF-C929-48BD-8F34-F47FC6C80B9A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_EDDSA][$CHILKATOBJ_ID_IID] = '{41F9D0B9-33D4-4D99-B5EE-A6ACF95FFDED}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_EMAIL][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Email.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_EMAIL][$CHILKATOBJ_ID_CLSID] = '{24631409-69F2-491C-8594-4741E2050041}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_EMAIL][$CHILKATOBJ_ID_IID] = '{5E429843-46D2-4F30-B97B-E87D3285226E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_EMAILBUNDLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.EmailBundle.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_EMAILBUNDLE][$CHILKATOBJ_ID_CLSID] = '{33296D35-A2FE-4948-B452-BCF05310C35D}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_EMAILBUNDLE][$CHILKATOBJ_ID_IID] = '{5F66FF6D-4072-4DE1-B739-561FE8E8C8E0}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_FILEACCESS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.FileAccess.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_FILEACCESS][$CHILKATOBJ_ID_CLSID] = '{1262BB57-5E2E-4DD4-99A4-2CFD61DF98FC}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_FILEACCESS][$CHILKATOBJ_ID_IID] = '{78333251-89F8-41F5-92A4-0D9C597835DF}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_FTP2][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Ftp2.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_FTP2][$CHILKATOBJ_ID_CLSID] = '{B1C794DF-B4FF-47E3-B1F9-14E8521935A7}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_FTP2][$CHILKATOBJ_ID_IID] = '{30B4EA56-FC2B-4DF3-A2C5-115C8D05DB86}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_GZIP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Gzip.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_GZIP][$CHILKATOBJ_ID_CLSID] = '{B85CFB18-E5F5-41BC-945A-E12A8EE9493B}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_GZIP][$CHILKATOBJ_ID_IID] = '{71A78C54-FBCE-47DE-B7CC-68D443FAF041}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HASHTABLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Hashtable.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HASHTABLE][$CHILKATOBJ_ID_CLSID] = '{18F12288-4D55-4477-9EE6-AFA9A33DE023}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HASHTABLE][$CHILKATOBJ_ID_IID] = '{385D1525-B86A-427D-8215-35D0A3A670B7}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTMLTOTEXT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.HtmlToText.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTMLTOTEXT][$CHILKATOBJ_ID_CLSID] = '{05C614E1-29CA-4006-81A3-FBE12075665F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTMLTOTEXT][$CHILKATOBJ_ID_IID] = '{869CDAB7-DFBE-4490-95D5-B924E4081F0D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTMLTOXML][$CHILKATOBJ_ID_PROGID] = 'Chilkat.HtmlToXml.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTMLTOXML][$CHILKATOBJ_ID_CLSID] = '{5C870104-442B-4D59-898E-DFED4CB33DF3}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTMLTOXML][$CHILKATOBJ_ID_IID] = '{1FEE9B3A-54D3-4414-8FFB-AF7B236AB60F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Http.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTP][$CHILKATOBJ_ID_CLSID] = '{072033B4-78CF-4D9A-B60F-E0A87DC3354D}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTP][$CHILKATOBJ_ID_IID] = '{8E4DA18B-41B8-4A0B-8FFD-4C5175B952F5}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTPCURL][$CHILKATOBJ_ID_PROGID] = 'Chilkat.HttpCurl.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTPCURL][$CHILKATOBJ_ID_CLSID] = '{6CAB0217-06E7-43BC-AAD8-3328FA609877}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTPCURL][$CHILKATOBJ_ID_IID] = '{B8C48470-7BB3-4990-B642-BC11CCE2D039}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTPREQUEST][$CHILKATOBJ_ID_PROGID] = 'Chilkat.HttpRequest.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTPREQUEST][$CHILKATOBJ_ID_CLSID] = '{2707092C-F4D9-4D11-B5CC-369A30373014}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTPREQUEST][$CHILKATOBJ_ID_IID] = '{690368E0-681B-4B41-84BC-D4DD069DB9AC}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTPRESPONSE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.HttpResponse.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTPRESPONSE][$CHILKATOBJ_ID_CLSID] = '{1A0D9969-2DF7-4EB2-B77C-1B4B8E70DB94}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_HTTPRESPONSE][$CHILKATOBJ_ID_IID] = '{F3AEFC3C-DAFF-48A3-AB8A-C130C931705E}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_IMAP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Imap.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_IMAP][$CHILKATOBJ_ID_CLSID] = '{CE1B3C40-4FDD-41EF-95B6-4EABE19BBF55}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_IMAP][$CHILKATOBJ_ID_IID] = '{DEE038E4-A0AD-4DC8-9D51-0BAFC9D513A4}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JAVAKEYSTORE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.JavaKeyStore.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JAVAKEYSTORE][$CHILKATOBJ_ID_CLSID] = '{F10F1A6D-F0B9-4344-81DB-26B705D39C9B}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JAVAKEYSTORE][$CHILKATOBJ_ID_IID] = '{FCD72CE0-CDB5-4328-89D1-C7C5C7A6B098}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Js.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JS][$CHILKATOBJ_ID_CLSID] = '{EF07D02B-C3E9-472C-AF66-546A36723116}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JS][$CHILKATOBJ_ID_IID] = '{31561452-99AC-4319-BEA1-A6DF264DCD03}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JSONARRAY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.JsonArray.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JSONARRAY][$CHILKATOBJ_ID_CLSID] = '{688842E3-5EFE-4B1D-9DED-43B533291761}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JSONARRAY][$CHILKATOBJ_ID_IID] = '{317C1B3B-5C20-4978-B60E-D75AEC855828}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JSONOBJECT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.JsonObject.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JSONOBJECT][$CHILKATOBJ_ID_CLSID] = '{1B764B0A-8941-47EF-A417-BA2A764BFFBA}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JSONOBJECT][$CHILKATOBJ_ID_IID] = '{402922C6-A5AB-4548-9E98-7AC30CE1AACE}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JWE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Jwe.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JWE][$CHILKATOBJ_ID_CLSID] = '{C1F44777-C5AB-4979-AE39-1341C4CC99EA}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JWE][$CHILKATOBJ_ID_IID] = '{7BD62BC5-3900-4901-A587-41F6B9BB969C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JWS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Jws.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JWS][$CHILKATOBJ_ID_CLSID] = '{9E833F11-344F-48D8-A680-B2F86BBD598E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JWS][$CHILKATOBJ_ID_IID] = '{E0F4732E-2057-4089-84E9-C44ECDB395FA}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JWT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Jwt.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JWT][$CHILKATOBJ_ID_CLSID] = '{E5FE43B6-A5FC-469C-A928-72EC95D2F5C0}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_JWT][$CHILKATOBJ_ID_IID] = '{17CE66B2-0E7A-40F4-8359-0AD61D8E6A43}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_LOG][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Log.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_LOG][$CHILKATOBJ_ID_CLSID] = '{E0BE096A-7904-42EE-BC58-392DD830C809}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_LOG][$CHILKATOBJ_ID_IID] = '{94BB0507-3B62-46CC-A1F5-76A56E7309F3}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MAILBOXES][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Mailboxes.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MAILBOXES][$CHILKATOBJ_ID_CLSID] = '{E6806B6D-A3C5-45B7-B995-6687A304A087}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MAILBOXES][$CHILKATOBJ_ID_IID] = '{230C9E18-AEE2-4F35-BBA4-65D719E3214F}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MAILMAN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.MailMan.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MAILMAN][$CHILKATOBJ_ID_CLSID] = '{C81E3C24-9216-42B5-BCE5-C81388555B09}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MAILMAN][$CHILKATOBJ_ID_IID] = '{DE292601-5A76-4A12-9E29-6F1243F11B54}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MESSAGESET][$CHILKATOBJ_ID_PROGID] = 'Chilkat.MessageSet.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MESSAGESET][$CHILKATOBJ_ID_CLSID] = '{FA8F8FB8-81B5-4522-AC43-D430E293410B}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MESSAGESET][$CHILKATOBJ_ID_IID] = '{3BD23268-9BDF-452C-AD08-5218506AD21A}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MHT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Mht.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MHT][$CHILKATOBJ_ID_CLSID] = '{F4281105-59CE-424C-880A-C9A23878C4A6}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MHT][$CHILKATOBJ_ID_IID] = '{99F03A32-758C-4055-A92E-D61A3E99EFDA}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MIME][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Mime.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MIME][$CHILKATOBJ_ID_CLSID] = '{8C348317-95CD-408E-A5F6-7BD38A04E110}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_MIME][$CHILKATOBJ_ID_IID] = '{40F16E1B-9B5D-4795-AFAD-09440BC0DD00}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_NTLM][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Ntlm.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_NTLM][$CHILKATOBJ_ID_CLSID] = '{FFCE36C3-A3EE-41BA-B274-6036BE198966}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_NTLM][$CHILKATOBJ_ID_IID] = '{F1EA5F40-6C80-4C64-9C08-C03CFDB9A628}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_OAUTH1][$CHILKATOBJ_ID_PROGID] = 'Chilkat.OAuth1.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_OAUTH1][$CHILKATOBJ_ID_CLSID] = '{B9E35F72-BF22-4487-8BC3-BCDF5DC5EDEF}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_OAUTH1][$CHILKATOBJ_ID_IID] = '{249516AA-D37D-4CE8-9542-831F2B340B07}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_OAUTH2][$CHILKATOBJ_ID_PROGID] = 'Chilkat.OAuth2.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_OAUTH2][$CHILKATOBJ_ID_CLSID] = '{6DEE7039-6ECF-4020-A114-43ECC8DD8E9E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_OAUTH2][$CHILKATOBJ_ID_IID] = '{2B19ADB2-ED60-4C20-8B49-49B4CB8F5964}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PDF][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Pdf.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PDF][$CHILKATOBJ_ID_CLSID] = '{4B742F42-4906-4B84-A8D6-C77B657A7DB9}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PDF][$CHILKATOBJ_ID_IID] = '{8511E967-7FC2-4D7C-BC73-DBC641DB43C6}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PEM][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Pem.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PEM][$CHILKATOBJ_ID_CLSID] = '{12D149DC-EE0B-470E-A4A6-FA5BF49FE9BD}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PEM][$CHILKATOBJ_ID_IID] = '{74910CDE-0E9E-4774-A896-98F8751A94EC}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PFX][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Pfx.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PFX][$CHILKATOBJ_ID_CLSID] = '{8CDB6E12-C4BB-48B7-A44E-6F162BBDC814}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PFX][$CHILKATOBJ_ID_IID] = '{BF8F8A38-8408-49B1-830E-D74433F6CB6D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PKCS11][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Pkcs11.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PKCS11][$CHILKATOBJ_ID_CLSID] = '{11F04A28-208B-4D7A-99B5-05D3903F405F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PKCS11][$CHILKATOBJ_ID_IID] = '{7F718E43-3032-46EB-927A-F72FB103913B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PRIVATEKEY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.PrivateKey.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PRIVATEKEY][$CHILKATOBJ_ID_CLSID] = '{D93FE65B-7042-4BC0-9A52-7A303C902948}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PRIVATEKEY][$CHILKATOBJ_ID_IID] = '{654F2BE7-D00A-4368-9A25-E6E125EFB6AA}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PRNG][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Prng.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PRNG][$CHILKATOBJ_ID_CLSID] = '{73572070-2264-4397-89D5-C31653421F46}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PRNG][$CHILKATOBJ_ID_IID] = '{C9ED942E-27AF-47FC-8A58-BC56193A2980}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PUBLICKEY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.PublicKey.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PUBLICKEY][$CHILKATOBJ_ID_CLSID] = '{E2E34D98-6013-4683-A21C-1F32B812A2E1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_PUBLICKEY][$CHILKATOBJ_ID_IID] = '{5B8E1958-D76B-44CF-8165-DD07471EF27B}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_REST][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Rest.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_REST][$CHILKATOBJ_ID_CLSID] = '{1E8FF1F9-4640-441B-B25F-F160BB8771F2}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_REST][$CHILKATOBJ_ID_IID] = '{3AA72327-E2A3-45F5-A208-36E447FED393}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_RSA][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Rsa.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_RSA][$CHILKATOBJ_ID_CLSID] = '{05364830-7465-49CD-98BC-9B76F7673A7E}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_RSA][$CHILKATOBJ_ID_IID] = '{5A27084B-F51C-42AD-81D8-F07DA13D321A}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SCARD][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SCard.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SCARD][$CHILKATOBJ_ID_CLSID] = '{E71775A2-70F0-4C2A-8EC4-F3BE2035E5D2}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SCARD][$CHILKATOBJ_ID_IID] = '{4CA58621-3AF2-4C3E-AD34-D66063093E07}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SCMINIDRIVER][$CHILKATOBJ_ID_PROGID] = 'Chilkat.ScMinidriver.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SCMINIDRIVER][$CHILKATOBJ_ID_CLSID] = '{04683EE8-EE9E-4E8F-A83F-A61D3D512D0F}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SCMINIDRIVER][$CHILKATOBJ_ID_IID] = '{876B4363-FA69-41AB-A7A5-2AFE99D32EB3}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SCP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Scp.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SCP][$CHILKATOBJ_ID_CLSID] = '{88E4F0C4-F9EA-4F26-BFC0-1FE433A30B74}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SCP][$CHILKATOBJ_ID_IID] = '{F0E9C89C-62E5-4AAF-A445-AB13856860FB}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SECRETS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Secrets.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SECRETS][$CHILKATOBJ_ID_CLSID] = '{048797A6-345E-441A-A7B5-D49F15F480F4}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SECRETS][$CHILKATOBJ_ID_IID] = '{D07D99A7-50C4-4BDF-83B7-82E423DEDD67}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SECURESTRING][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SecureString.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SECURESTRING][$CHILKATOBJ_ID_CLSID] = '{E8EB1274-2E97-4D97-8C78-1C3BFF23912B}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SECURESTRING][$CHILKATOBJ_ID_IID] = '{2682C52F-328C-41A4-B201-66471DC83289}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SERVERSENTEVENT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.ServerSentEvent.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SERVERSENTEVENT][$CHILKATOBJ_ID_CLSID] = '{A6A48906-7366-4DC1-9775-9734CE336CD8}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SERVERSENTEVENT][$CHILKATOBJ_ID_IID] = '{2A4FE3E7-B36B-431F-A685-29C5E457354D}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SFTP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SFtp.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SFTP][$CHILKATOBJ_ID_CLSID] = '{259D8714-AC90-484B-BAD0-A0B7756956D2}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SFTP][$CHILKATOBJ_ID_IID] = '{B68D3460-666F-498B-B457-295567F4EEA7}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SFTPDIR][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SFtpDir.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SFTPDIR][$CHILKATOBJ_ID_CLSID] = '{4E502839-CFA1-4C8E-A658-046895C329DC}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SFTPDIR][$CHILKATOBJ_ID_IID] = '{8B8F02B7-7A4D-47DB-BB9E-AA6FB12B28A6}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SFTPFILE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SFtpFile.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SFTPFILE][$CHILKATOBJ_ID_CLSID] = '{E65108AB-1AC2-4DEB-A44C-7ECDA230FB8A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SFTPFILE][$CHILKATOBJ_ID_IID] = '{96032DAD-C60A-4AC7-9057-84DCAC438CFB}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SOCKET][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Socket.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SOCKET][$CHILKATOBJ_ID_CLSID] = '{A7AC594F-BE82-4A3D-B61B-E9FF8EC61911}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SOCKET][$CHILKATOBJ_ID_IID] = '{7BDA9F18-DFB0-430B-A6C4-3E00C648AA2C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SPIDER][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Spider.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SPIDER][$CHILKATOBJ_ID_CLSID] = '{918CF1D2-A21E-4E98-B3F8-AFE73D1D7FA0}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SPIDER][$CHILKATOBJ_ID_IID] = '{E2C9FD6D-119D-4F96-A022-F33C24865046}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SSH][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Ssh.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SSH][$CHILKATOBJ_ID_CLSID] = '{662708DC-9579-4142-A124-FE3BEA1CCC75}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SSH][$CHILKATOBJ_ID_IID] = '{E4081B6F-8490-455C-A93A-039E6E078D21}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SSHKEY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SshKey.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SSHKEY][$CHILKATOBJ_ID_CLSID] = '{1D850156-9295-4535-85F7-00E096F19D46}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SSHKEY][$CHILKATOBJ_ID_IID] = '{1523D162-5AC5-4C6D-96D2-7581B97A6793}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SSHTUNEL][$CHILKATOBJ_ID_PROGID] = 'Chilkat.SshTunnel.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SSHTUNEL][$CHILKATOBJ_ID_CLSID] = '{980FC343-5CB6-4A74-B098-79C96E839616}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_SSHTUNEL][$CHILKATOBJ_ID_IID] = '{701CB5C1-3F7B-4531-8A4B-A2C4ED6F5FC3}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STREAM][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Stream.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STREAM][$CHILKATOBJ_ID_CLSID] = '{35D86C37-E1FF-4294-A442-C84983F6E0E0}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STREAM][$CHILKATOBJ_ID_IID] = '{DAE99246-AA35-47EC-B76F-D5D543F6518C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STRINGARRAY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.StringArray.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STRINGARRAY][$CHILKATOBJ_ID_CLSID] = '{75E54162-67FA-4329-B0CD-C2F4CC33C728}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STRINGARRAY][$CHILKATOBJ_ID_IID] = '{CA15DEC0-082B-49E5-BBE1-A886EF69AE47}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STRINGBUILDER][$CHILKATOBJ_ID_PROGID] = 'Chilkat.StringBuilder.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STRINGBUILDER][$CHILKATOBJ_ID_CLSID] = '{93B73358-A1FC-4F53-A089-1D2A308349CD}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STRINGBUILDER][$CHILKATOBJ_ID_IID] = '{601453E0-6CC1-4D55-B7E5-AA51885FBDE8}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STRINGTABLE][$CHILKATOBJ_ID_PROGID] = 'Chilkat.StringTable.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STRINGTABLE][$CHILKATOBJ_ID_CLSID] = '{D1DACBB5-3DBA-41AA-B8A4-F921582B61E7}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_STRINGTABLE][$CHILKATOBJ_ID_IID] = '{5C3CF26B-6B6D-4FC7-8BF4-63A5022D46B9}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TAR][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Tar.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TAR][$CHILKATOBJ_ID_CLSID] = '{7A82580A-A194-4862-8207-F2E8E847B481}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TAR][$CHILKATOBJ_ID_IID] = '{C26DE0E7-9C70-44C0-B42C-817905E5BEEE}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TASK][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Task.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TASK][$CHILKATOBJ_ID_CLSID] = '{2562BAAD-E7F3-422A-AEC9-496970EC7083}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TASK][$CHILKATOBJ_ID_IID] = '{9F836CEF-7DC7-4DE9-9ED0-FBC2F6BA06DE}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TASKCHAIN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.TaskChain.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TASKCHAIN][$CHILKATOBJ_ID_CLSID] = '{5912382B-3FF2-47B3-9C98-78A4F82005EF}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TASKCHAIN][$CHILKATOBJ_ID_IID] = '{E3DC2AAE-2C29-4F6D-A19D-7F95A5B822C9}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TRUSTEDROOTS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.TrustedRoots.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TRUSTEDROOTS][$CHILKATOBJ_ID_CLSID] = '{F870DDF9-21C5-47A0-8D81-34C33DD35BF3}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_TRUSTEDROOTS][$CHILKATOBJ_ID_IID] = '{E169D96A-7144-4D31-8C63-C345211648E8}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_UNIXCOMPRESS][$CHILKATOBJ_ID_PROGID] = 'Chilkat.UnixCompress.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_UNIXCOMPRESS][$CHILKATOBJ_ID_CLSID] = '{2EDBDFD5-221A-4EB2-8EE8-D22D3E3328C1}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_UNIXCOMPRESS][$CHILKATOBJ_ID_IID] = '{337015D1-DE6C-4A1A-B44A-B5557C14EB6C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_UPLOAD][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Upload.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_UPLOAD][$CHILKATOBJ_ID_CLSID] = '{3CBDD350-8F3E-490A-9A59-BAD76D3F3153}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_UPLOAD][$CHILKATOBJ_ID_IID] = '{43C2E413-EB5D-4986-88C3-96723E542AE1}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_URL][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Url.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_URL][$CHILKATOBJ_ID_CLSID] = '{0C668202-C08C-4987-A73A-C9A43E9B7736}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_URL][$CHILKATOBJ_ID_IID] = '{69003E4D-C883-4CB2-98E1-1616DB0EE6C4}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_WEBSOCKET][$CHILKATOBJ_ID_PROGID] = 'Chilkat.WebSocket.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_WEBSOCKET][$CHILKATOBJ_ID_CLSID] = '{4FA2F6C1-6861-4466-9420-18AD3889A5BB}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_WEBSOCKET][$CHILKATOBJ_ID_IID] = '{EB2F9479-EF70-465A-B1D2-1E0B5E31CACD}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XML][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Xml.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XML][$CHILKATOBJ_ID_CLSID] = '{E339744D-52E8-457A-9CD4-875C84EF3094}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XML][$CHILKATOBJ_ID_IID] = '{76915061-6906-4B3D-A789-403CE7438F43}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMLCERTVAULT][$CHILKATOBJ_ID_PROGID] = 'Chilkat.XmlCertVault.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMLCERTVAULT][$CHILKATOBJ_ID_CLSID] = '{AC340B2B-0F50-4BD7-BAE2-13EC52858EDF}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMLCERTVAULT][$CHILKATOBJ_ID_IID] = '{DD837584-16D4-4912-8403-A9FB7AD5C31C}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMLDSIG][$CHILKATOBJ_ID_PROGID] = 'Chilkat.XmlDSig.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMLDSIG][$CHILKATOBJ_ID_CLSID] = '{47D57709-377F-4479-9BB4-65E69223E799}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMLDSIG][$CHILKATOBJ_ID_IID] = '{6E09D0DD-CD31-4150-9F0D-032C90DA5F73}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMLDSIGGEN][$CHILKATOBJ_ID_PROGID] = 'Chilkat.XmlDSigGen.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMLDSIGGEN][$CHILKATOBJ_ID_CLSID] = '{AAB4670B-BEFF-49AA-9676-DB1880D86588}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMLDSIGGEN][$CHILKATOBJ_ID_IID] = '{38990F0E-10E8-482B-B262-ADCEC41D879A}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Xmp.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMP][$CHILKATOBJ_ID_CLSID] = '{1D7224D4-77F3-4838-8439-B12F8EE081D4}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_XMP][$CHILKATOBJ_ID_IID] = '{B971D614-58DB-472A-8E70-C57CAD4FDE39}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ZIP][$CHILKATOBJ_ID_PROGID] = 'Chilkat.Zip.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ZIP][$CHILKATOBJ_ID_CLSID] = '{CB4F7C78-223E-4EF7-A878-36599B0B74C6}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ZIP][$CHILKATOBJ_ID_IID] = '{184496A9-2DF8-4EE8-BA7E-1F08B9CE51BA}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ZIPCRC][$CHILKATOBJ_ID_PROGID] = 'Chilkat.ZipCrc.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ZIPCRC][$CHILKATOBJ_ID_CLSID] = '{97BAEBDB-66B6-4087-956D-6EB6B45C0C6A}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ZIPCRC][$CHILKATOBJ_ID_IID] = '{14DF590F-13B9-451F-B3F4-ECA1290D9FE9}'
+
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ZIPENTRY][$CHILKATOBJ_ID_PROGID] = 'Chilkat.ZipEntry.11'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ZIPENTRY][$CHILKATOBJ_ID_CLSID] = '{EC9670A9-41B9-4D74-825C-AFEF6E3C8828}'
+$CHILKATOBJ_API[$CHILKATOBJ_VERSION_11][$CHILKATOBJ_NAME_ZIPENTRY][$CHILKATOBJ_ID_IID] = '{81EA1674-270B-4B06-8060-FAF74ACE5AF1}'
+#EndRegion ; filling up $CHILKATOBJ_API for - Chilkat AX 11.5.0
+
+#EndRegion - ChilkatConstants.au3 - Declarations - AX Object
