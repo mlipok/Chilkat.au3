@@ -10,6 +10,7 @@ The documentation reflects the modular source layout currently developed on the 
 - [Architecture and modules](architecture-and-modules.md)
 - [Object creation and deployment](object-creation-and-deployment.md)
 - [Examples and initialization](examples-and-initialization.md)
+- [PEM, keys, CSR, and certificates](pem-key-csr-cert.md)
 - [Certificates, PKI, and smart cards](certificates-pki-and-smart-cards.md)
 - [Digital signatures](digital-signatures.md)
 - [API overview](api-overview.md)
@@ -34,3 +35,14 @@ The principal files are:
 - `Chilkat_Cryptography.au3` — RSA, ECC, DSA, EdDSA, encryption, and key handling.
 - `Chilkat_CompressionArchives.au3` — ZIP, Gzip, Tar, and compression workflows.
 - `Examples/` — individual runnable examples and the shared initialization layer.
+
+## Release Notes maintenance
+
+Release Notes are currently maintained in the `#Region ; Release Notes` section of `Chilkat.au3`.
+
+From `v0.3.0` onward:
+
+- every new UDF function must be documented in the current Release Notes entry as part of the same change;
+- while a version is still under development, revise and extend its latest entry instead of leaving an incomplete summary.
+
+The complete history may be moved to a separate `RELEASE_NOTES.md` file in a later iteration.
