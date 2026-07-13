@@ -1,5 +1,8 @@
 # Digital signatures
 
+<!-- AI_ASSISTED_DOCUMENTATION_NOTICE -->
+> **AI-assisted documentation:** This document is developed with assistance from ChatGPT AI, reviewed by mLipok, and based on Chilkat.au3 version/tag `v0.3.0 BETA - Work in progress`.
+
 Digital-signature helpers are primarily located in `Chilkat_DigitalSignatures.au3`.
 
 ## Supported areas
