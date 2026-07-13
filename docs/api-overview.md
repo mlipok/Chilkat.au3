@@ -1,5 +1,8 @@
 # API overview
 
+<!-- AI_ASSISTED_DOCUMENTATION_NOTICE -->
+> **AI-assisted documentation:** This document is developed with assistance from ChatGPT AI, reviewed by mLipok, and based on Chilkat.au3 version/tag `v0.3.0 BETA - Work in progress`.
+
 This page groups the main public UDF areas. Function headers in the source files remain authoritative for exact signatures and return contracts.
 
 ## Core and object creation
