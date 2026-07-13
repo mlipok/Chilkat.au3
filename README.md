@@ -111,14 +111,15 @@ Main topics:
 - [API overview](docs/api-overview.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [References and support](docs/links.md)
+- [Release Notes](RELEASE_NOTES.md)
 
 The current UDF function headers and `ChilkatConstants.au3` metadata remain authoritative for exact signatures, return values, `@error`, `@extended`, ProgIDs, CLSIDs, IIDs, and supported object-version metadata.
 
 ## Release Notes
 
-Release Notes are currently maintained in the `#Region ; Release Notes` section of `Chilkat.au3`.
+The complete release history is maintained in [`RELEASE_NOTES.md`](RELEASE_NOTES.md) in the repository root.
 
-From `v0.3.0` onward, every new UDF function must be documented in the current Release Notes entry as part of the same change. While a version remains under development, its latest entry should be revised and expanded rather than duplicated.
+From `v0.3.0` onward, every new UDF function and every significant UDF change must be documented in the current release entry as part of the same change. While a version remains under development, revise and expand its latest entry instead of creating incomplete or duplicate entries.
 
 ## Authors and support
 
