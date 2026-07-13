@@ -12,6 +12,8 @@ Chilkat_Example_XXX_ShortDescription.au3
 
 Examples cover JSON, CSV, strings, Atom, SMTP, IMAP, ZIP, HTTP, smart cards, PDF, FTP2, PKCS11, PAdES, XAdES, PEM generation, and PEM/key/certificate inspection.
 
+Detailed documentation for `Chilkat_Example_038_PEM_GENERATOR.au3` and `Chilkat_Example_039_PEM_KEY_CERT_Reader.au3` is available in [PEM, keys, CSR, and certificates](pem-key-csr-cert.md).
+
 ## Shared initialization
 
 Numbered examples include:
