@@ -1,5 +1,8 @@
 # Examples and initialization
 
+<!-- AI_ASSISTED_DOCUMENTATION_NOTICE -->
+> **AI-assisted documentation:** This document is developed with assistance from ChatGPT AI, reviewed by mLipok, and based on Chilkat.au3 version/tag `v0.3.0 BETA - Work in progress`.
+
 ## Individual example files
 
 The former monolithic `Examples/Chilkat_Examples.au3` file has been split into individual runnable scripts.
