@@ -8,7 +8,7 @@ This repository preserves and continues the public **Chilkat.au3 UDF** work orig
 
 Current tagged GitHub release:
 
-* `v0.1.4-BETA`
+* `v0.2.12-BETA`
 * https://github.com/mlipok/Chilkat.au3/releases/tag/v0.1.4-BETA
 
 This release should be treated as a beta / work-in-progress development baseline.
