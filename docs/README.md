@@ -1,5 +1,8 @@
 # Chilkat.au3 documentation
 
+<!-- AI_ASSISTED_DOCUMENTATION_NOTICE -->
+> **AI-assisted documentation:** This document is developed with assistance from ChatGPT AI, reviewed by mLipok, and based on Chilkat.au3 version/tag `v0.3.0 BETA - Work in progress`.
+
 This directory contains project documentation for the **Chilkat.au3 UDF** development line `0.3.x`.
 
 The documentation reflects the modular source layout currently developed on the `the_way_to_0.3.x` branch. `Chilkat.au3` remains the primary include file and the single entry point for application scripts.
@@ -35,6 +38,12 @@ The principal files are:
 - `Chilkat_Cryptography.au3` — RSA, ECC, DSA, EdDSA, encryption, and key handling.
 - `Chilkat_CompressionArchives.au3` — ZIP, Gzip, Tar, and compression workflows.
 - `Examples/` — individual runnable examples and the shared initialization layer.
+
+## Documentation baseline maintenance
+
+Every repository `*.md` file must contain the standardized `AI_ASSISTED_DOCUMENTATION_NOTICE` block immediately after its top-level heading.
+
+Before creating a final release, update the Chilkat.au3 version/tag in that notice in every `*.md` file. The value must be identical across the complete documentation set and must match the final release tag.
 
 ## Release Notes maintenance
 
