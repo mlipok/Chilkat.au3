@@ -9,4 +9,28 @@ The documentation reflects the modular source layout currently developed on the 
 - [Getting started](getting-started.md)
 - [Architecture and modules](architecture-and-modules.md)
 - [Object creation and deployment](object-creation-and-deployment.md)
-- [Examples
+- [Examples and initialization](examples-and-initialization.md)
+- [Certificates, PKI, and smart cards](certificates-pki-and-smart-cards.md)
+- [Digital signatures](digital-signatures.md)
+- [API overview](api-overview.md)
+- [Troubleshooting](troubleshooting.md)
+- [References and support](links.md)
+
+## Development status
+
+The `0.3.x` line is marked `BETA - Work in progress`. It introduces a modular source layout and may contain script-breaking changes compared with earlier releases.
+
+The current source branch remains authoritative for exact function signatures, return values, `@error`, `@extended`, supported Chilkat versions, and object metadata.
+
+## Repository layout
+
+The principal files are:
+
+- `Chilkat.au3` — primary include file and shared/core functionality.
+- `ChilkatConstants.au3` — return/error constants and Chilkat object metadata.
+- `Chilkat_Certificates_PKI.au3` — certificates, key containers, PKI, PKCS11, PC/SC, and smart cards.
+- `Chilkat_DigitalSignatures.au3` — PDF/PAdES, XAdES, XML signatures, JWS, JWE, JWT, and related signing workflows.
+- `Chilkat_Email.au3` — SMTP, IMAP, POP3, MIME, Gmail, Microsoft 365, and other email-related functionality.
+- `Chilkat_Cryptography.au3` — RSA, ECC, DSA, EdDSA, encryption, and key handling.
+- `Chilkat_CompressionArchives.au3` — ZIP, Gzip, Tar, and compression workflows.
+- `Examples/` — individual runnable examples and the shared initialization layer.
