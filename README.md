@@ -9,7 +9,7 @@ This repository preserves and continues the public **Chilkat.au3 UDF** work orig
 Current tagged GitHub release:
 
 * `v0.2.12-BETA`
-* https://github.com/mlipok/Chilkat.au3/releases/tag/v0.1.4-BETA
+* https://github.com/mlipok/Chilkat.au3/releases/tag/v0.2.12-BETA
 
 This release should be treated as a beta / work-in-progress development baseline.
 
@@ -20,13 +20,13 @@ Active development toward the next version is done on:
 * branch: `the_way_to_0.2.0`
 * current UDF header version on this branch: `0.2.10 BETA - Work in progress`
 * current UDF header date on this branch: `2026/07/09`
-* latest release-notes entry on this branch: `v0.2.11`
+* latest release-notes entry prepared for this development line: `v0.2.12`
 
-The `0.2.x` development line starts from the `v0.1.4-BETA` baseline and is intended for maintenance, documentation cleanup, compatibility-sensitive refactoring, and further UDF development.
+The `0.2.x` development line starts from the earlier public baseline and is intended for maintenance, documentation cleanup, compatibility-sensitive refactoring, and further UDF development.
 
-The `0.2.x` changelog currently notes this line as modified with ChatGPT AI assistance.
+The `0.2.x` changelog notes that this development line includes changes prepared with ChatGPT AI assistance and reviewed by mLipok.
 
-Recent development work on this branch includes:
+Recent development work includes:
 
 * expanded Chilkat ActiveX object metadata for the supported 9.5, 10 and 11 object-version settings, including ProgID / CLSID / IID entries used by wrapper-based object creation;
 * major-version-specific ProgID support for Chilkat v10+ object creation, for example `Chilkat.Http.10` and future `Chilkat.Http.11`, while preserving the legacy `Chilkat_9_5_0.*` naming for the 9.5 object-version setting;
@@ -39,10 +39,33 @@ Recent development work on this branch includes:
 * FTP2 helper functions for connection, upload/download, binary transfer and directory listing as native AutoIt arrays;
 * smart-card, PC/SC and PKCS11 discovery helpers returning native AutoIt arrays;
 * certificate helper functions, including qualified-policy detection and validity-date checks;
-* smart-card certificate selection that can reject expired or not-yet-valid certificates when selecting a certificate for signing;
+* smart-card certificate listing as a native AutoIt array containing certificate name, issuer, serial number, validity dates, fingerprint, key usage and qualification metadata;
+* filtering of expired, not-yet-valid and private-key-inaccessible smart-card certificates before selection;
+* interactive `ListView`-based selection of a smart-card certificate;
+* identification of the selected certificate by its complete SHA-1 fingerprint rather than by display name or list position;
+* smart-card PIN prompts that display a readable summary of the selected certificate before requesting the PIN;
 * PAdES PDF signing and aggregate verification helpers, including binary PDF workflows;
 * XAdES-BES signing and verification helpers for external-file and binary XML workflows;
+* updated `_Example_36_PDF_PAdES_Binary()` demonstrating interactive smart-card certificate selection before signing;
 * expanded examples, standardized example function documentation headers, and standardized object-creator documentation.
+
+## Smart-card certificate selection
+
+The smart-card signing workflow is designed to avoid silently selecting the first certificate returned by the card or certificate store.
+
+The intended sequence is:
+
+1. Open the smart-card certificate store.
+2. Read all available certificates into a native AutoIt array.
+3. Reject certificates that are expired, not yet valid or do not provide access to a private key.
+4. Display the remaining certificates in a `ListView` with useful metadata such as subject name, issuer, validity dates, serial number and fingerprint.
+5. Let the user explicitly select the certificate intended for signing.
+6. Identify the selected certificate internally by its complete SHA-1 fingerprint.
+7. Display a readable certificate summary before requesting the smart-card PIN.
+8. Assign the PIN only to the selected `Chilkat.Cert` object.
+9. Use that same selected certificate object for the signing operation.
+
+The fingerprint is used as a certificate identifier, not as a trust or cryptographic-strength assessment. The PIN unlocks access to the private key and does not determine which certificate should be selected. Multiple certificates on the same card may use the same PIN.
 
 ## Object creation model
 
@@ -102,11 +125,11 @@ Useful Chilkat references:
 
 ## Status
 
-`v0.1.4-BETA` is the latest tagged GitHub release.
+`v0.2.12-BETA` is the latest tagged GitHub release.
 
 The `the_way_to_0.2.0` branch is the active development branch for the next `0.2.x` line and may include script-breaking changes compared to earlier public versions.
 
-Known compatibility-sensitive changes include renamed internal/logging helper functions, refactoring around Chilkat object creation wrappers, expanded `$CHILKATOBJ_NAME_*` / `$CHILKATOBJ_API` metadata, updated ProgID naming for Chilkat v10+ objects, additional `_Chilkat_*_ObjCreate()` wrappers, and API renaming in newer ZIP and FTP2 helper functions.
+Known compatibility-sensitive changes include renamed internal/logging helper functions, refactoring around Chilkat object creation wrappers, expanded `$CHILKATOBJ_NAME_*` / `$CHILKATOBJ_API` metadata, updated ProgID naming for Chilkat v10+ objects, additional `_Chilkat_*_ObjCreate()` wrappers, API renaming in newer ZIP and FTP2 helper functions, and explicit user-driven smart-card certificate selection.
 
 Use the development branch for testing, maintenance, documentation cleanup, and further development rather than as an assumed drop-in replacement without verification.
 
