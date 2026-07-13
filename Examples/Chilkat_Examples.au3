@@ -889,7 +889,7 @@ Func _Example_25_Simple_IMAP_List_MailBoxes()
 	ConsoleWrite(@ScriptLineNumber & @CRLF)
 	;  Any string argument automatically begins the 30-day trial.
 
-	#cs
+	#CS
 		; this is already unlocked on begining of this example
 		success = $oImap.UnlockComponent("30-day trial")
 		If (success <> 1) Then
@@ -897,7 +897,7 @@ Func _Example_25_Simple_IMAP_List_MailBoxes()
 		Return ; @TODO - refactoring
 		EndIf
 
-	#ce
+	#CE
 
 	;  Connect to an IMAP server.
 	;  Use TLS
@@ -929,7 +929,7 @@ Func _Example_25_Simple_IMAP_List_MailBoxes()
 	;  Select all mailboxes matching this pattern:
 	Local $s_wildcardedMailbox = '*'
 
-	Local $oMBoxes = $oImap.ListMailboxes($s_refName, $s_wildcardedMailbox)
+	Local $oMBoxes = $oIMAP.ListMailboxes($s_refName, $s_wildcardedMailbox)
 ;~ 	If ($oImap.LastMethodSuccess <> 1) Or $oMBoxes = Null Then
 ;~ 		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
 ;~ 		Return ; @TODO - refactoring
@@ -1163,9 +1163,10 @@ Func _Example_30_SmartCards()
 ;~ 	"CryptoCertum3 Csp"
 	Local $s_CspName = "cryptoCertum3 CSP"
 	Local $oCert = _Chilkat_Cert_LoadFromSmartCard($s_CspName)
+	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx()
 	#forceref $oCert
 
-	Local $s_PIN = __Chilkat_PIN_Request(@ScriptLineNumber)
+	Local $s_PIN = __Chilkat_PIN_Request('', @ScriptLineNumber)
 	Local $i_pinValid = _Chilkat_Cert_ValidateSmartCard_PIN($s_CspName, $s_PIN)
 	#forceref $i_pinValid
 
@@ -1398,7 +1399,7 @@ Func _Example_35_SmartCards_PKCS11_List()
 ;~ 	Local $sPkcs11DllFullPath = 'C:\Windows\System32\cryptoCertum3PKCS.dll'
 	Local $sPkcs11DllFullPath = 'C:\Windows\SysWOW64\cryptoCertum3PKCS.dll'
 
-	Local $s_PIN = __Chilkat_PIN_Request(@ScriptLineNumber)
+	Local $s_PIN = __Chilkat_PIN_Request('', @ScriptLineNumber)
 	If $sPkcs11DllFullPath = '' Then
 		MsgBox($MB_ICONINFORMATION, '_Example_35_SmartCards_PKCS11_List', 'Set PKCS#11 DLL path and PIN in the example before running the PKCS#11 part.')
 		Return
@@ -1417,12 +1418,12 @@ EndFunc   ;==>_Example_35_SmartCards_PKCS11_List
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Example_36_PDF_PAdES_Binary
-; Description ...: Demonstrates PAdES signing and verification using binary PDF data.
+; Description ...: Demonstrates PAdES signing and verification using binary PDF data and a user-selected smart-card certificate.
 ; Syntax ........: _Example_36_PDF_PAdES_Binary()
 ; Parameters ....: None
 ; Return values .: Success - None.
 ;                  Failure - Sets @error/@extended when a called UDF function fails.
-; Remarks .......: Requires a PDF file and a smart card PIN for signing.
+; Remarks .......: The UDF lists currently valid smart-card certificates with private keys, lets the user select one, and then requests its PIN.
 ; ===============================================================================================================================
 Func _Example_36_PDF_PAdES_Binary()
 	_Log_ChilkatExample('_Example_36_PDF_PAdES_Binary')
@@ -1435,27 +1436,24 @@ Func _Example_36_PDF_PAdES_Binary()
 	Local $dPDF = _File_ReadHexData($sPDF_FileFullPath)
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
-	Local $s_PIN = __Chilkat_PIN_Request(@ScriptLineNumber)
-	If $s_PIN = '' Then
-		MsgBox($MB_ICONINFORMATION, '_Example_36_PDF_PAdES_Binary', 'Set smart card PIN in the example before signing. Verification will be shown only.')
-		Local $oVerifyJson = _Chilkat_PDF_VerifySignaturesInBinary_AsJson($dPDF)
-		If Not @error Then ConsoleWrite($oVerifyJson.Emit() & @CRLF)
-		Return
-	EndIf
-
 	Local $oOptions = _Chilkat_PDF_PAdES_CreateOptions()
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
-	Local $dSignedPDF = _Chilkat_PDF_SignPAdES_Binary_BySmartCard($dPDF, $s_PIN, '', $oOptions, Default, 1)
+	; Passing Default as the PIN activates the safe smart-card workflow:
+	; 1. Build an AutoIt array containing currently valid certificates with private keys.
+	; 2. Display certificate name, issuer, validity dates and fingerprint.
+	; 3. Let the user select the certificate; the full fingerprint identifies the selection.
+	; 4. Display the selected certificate summary and request its PIN.
+	Local $dSignedPDF = _Chilkat_PDF_SignPAdES_Binary_BySmartCard($dPDF, Default, '', $oOptions, Default, 1)
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
 	Local $sOutput = StringTrimRight($sPDF_FileFullPath, 4) & '.pades.pdf'
 	Local $hFile = FileOpen($sOutput, $FO_BINARY + $FO_OVERWRITE)
+	If $hFile = -1 Then Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
 	FileWrite($hFile, $dSignedPDF)
 	FileClose($hFile)
 
 	MsgBox($MB_ICONINFORMATION, '_Example_36_PDF_PAdES_Binary', 'Signed PDF saved to:' & @CRLF & $sOutput)
-
 EndFunc   ;==>_Example_36_PDF_PAdES_Binary
 
 ; #FUNCTION# ====================================================================================================================
@@ -1478,7 +1476,7 @@ Func _Example_37_XADES_Binary()
 	Local $dPayload = _File_ReadHexData($sFileFullPath)
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
-	Local $s_PIN = __Chilkat_PIN_Request(@ScriptLineNumber)
+	Local $s_PIN = __Chilkat_PIN_Request('', @ScriptLineNumber)
 	If $s_PIN = '' Then
 		MsgBox($MB_ICONINFORMATION, '_Example_37_XADES_Binary', 'Set smart card PIN in the example before running it.')
 		Return
@@ -1541,9 +1539,6 @@ Func _Log_ChilkatExample($sData)
 EndFunc   ;==>_Log_ChilkatExample
 #Region - Internal
 
-Func __Chilkat_PIN_Request($_ScriptLineNumber)
-	Return InputBox("PIN", "Provide PIN" & @CRLF & "REF LINE=" & $_ScriptLineNumber, "", "*")
-EndFunc   ;==>__Chilkat_PIN_Request
 Func __Example_19b_API($vCol0 = Default, $vCol1 = Default, $vCol2 = Default, $vCol3 = Default)
 	Local Static $oCSV = Null
 
