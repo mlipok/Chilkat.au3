@@ -11,8 +11,8 @@
 ; URL ...........: https://www.chilkatsoft.com/downloads_ActiveX.asp
 ; URL ...........: https://chilkatsoft.com/activex_dll_registration_tutorial.asp
 ; URL ...........: https://cknotes.com/category/release-notes/
-; Date ..........: 2026/07/09
-; Version .......: 0.2.10 BETA - Work in progress
+; Date ..........: 2026/07/13
+; Version .......: v0.2.12 BETA - Work in progress
 ; ================================================================================
 
 #Region ; Release Notes
@@ -153,6 +153,13 @@
 	.   Added: ObjCreate() Remarks documenting Chilkat object introduction versions where available in the Chilkat ActiveX refdoc - AI / mLipok
 	.   Added: Registration-Free COM / SxS comments for CLSID/IID/DLL-handle object creation and clarified registered ProgID fallback logging - AI / mLipok
 	.   Changed: SmartCard certificate loading can reject expired or not-yet-valid certificates when selecting a certificate for signing - AI / mLipok
+	
+	v0.2.12
+	2026/07/13
+	.   Added: smart-card certificate listing as a native AutoIt array containing certificate name, issuer, serial number, validity dates, fingerprint, key usage and qualification metadata - AI / mLipok
+	.   Added: interactive ListView-based selection of a valid smart-card certificate, with the selected certificate identified by its full SHA-1 fingerprint - AI / mLipok
+	.   Changed: smart-card PIN prompts now display a readable summary of the selected certificate before requesting the PIN - AI / mLipok
+	.   Changed: _Example_36_PDF_PAdES_Binary() now uses interactive smart-card certificate selection before PAdES signing - AI / mLipok
 
 	@LAST
 
