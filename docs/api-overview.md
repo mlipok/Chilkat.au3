@@ -16,7 +16,9 @@ Examples include `_Chilkat_HTTP_ObjCreate()`, `_Chilkat_BINDATA_ObjCreate()`, `_
 
 ## Certificates and PKI
 
-See `Chilkat_Certificates_PKI.au3` for certificate stores, certificates, CSR, PEM, PFX/P12, PKCS11, SCard, smart cards, minidrivers, private keys, and public keys.
+See `Chilkat_Certificates_PKI.au3` for certificate stores, certificates, CSR, PEM, PFX/P12, PKCS11, SCard, smart cards, minidrivers, and certificate export operations.
+
+Detailed RSA, PEM, private-key, public-key, CSR, and certificate helper documentation is available in [PEM, keys, CSR, and certificates](pem-key-csr-cert.md).
 
 ## Digital signatures
 
@@ -28,7 +30,7 @@ See `Chilkat_Email.au3` for SMTP/MailMan, IMAP, POP3, MIME, DKIM, Gmail, Microso
 
 ## Cryptography
 
-See `Chilkat_Cryptography.au3` for RSA, DSA, Diffie-Hellman, ECC, EdDSA, encryption, PRNG, and key operations.
+See `Chilkat_Cryptography.au3` for RSA, DSA, Diffie-Hellman, ECC, EdDSA, encryption, PRNG, private keys, public keys, and key export operations.
 
 ## Compression and archives
 
