@@ -186,6 +186,7 @@
 #include <AutoItConstants.au3>
 #include <FileConstants.au3>
 #include <GUIConstantsEx.au3>
+#include <GuiListView.au3>
 #include <IE.au3>
 #include <MsgBoxConstants.au3>
 #include <StringConstants.au3>
@@ -3169,8 +3170,267 @@ Func _Chilkat_Cert_ObjCreate()
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Cert_ObjCreate
 
-Func __Chilkat_Cert_LoadFromSmartCardStoreEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $bRejectExpired = 1)
-	Local $oErrorHandler = ObjEvent("AutoIt.Error", __Internal_COM_ERROR_HANDLER__for_Chilkat)
+; #FUNCTION# ====================================================================================================================
+; Name ..........: __Chilkat_Cert_NormalizeFingerprint
+; Description ...: Normalizes a certificate fingerprint for exact comparisons.
+; Syntax ........: __Chilkat_Cert_NormalizeFingerprint($sFingerprint)
+; Parameters ....: $sFingerprint          - [in] certificate fingerprint string.
+; Return values .: Uppercase fingerprint without whitespace.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: The fingerprint is used only as a stable certificate identifier, not as a trust decision.
+; Related .......: __Chilkat_CertStore_GetCertByFingerprint, __Chilkat_Cert_SelectFingerprintFromArray
+; Link ..........:
+; Example .......: No
+; ===============================================================================================================================
+Func __Chilkat_Cert_NormalizeFingerprint($sFingerprint)
+	If Not IsString($sFingerprint) Then Return ''
+	Return StringUpper(StringStripWS($sFingerprint, $STR_STRIPALL))
+EndFunc   ;==>__Chilkat_Cert_NormalizeFingerprint
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: __Chilkat_Cert_GetPINRequestSummary
+; Description ...: Builds a readable summary of the selected certificate for the smart-card PIN prompt.
+; Syntax ........: __Chilkat_Cert_GetPINRequestSummary(ByRef $oCert)
+; Parameters ....: $oCert                 - [in/out] selected Chilkat Cert object.
+; Return values .: Success: certificate summary string. Failure: empty string and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Includes subject, issuer, serial number, validity dates and the complete SHA-1 fingerprint.
+; Related .......: __Chilkat_PIN_Request, _Chilkat_Cert_LoadFromSmartCardEx
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCertRef.html
+; Example .......: No
+; ===============================================================================================================================
+Func __Chilkat_Cert_GetPINRequestSummary(ByRef $oCert)
+	If Not IsObj($oCert) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, '')
+
+	Local $sSubject = $oCert.SubjectCN
+	If $sSubject = '' Then $sSubject = $oCert.SubjectDN
+	If $sSubject = '' Then $sSubject = 'selected smart-card certificate'
+
+	Local $sSummary = $sSubject
+	If $oCert.IssuerCN <> '' Then $sSummary &= @CRLF & 'Issuer: ' & $oCert.IssuerCN
+	If $oCert.SerialNumber <> '' Then $sSummary &= @CRLF & 'Serial number: ' & $oCert.SerialNumber
+	If $oCert.ValidFromStr <> '' Then $sSummary &= @CRLF & 'Valid from: ' & $oCert.ValidFromStr
+	If $oCert.ValidToStr <> '' Then $sSummary &= @CRLF & 'Valid to: ' & $oCert.ValidToStr
+	If $oCert.Sha1Thumbprint <> '' Then $sSummary &= @CRLF & 'Fingerprint: ' & $oCert.Sha1Thumbprint
+
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $sSummary)
+EndFunc   ;==>__Chilkat_Cert_GetPINRequestSummary
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: __Chilkat_PIN_Request
+; Description ...: Requests a smart-card PIN and identifies the certificate for which the PIN is required.
+; Syntax ........: __Chilkat_PIN_Request($sCertSummary = '', $sComment = '')
+; Parameters ....: $sCertSummary          - [in] readable summary of the selected certificate.
+;                  $sComment              - [in] optional operation description displayed in the dialog title.
+; Return values .: Success: entered PIN. Failure/cancel: empty string and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: The PIN is returned to the caller and must not be logged or persisted.
+; Related .......: __Chilkat_Cert_GetPINRequestSummary, _Chilkat_Cert_LoadFromSmartCardEx
+; Link ..........:
+; Example .......: No
+; ===============================================================================================================================
+Func __Chilkat_PIN_Request($sCertSummary = '', $sComment = '')
+	; Compatibility with older examples that passed @ScriptLineNumber as the first argument.
+	If IsNumber($sCertSummary) Then
+		If $sComment = '' Then $sComment = 'script line ' & $sCertSummary
+		$sCertSummary = ''
+	EndIf
+
+	If $sCertSummary = Default Or $sCertSummary = '' Then $sCertSummary = 'selected smart-card certificate'
+	If $sComment = Default Then $sComment = ''
+
+	Local $sPIN = InputBox('Chilkat smart-card PIN : ' & $sComment, _
+			'Enter PIN for certificate:' & @CRLF & @CRLF & $sCertSummary, '', '*')
+	If @error Then Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, '')
+
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $sPIN)
+EndFunc   ;==>__Chilkat_PIN_Request
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: __Chilkat_Cert_SelectFingerprintFromArray
+; Description ...: Displays valid smart-card certificates in a ListView and returns the fingerprint selected by the user.
+; Syntax ........: __Chilkat_Cert_SelectFingerprintFromArray(ByRef $aCerts)
+; Parameters ....: $aCerts                - [in/out] certificate metadata array using $CHILKAT_CERT_LIST_COL_* columns.
+; Return values .: Success: complete SHA-1 fingerprint. Failure/cancel: empty string and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: The ListView row is only a UI position. The returned complete fingerprint identifies the selected certificate.
+; Related .......: _Chilkat_CertStore_ListValidCertificates_AsArray, __Chilkat_CertStore_GetCertByFingerprint
+; Link ..........:
+; Example .......: No
+; ===============================================================================================================================
+Func __Chilkat_Cert_SelectFingerprintFromArray(ByRef $aCerts)
+	If Not IsArray($aCerts) Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERTYPE, $CHILKAT_EXT_PARAM1, '')
+	If UBound($aCerts, 0) <> 2 Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERTYPE, $CHILKAT_EXT_PARAM1, '')
+	If UBound($aCerts, 2) < $CHILKAT_CERT_LIST_COL_COUNT Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERTYPE, $CHILKAT_EXT_PARAM1, '')
+
+	Local $iRows = UBound($aCerts, 1)
+	If $iRows < 1 Then Return SetError($CHILKAT_ERR_NOTFOUND, $CHILKAT_EXT_GENERAL, '')
+
+	Local $hGUI = GUICreate('Chilkat smart-card certificate selection', 1280, 570, -1, -1, _
+			BitOR($WS_CAPTION, $WS_MINIMIZEBOX, $WS_SYSMENU))
+	If $hGUI = 0 Then Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, '')
+
+	GUICtrlCreateLabel('Select the certificate to use, then click "Use selected certificate".', 12, 12, 900, 20)
+
+	Local $idListView = GUICtrlCreateListView( _
+			'Name|Issuer|Valid from|Valid to|Fingerprint|Serial number|Qualified type', _
+			10, 38, 1260, 470, _
+			BitOR($LVS_REPORT, $LVS_SINGLESEL, $LVS_SHOWSELALWAYS))
+	If $idListView = 0 Then
+		GUIDelete($hGUI)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, '')
+	EndIf
+
+	Local $hListView = GUICtrlGetHandle($idListView)
+	_GUICtrlListView_SetExtendedListViewStyle($hListView, BitOR($LVS_EX_FULLROWSELECT, $LVS_EX_GRIDLINES))
+
+	Local $aListViewItemID[$iRows]
+	For $iRow = 0 To $iRows - 1
+		Local $sName = $aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SUBJECT_CN]
+		If $sName = '' Then $sName = $aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SUBJECT_DN]
+		If $sName = '' Then $sName = 'Unnamed certificate'
+
+		Local $sIssuer = $aCerts[$iRow][$CHILKAT_CERT_LIST_COL_ISSUER_CN]
+		If $sIssuer = '' Then $sIssuer = $aCerts[$iRow][$CHILKAT_CERT_LIST_COL_ISSUER_DN]
+
+		$sName = StringReplace(StringReplace($sName, @CRLF, ' '), '|', '/')
+		$sIssuer = StringReplace(StringReplace($sIssuer, @CRLF, ' '), '|', '/')
+
+		Local $idItem = GUICtrlCreateListViewItem( _
+				$sName & '|' & _
+				$sIssuer & '|' & _
+				$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_VALID_FROM] & '|' & _
+				$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_VALID_TO] & '|' & _
+				$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SHA1] & '|' & _
+				$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SERIAL] & '|' & _
+				$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_QUALIFIED_TYPE], _
+				$idListView)
+		If $idItem = 0 Then
+			GUIDelete($hGUI)
+			Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, '')
+		EndIf
+		$aListViewItemID[$iRow] = $idItem
+	Next
+
+	_GUICtrlListView_SetColumnWidth($hListView, 0, 190)
+	_GUICtrlListView_SetColumnWidth($hListView, 1, 180)
+	_GUICtrlListView_SetColumnWidth($hListView, 2, 145)
+	_GUICtrlListView_SetColumnWidth($hListView, 3, 145)
+	_GUICtrlListView_SetColumnWidth($hListView, 4, 300)
+	_GUICtrlListView_SetColumnWidth($hListView, 5, 150)
+	_GUICtrlListView_SetColumnWidth($hListView, 6, 130)
+
+	_GUICtrlListView_SetItemSelected($hListView, 0, True, True)
+	_GUICtrlListView_SetSelectionMark($hListView, 0)
+	_GUICtrlListView_EnsureVisible($hListView, 0)
+
+	Local $idSelect = GUICtrlCreateButton('Use selected certificate', 875, 522, 230, 34)
+	Local $idCancel = GUICtrlCreateButton('Cancel', 1120, 522, 150, 34)
+
+	GUISetState(@SW_SHOW, $hGUI)
+
+	Local $iLastSelectedRow = 0
+	While 1
+		Local $iGUIMessage = GUIGetMsg()
+
+		; Remember the row clicked by the user. GUICtrlCreateListViewItem() creates
+		; a separate control ID for every row.
+		For $iRow = 0 To $iRows - 1
+			If $iGUIMessage = $aListViewItemID[$iRow] Then
+				$iLastSelectedRow = $iRow
+				ExitLoop
+			EndIf
+		Next
+
+		Switch $iGUIMessage
+			Case $idSelect
+				; SelectionMark is reliable after the ListView loses focus to the button.
+				Local $iSelectedRow = _GUICtrlListView_GetSelectionMark($hListView)
+
+				; Fallback for controls/providers that do not update SelectionMark.
+				If $iSelectedRow < 0 Or $iSelectedRow >= $iRows Then _
+					$iSelectedRow = _GUICtrlListView_GetNextItem($hListView, -1, $LVNI_SELECTED)
+
+				; Final fallback: use the last ListViewItem control clicked by the user.
+				If $iSelectedRow < 0 Or $iSelectedRow >= $iRows Then $iSelectedRow = $iLastSelectedRow
+
+				If $iSelectedRow < 0 Or $iSelectedRow >= $iRows Then
+					MsgBox($MB_ICONWARNING, 'Chilkat smart-card certificate selection', 'Select a certificate from the list.')
+					ContinueLoop
+				EndIf
+
+				Local $sFingerprint = __Chilkat_Cert_NormalizeFingerprint($aCerts[$iSelectedRow][$CHILKAT_CERT_LIST_COL_SHA1])
+				If $sFingerprint = '' Then
+					MsgBox($MB_ICONWARNING, 'Chilkat smart-card certificate selection', 'The selected certificate does not have a valid fingerprint.')
+					ContinueLoop
+				EndIf
+
+				GUIDelete($hGUI)
+				Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $sFingerprint)
+
+			Case $idCancel, $GUI_EVENT_CLOSE
+				GUIDelete($hGUI)
+				Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, '')
+		EndSwitch
+	WEnd
+EndFunc   ;==>__Chilkat_Cert_SelectFingerprintFromArray
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: __Chilkat_CertStore_GetCertByFingerprint
+; Description ...: Retrieves a certificate from an open CertStore by its complete SHA-1 fingerprint.
+; Syntax ........: __Chilkat_CertStore_GetCertByFingerprint(ByRef $oCertStore, $sFingerprint)
+; Parameters ....: $oCertStore            - [in/out] open Chilkat CertStore object.
+;                  $sFingerprint          - [in] complete certificate SHA-1 fingerprint.
+; Return values .: Success: matching Chilkat Cert object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Compares normalized complete fingerprints; partial fingerprint matching is not used.
+; Related .......: __Chilkat_Cert_NormalizeFingerprint, __Chilkat_Cert_SelectFingerprintFromArray
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCertStoreRef.html
+; Example .......: No
+; ===============================================================================================================================
+Func __Chilkat_CertStore_GetCertByFingerprint(ByRef $oCertStore, $sFingerprint)
+	If Not IsObj($oCertStore) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+
+	Local $sExpectedFingerprint = __Chilkat_Cert_NormalizeFingerprint($sFingerprint)
+	If $sExpectedFingerprint = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERTYPE, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
+
+	For $iCertIndex = 0 To $oCertStore.NumCertificates - 1
+		Local $oCert = _Chilkat_Cert_ObjCreate()
+		If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+		Local $iSuccess = $oCertStore.GetCert($iCertIndex, $oCert)
+		If $iSuccess = 0 Then ContinueLoop
+
+		If __Chilkat_Cert_NormalizeFingerprint($oCert.Sha1Thumbprint) = $sExpectedFingerprint Then _
+				Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oCert)
+	Next
+
+	Return SetError($CHILKAT_ERR_NOTFOUND, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+EndFunc   ;==>__Chilkat_CertStore_GetCertByFingerprint
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: __Chilkat_Cert_LoadFromSmartCardStoreEx
+; Description ...: Lists valid signing certificates from a smart card, lets the user select one, and configures its PIN.
+; Syntax ........: __Chilkat_Cert_LoadFromSmartCardStoreEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $sPINComment = '')
+; Parameters ....: $s_CspName             - [in] optional CSP/provider name. Empty string lets Chilkat choose.
+;                  $s_PIN                 - [in] optional PIN. Default or empty requests the PIN after certificate selection.
+;                  $bNoDialog             - [in] optional SmartCardNoDialog value applied to the selected Cert object.
+;                  $sPINComment           - [in] optional operation description for the PIN dialog title.
+; Return values .: Success: selected Chilkat Cert object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Selection is performed from an AutoIt metadata array and resolved back to the CertStore by full fingerprint.
+; Related .......: _Chilkat_CertStore_ListValidCertificates_AsArray, __Chilkat_Cert_SelectFingerprintFromArray, __Chilkat_PIN_Request
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCertStoreRef.html
+; Example .......: No
+; ===============================================================================================================================
+Func __Chilkat_Cert_LoadFromSmartCardStoreEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $sPINComment = '')
+	Local $oErrorHandler = ObjEvent('AutoIt.Error', __Internal_COM_ERROR_HANDLER__for_Chilkat)
 	#forceref $oErrorHandler
 
 	Local $oCertStore = _Chilkat_CertStore_ObjCreate()
@@ -3184,25 +3444,34 @@ Func __Chilkat_Cert_LoadFromSmartCardStoreEx($s_CspName = '', $s_PIN = Default, 
 		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
 	EndIf
 
-	Local $iNumCerts = $oCertStore.NumCertificates
-	For $iCert_idx = 0 To $iNumCerts - 1
-		Local $oCert = _Chilkat_Cert_ObjCreate()
+	Local $aCerts = _Chilkat_CertStore_ListValidCertificates_AsArray($oCertStore, 1)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	If UBound($aCerts, 1) = 0 Then
+		__Chilkat_Log('__Chilkat_Cert_LoadFromSmartCardStoreEx(): no currently valid smart-card certificate with a private key was found.')
+		Return SetError($CHILKAT_ERR_NOTFOUND, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+
+	Local $sSelectedFingerprint = __Chilkat_Cert_SelectFingerprintFromArray($aCerts)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+	Local $oCert = __Chilkat_CertStore_GetCertByFingerprint($oCertStore, $sSelectedFingerprint)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+	If $bNoDialog <> Default Then $oCert.SmartCardNoDialog = $bNoDialog ? 1 : 0
+
+	Local $sEffectivePIN = $s_PIN
+	If $sEffectivePIN = Default Or $sEffectivePIN = '' Then
+		Local $sCertSummary = __Chilkat_Cert_GetPINRequestSummary($oCert)
 		If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
-		$iSuccess = $oCertStore.GetCert($iCert_idx, $oCert)
-		If $iSuccess = 0 Then ContinueLoop
+		$sEffectivePIN = __Chilkat_PIN_Request($sCertSummary, $sPINComment)
+		If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	EndIf
 
-		If $s_PIN <> Default And $s_PIN <> '' Then $oCert.SmartCardPin = $s_PIN
-		If $bNoDialog <> Default Then $oCert.SmartCardNoDialog = $bNoDialog ? 1 : 0
+	$oCert.SmartCardPin = $sEffectivePIN
+	$sEffectivePIN = ''
 
-		If $oCert.HasPrivateKey() <> 1 Then ContinueLoop
-		If $bRejectExpired And _Chilkat_Cert_IsDateValidNow($oCert) <> 1 Then ContinueLoop
-
-		Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oCert)
-	Next
-
-	__Chilkat_Log('__Chilkat_Cert_LoadFromSmartCardStoreEx(): no matching smart-card certificate was found. Required: HasPrivateKey=1 and DateValidNow=' & ($bRejectExpired ? '1' : 'any'))
-	Return SetError($CHILKAT_ERR_NOTFOUND, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oCert)
 EndFunc   ;==>__Chilkat_Cert_LoadFromSmartCardStoreEx
 
 Func __Chilkat_Cert_QualifiedPolicyOidFromXml($sXml)
@@ -3409,27 +3678,28 @@ EndFunc   ;==>_Chilkat_Cert_LoadFromSmartCard
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Cert_LoadFromSmartCardEx
-; Description ...: Loads a certificate from the current smart card / USB token with optional PIN, no-dialog flag and validity filtering.
-; Syntax ........: _Chilkat_Cert_LoadFromSmartCardEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $bRejectExpired = 1)
-; Parameters ....: $s_CspName             - [in] optional CSP / provider name. Empty string lets Chilkat choose.
-;                  $s_PIN                 - [in] optional smart-card PIN.
-;                  $bNoDialog             - [in] optional SmartCardNoDialog value applied to the returned Cert object.
-;                  $bRejectExpired        - [in] when 1, iterate smart-card certificates and return only a currently date-valid certificate. Default = 1.
-; Return values .: Success: Chilkat Cert object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Description ...: Selects a currently valid smart-card certificate with a private key and configures its PIN.
+; Syntax ........: _Chilkat_Cert_LoadFromSmartCardEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $bRejectExpired = 1, $sPINComment = '')
+; Parameters ....: $s_CspName             - [in] optional CSP/provider name. Empty string lets Chilkat choose.
+;                  $s_PIN                 - [in] optional PIN. Default or empty requests the PIN after certificate selection.
+;                  $bNoDialog             - [in] optional SmartCardNoDialog value applied to the selected Cert object.
+;                  $bRejectExpired        - [in] when 1, lists only currently valid certificates and lets the user choose one. Default = 1.
+;                  $sPINComment           - [in] optional operation description for the PIN dialog title.
+; Return values .: Success: selected Chilkat Cert object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
 ; Author ........: AI / mLipok
 ; Modified ......:
-; Remarks .......: When $bRejectExpired = 1, CertStore.OpenSmartcard() is used because Cert.LoadFromSmartcard() arbitrarily picks one certificate.
-;                  Pass $bRejectExpired = 0 to preserve the previous LoadFromSmartcard() behavior.
-; Related .......: _Chilkat_Cert_LoadFromSmartCard, _Chilkat_Cert_IsDateValidNow, _Chilkat_PDF_SignPAdES_File_BySmartCard, _Chilkat_XADES_SignExternalFile_BES_BySmartCard
+; Remarks .......: The default safe path uses CertStore.OpenSmartcard(), builds an AutoIt metadata array, and identifies the selected certificate by its full fingerprint.
+;                  Pass $bRejectExpired = 0 only to retain the legacy Cert.LoadFromSmartcard() behavior, which may arbitrarily choose one certificate.
+; Related .......: _Chilkat_CertStore_ListValidCertificates_AsArray, __Chilkat_Cert_GetPINRequestSummary, __Chilkat_PIN_Request
 ; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCertRef.html
-; Example .......: No
+; Example .......: Yes
 ; ===============================================================================================================================
-Func _Chilkat_Cert_LoadFromSmartCardEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $bRejectExpired = 1)
-	Local $oErrorHandler = ObjEvent("AutoIt.Error", __Internal_COM_ERROR_HANDLER__for_Chilkat)
+Func _Chilkat_Cert_LoadFromSmartCardEx($s_CspName = '', $s_PIN = Default, $bNoDialog = Default, $bRejectExpired = 1, $sPINComment = '')
+	Local $oErrorHandler = ObjEvent('AutoIt.Error', __Internal_COM_ERROR_HANDLER__for_Chilkat)
 	#forceref $oErrorHandler
 
 	If $bRejectExpired = Default Then $bRejectExpired = 1
-	If $bRejectExpired Then Return __Chilkat_Cert_LoadFromSmartCardStoreEx($s_CspName, $s_PIN, $bNoDialog, $bRejectExpired)
+	If $bRejectExpired Then Return __Chilkat_Cert_LoadFromSmartCardStoreEx($s_CspName, $s_PIN, $bNoDialog, $sPINComment)
 
 	Local $oCert = _Chilkat_Cert_ObjCreate()
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
@@ -3504,6 +3774,53 @@ Func _Chilkat_CertStore_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_CERTSTORE)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_CertStore_ObjCreate
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_CertStore_ListValidCertificates_AsArray
+; Description ...: Lists currently valid certificates from an open smart-card CertStore as a native AutoIt 2D array.
+; Syntax ........: _Chilkat_CertStore_ListValidCertificates_AsArray(ByRef $oCertStore, $bOnlyWithPrivateKey = 1)
+; Parameters ....: $oCertStore            - [in/out] open Chilkat CertStore object.
+;                  $bOnlyWithPrivateKey   - [in] when 1, includes only certificates with an available private key. Default = 1.
+; Return values .: Success: 2D array [n][$CHILKAT_CERT_LIST_COL_COUNT], including an empty array when no match is found.
+;                  Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Columns are described by $CHILKAT_CERT_LIST_COL_* constants and include names, issuer, serial, fingerprint, dates and key usage.
+; Related .......: _Chilkat_Cert_Info_AsArray, _Chilkat_Cert_IsDateValidNow, __Chilkat_Cert_SelectFingerprintFromArray
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCertStoreRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_CertStore_ListValidCertificates_AsArray(ByRef $oCertStore, $bOnlyWithPrivateKey = 1)
+	Local $oErrorHandler = ObjEvent('AutoIt.Error', __Internal_COM_ERROR_HANDLER__for_Chilkat)
+	#forceref $oErrorHandler
+
+	If Not IsObj($oCertStore) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+
+	Local $iNumCerts = $oCertStore.NumCertificates
+	If $iNumCerts < 1 Then Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, __Chilkat_Array_CreateEmpty2D($CHILKAT_CERT_LIST_COL_COUNT))
+
+	Local $aCerts[$iNumCerts][$CHILKAT_CERT_LIST_COL_COUNT]
+	Local $iOut = 0
+
+	For $iStoreIndex = 0 To $iNumCerts - 1
+		Local $oCert = _Chilkat_Cert_ObjCreate()
+		If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+		Local $iSuccess = $oCertStore.GetCert($iStoreIndex, $oCert)
+		If $iSuccess = 0 Then ContinueLoop
+		If $bOnlyWithPrivateKey And $oCert.HasPrivateKey() <> 1 Then ContinueLoop
+		If _Chilkat_Cert_IsDateValidNow($oCert) <> 1 Then ContinueLoop
+		If __Chilkat_Cert_NormalizeFingerprint($oCert.Sha1Thumbprint) = '' Then ContinueLoop
+
+		__Chilkat_Array_SetCertRow($aCerts, $iOut, $oCert, $iStoreIndex)
+		$iOut += 1
+	Next
+
+	If $iOut = 0 Then Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, __Chilkat_Array_CreateEmpty2D($CHILKAT_CERT_LIST_COL_COUNT))
+
+	ReDim $aCerts[$iOut][$CHILKAT_CERT_LIST_COL_COUNT]
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $aCerts)
+EndFunc   ;==>_Chilkat_CertStore_ListValidCertificates_AsArray
 
 #EndRegion ; _Chilkat_CertStore_**
 
@@ -4098,24 +4415,24 @@ EndFunc   ;==>_Chilkat_PDF_SignPAdES_Binary_ByPkcs11
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_PDF_SignPAdES_Binary_BySmartCard
-; Description ...: Signs binary PDF data as PAdES using a smart-card or USB-token certificate and returns signed PDF bytes.
+; Description ...: Signs binary PDF data as PAdES using a user-selected smart-card or USB-token certificate and returns signed PDF bytes.
 ; Syntax ........: _Chilkat_PDF_SignPAdES_Binary_BySmartCard(ByRef $dPDF_InputBinaryData, $sPIN = Default, $s_CspName = '', $oJsonOptions = Default, $bNoDialog = Default, $bRejectExpired = 1)
 ; Parameters ....: $dPDF_InputBinaryData  - [in/out] input PDF bytes.
-;                  $sPIN                  - [in] optional smart-card/token PIN.
+;                  $sPIN                  - [in] optional smart-card/token PIN. Default or empty requests the PIN after certificate selection.
 ;                  $s_CspName             - [in] optional CSP/provider name.
 ;                  $oJsonOptions          - [in] optional Chilkat JsonObject.
 ;                  $bNoDialog             - [in] optional smart-card no-dialog flag.
-;                  $bRejectExpired        - [in] when 1, skip expired and not-yet-valid certificates. Default = 1.
+;                  $bRejectExpired        - [in] when 1, lists only currently valid certificates with private keys. Default = 1.
 ; Return values .: Success: signed PDF bytes as binary Variant. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
 ; Author ........: AI / mLipok
 ; Modified ......:
-; Remarks .......: Certificate selection uses CertStore.OpenSmartcard() by default to avoid arbitrary selection of an expired certificate.
+; Remarks .......: The safe default path lets the user select a certificate by its displayed metadata, resolves it by full fingerprint, and then requests its PIN.
 ; Related .......: _Chilkat_Cert_LoadFromSmartCardEx, _Chilkat_PDF_SignPAdES_Binary_ByCert
 ; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatPdfRef.html
-; Example .......: No
+; Example .......: Yes
 ; ===============================================================================================================================
 Func _Chilkat_PDF_SignPAdES_Binary_BySmartCard(ByRef $dPDF_InputBinaryData, $sPin = Default, $s_CspName = '', $oJsonOptions = Default, $bNoDialog = Default, $bRejectExpired = 1)
-	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($s_CspName, $sPin, $bNoDialog, $bRejectExpired)
+	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($s_CspName, $sPin, $bNoDialog, $bRejectExpired, 'PDF PAdES signing')
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
 	Local $dSignedPdfBinaryData = _Chilkat_PDF_SignPAdES_Binary_ByCert($dPDF_InputBinaryData, $oCert, $oJsonOptions)
