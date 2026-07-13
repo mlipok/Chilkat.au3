@@ -17,20 +17,21 @@
 
 ; Release Notes .: See RELEASE_NOTES.md
 
-
+#Region ; TODO LIST
 #TODO https://www.example-code.com/autoit/socket_nist_time_server.asp
 #TODO https://www.example-code.com/autoit/scard.asp
 #TODO https://www.example-code.com/autoit/pdf_signatures.asp
 #TODO https://www.example-code.com/autoit/pkcs11.asp
 #TODO https://www.example-code.com/autoit/cert.asp
-;~ Cert: Added the SmartcardFailReason property to provide the ability to know the main reason the LoadFromSmartcard method failed.
-;~ CertStore: Improved functionality for smart cards and USB tokens. Also extended to better support the Apple Keychain.
-;~ CertStore: Added the following methods: FindCert, GetCert, LoadPfxBd.
-;~ https://www.example-code.com/xojo/pcsc_list_readers.asp
-;~ https://www.example-code.com/chilkat2-python/authenticode_sign_using_yubikey.asp
-;~ https://stackoverflow.com/questions/67173206/chilkat-codesigning
-;~ https://www.example-code.com/autoit/code_sign_sectigo_usb_token.asp
-;~ https://www.example-code.com/autoit/authenticode_sign_using_yubikey.asp
+#TODO Cert: Added the SmartcardFailReason property to provide the ability to know the main reason the LoadFromSmartcard method failed.
+#TODO CertStore: Improved functionality for smart cards and USB tokens. Also extended to better support the Apple Keychain.
+#TODO CertStore: Added the following methods: FindCert, GetCert, LoadPfxBd.
+#TODO https://www.example-code.com/xojo/pcsc_list_readers.asp
+#TODO https://www.example-code.com/chilkat2-python/authenticode_sign_using_yubikey.asp
+#TODO https://stackoverflow.com/questions/67173206/chilkat-codesigning
+#TODO https://www.example-code.com/autoit/code_sign_sectigo_usb_token.asp
+#TODO https://www.example-code.com/autoit/authenticode_sign_using_yubikey.asp
+#EndRegion ; TODO LIST
 
 #EndRegion - Chilkat.au3 - Header
 
@@ -148,7 +149,6 @@ Global Const $CHILKAT_CERT_DATE_COL_COUNT = 8
 
 OnAutoItExitRegister(_Chilkat_ShutDown) ; in case the script exit without calling _Chilkat_ShutDown()
 
-
 #Region - Chilkat.au3 - Object Group Modules
 ; Chilkat.au3 remains the primary include file.
 #include "Chilkat_Certificates_PKI.au3"
@@ -159,6 +159,7 @@ OnAutoItExitRegister(_Chilkat_ShutDown) ; in case the script exit without callin
 #EndRegion - Chilkat.au3 - Object Group Modules
 
 #Region - Chilkat.au3 - Function - INIT
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_DllVersion
@@ -290,10 +291,10 @@ Func _Chilkat_UnlockComponent($oChilkat, $sUnlockCode)
 		http://cknotes.com/verify-unlockcomponent-success-w-permanent-unlock-code/
 	#ce
 EndFunc   ;==>_Chilkat_UnlockComponent
-
 #EndRegion - Chilkat.au3 - Function - INIT
 
 #Region - Chilkat.au3 - Function - ObjCreate Core
+
 
 Func __Chilkat_ObjCreate_ByProgIdSuffix($sClassName)
 	Local $oErrorHandler = ObjEvent("AutoIt.Error", __Fake_COM_ERROR_HANDLER__for_Chilkat)
@@ -398,12 +399,12 @@ Func __Chilkat_ObjCreate_Wrapper($iChilkatObjectName_IDX)
 	If IsObj($oObject) Then __Chilkat_ConsoleWrite_IFNC(@ScriptLineNumber & " Object Version=" & $oObject.Version)
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oObject)
 EndFunc   ;==>__Chilkat_ObjCreate_Wrapper
-
 #EndRegion - Chilkat.au3 - Function - ObjCreate Core
 
 #Region - Chilkat.au3 - Chilkat object-specific functions
 
 #Region ; _Chilkat_GLOBAL_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_GLOBAL_ObjCreate
@@ -475,10 +476,10 @@ Func _Chilkat_GLOBAL_UnlockBundle(ByRef $oGLOBAL, $sUnlockCode)
 	EndIf
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
 EndFunc   ;==>_Chilkat_GLOBAL_UnlockBundle
-
 #EndRegion ; _Chilkat_GLOBAL_**
 
 #Region ; _Chilkat_CSV_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_CSV_ObjCreate
@@ -561,10 +562,10 @@ Func _Chilkat_CSV_StringToArray(ByRef $sCSVContent, $sDelimeter = @TAB, $iHasCol
 
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $aResult)
 EndFunc   ;==>_Chilkat_CSV_StringToArray
-
 #EndRegion ; _Chilkat_CSV_**
 
 #Region ; _Chilkat_JSON_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_JSON_ObjCreate
@@ -679,10 +680,10 @@ Func _Chilkat_JSON_StringPretty(ByRef $sJSON_String)
 
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oJSON.Emit())
 EndFunc   ;==>_Chilkat_JSON_StringPretty
-
 #EndRegion ; _Chilkat_JSON_**
 
 #Region ; _Chilkat_XML_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_XML_ObjCreate
@@ -702,10 +703,10 @@ Func _Chilkat_XML_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_XML)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_XML_ObjCreate
-
 #EndRegion ; _Chilkat_XML_**
 
 #Region ; _Chilkat_SSHTunel_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_SSHTunel_ObjCreate
@@ -725,10 +726,10 @@ Func _Chilkat_SSHTunel_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SSHTUNEL)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_SSHTunel_ObjCreate
-
 #EndRegion ; _Chilkat_SSHTunel_**
 
 #Region ; _Chilkat_CKSTRING_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_CKSTRING_ObjCreate
@@ -748,10 +749,10 @@ Func _Chilkat_CKSTRING_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_CKSTRING)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_CKSTRING_ObjCreate
-
 #EndRegion ; _Chilkat_CKSTRING_**
 
 #Region ; _Chilkat_StringBuilder_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_StringBuilder_ObjCreate
@@ -771,17 +772,10 @@ Func _Chilkat_StringBuilder_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_STRINGBUILDER)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_StringBuilder_ObjCreate
-
 #EndRegion ; _Chilkat_StringBuilder_**
 
-
-
-
-
-
-
-
 #Region ; _Chilkat_ATOM_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_ATOM_ObjCreate
@@ -802,10 +796,10 @@ Func _Chilkat_ATOM_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_ATOM)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_ATOM_ObjCreate
-
 #EndRegion ; _Chilkat_ATOM_**
 
 #Region ; _Chilkat_SFTP_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_SFTP_ObjCreate
@@ -826,10 +820,10 @@ Func _Chilkat_SFTP_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SFTP)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_SFTP_ObjCreate
-
 #EndRegion ; _Chilkat_SFTP_**
 
 #Region ; _Chilkat_SFTPDIR_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_SFTPDIR_ObjCreate
@@ -850,10 +844,10 @@ Func _Chilkat_SFTPDIR_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SFTPDIR)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_SFTPDIR_ObjCreate
-
 #EndRegion ; _Chilkat_SFTPDIR_**
 
 #Region ; _Chilkat_SFTPFILE_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_SFTPFILE_ObjCreate
@@ -874,30 +868,10 @@ Func _Chilkat_SFTPFILE_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SFTPFILE)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_SFTPFILE_ObjCreate
-
 #EndRegion ; _Chilkat_SFTPFILE_**
 
 #Region ; _Chilkat_FTP2_**
 
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Chilkat_FTP2_ObjCreate
-; Description ...: Creates a Chilkat Ftp2 COM object for the selected Chilkat API version.
-; Syntax ........: _Chilkat_FTP2_ObjCreate()
-; Parameters ....: None
-; Return values .: Success: Chilkat COM object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
-; Author ........: mLipok
-; Modified ......:
-; Remarks .......: Chilkat Ftp2 object was introduced in version 9.5.0.44.
-;                  Uses ChilkatConstants.au3 object metadata through __Chilkat_ObjCreate_Wrapper().
-; Related .......: __Chilkat_ObjCreate_Wrapper
-; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatFtp2Ref.html
-; Example .......: No
-; ===============================================================================================================================
-Func _Chilkat_FTP2_ObjCreate()
-;~ 	https://www.chilkatsoft.com/refdoc/xChilkatFTP2Ref.html
-	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_FTP2)
-	Return SetError(@error, @extended, $oObject)
-EndFunc   ;==>_Chilkat_FTP2_ObjCreate
 
 Func __Chilkat_FTP2_ListDirectoryItems_AddCurrent(ByRef $oFTP, $iIndex, $sBaseDir, $sRelDir, $iReturn, $iReturnPath, ByRef $aList, ByRef $iRows, $iLevel)
 	Local $sName = $oFTP.GetFilename($iIndex)
@@ -1416,6 +1390,26 @@ Func _Chilkat_FTP2_ListDirectoryItemsRecursive_AsArray(ByRef $oFTP, $sRemoteDir 
 EndFunc   ;==>_Chilkat_FTP2_ListDirectoryItemsRecursive_AsArray
 
 ; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_FTP2_ObjCreate
+; Description ...: Creates a Chilkat Ftp2 COM object for the selected Chilkat API version.
+; Syntax ........: _Chilkat_FTP2_ObjCreate()
+; Parameters ....: None
+; Return values .: Success: Chilkat COM object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: mLipok
+; Modified ......:
+; Remarks .......: Chilkat Ftp2 object was introduced in version 9.5.0.44.
+;                  Uses ChilkatConstants.au3 object metadata through __Chilkat_ObjCreate_Wrapper().
+; Related .......: __Chilkat_ObjCreate_Wrapper
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatFtp2Ref.html
+; Example .......: No
+; ===============================================================================================================================
+Func _Chilkat_FTP2_ObjCreate()
+;~ 	https://www.chilkatsoft.com/refdoc/xChilkatFTP2Ref.html
+	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_FTP2)
+	Return SetError(@error, @extended, $oObject)
+EndFunc   ;==>_Chilkat_FTP2_ObjCreate
+
+; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_FTP2_UploadFile
 ; Description ...: Uploads a local file to the connected FTP/FTPS server.
 ; Syntax ........: _Chilkat_FTP2_UploadFile(ByRef $oFTP, $sLocalFileFullPath, $sRemoteFilePath)
@@ -1522,10 +1516,10 @@ Func _Chilkat_FTP2_UploadZipObject(ByRef $oFTP, ByRef $oZIP, $sRemoteZipFilePath
 	Local $iSuccess = _Chilkat_FTP2_UploadFileBd($oFTP, $oZipBd, $sRemoteZipFilePath)
 	Return SetError(@error, @extended, $iSuccess)
 EndFunc   ;==>_Chilkat_FTP2_UploadZipObject
-
 #EndRegion ; _Chilkat_FTP2_**
 
 #Region ; _Chilkat_SCP_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_SCP_ObjCreate
@@ -1546,29 +1540,10 @@ Func _Chilkat_SCP_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SCP)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_SCP_ObjCreate
-
 #EndRegion ; _Chilkat_SCP_**
 
 #Region ; _Chilkat_HTTP_**
 
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Chilkat_HTTP_ObjCreate
-; Description ...: Creates a Chilkat Http COM object for the selected Chilkat API version.
-; Syntax ........: _Chilkat_HTTP_ObjCreate()
-; Parameters ....: None
-; Return values .: Success: Chilkat COM object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
-; Author ........: mLipok
-; Modified ......:
-; Remarks .......: Chilkat Http object was introduced in version 9.5.0.44.
-;                  Uses ChilkatConstants.au3 object metadata through __Chilkat_ObjCreate_Wrapper().
-; Related .......: __Chilkat_ObjCreate_Wrapper
-; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatHttpRef.html
-; Example .......: Yes
-; ===============================================================================================================================
-Func _Chilkat_HTTP_ObjCreate()
-	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_HTTP)
-	Return SetError(@error, @extended, $oObject)
-EndFunc   ;==>_Chilkat_HTTP_ObjCreate
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Http_DownloadFile_Async
@@ -1617,28 +1592,28 @@ Func _Chilkat_Http_DownloadFile_Async($sURL, $sDestination_FileFullPath, $fnProg
 	FileClose($hFileOpen)
 EndFunc   ;==>_Chilkat_Http_DownloadFile_Async
 
-#EndRegion ; _Chilkat_HTTP_**
-
-#Region ; _Chilkat_BINDATA_**
-
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: _Chilkat_BINDATA_ObjCreate
-; Description ...: Creates a Chilkat BinData COM object for the selected Chilkat API version.
-; Syntax ........: _Chilkat_BINDATA_ObjCreate()
+; Name ..........: _Chilkat_HTTP_ObjCreate
+; Description ...: Creates a Chilkat Http COM object for the selected Chilkat API version.
+; Syntax ........: _Chilkat_HTTP_ObjCreate()
 ; Parameters ....: None
 ; Return values .: Success: Chilkat COM object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
 ; Author ........: mLipok
 ; Modified ......:
-; Remarks .......: Chilkat BinData object was introduced in version 9.5.0.51.
+; Remarks .......: Chilkat Http object was introduced in version 9.5.0.44.
 ;                  Uses ChilkatConstants.au3 object metadata through __Chilkat_ObjCreate_Wrapper().
 ; Related .......: __Chilkat_ObjCreate_Wrapper
-; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatBinDataRef.html
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatHttpRef.html
 ; Example .......: Yes
 ; ===============================================================================================================================
-Func _Chilkat_BINDATA_ObjCreate()
-	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_BINDATA)
+Func _Chilkat_HTTP_ObjCreate()
+	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_HTTP)
 	Return SetError(@error, @extended, $oObject)
-EndFunc   ;==>_Chilkat_BINDATA_ObjCreate
+EndFunc   ;==>_Chilkat_HTTP_ObjCreate
+#EndRegion ; _Chilkat_HTTP_**
+
+#Region ; _Chilkat_BINDATA_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_BINDATA_FromBinary
@@ -1670,6 +1645,25 @@ Func _Chilkat_BINDATA_FromBinary(ByRef $dBinaryData)
 EndFunc   ;==>_Chilkat_BINDATA_FromBinary
 
 ; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_BINDATA_ObjCreate
+; Description ...: Creates a Chilkat BinData COM object for the selected Chilkat API version.
+; Syntax ........: _Chilkat_BINDATA_ObjCreate()
+; Parameters ....: None
+; Return values .: Success: Chilkat COM object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: mLipok
+; Modified ......:
+; Remarks .......: Chilkat BinData object was introduced in version 9.5.0.51.
+;                  Uses ChilkatConstants.au3 object metadata through __Chilkat_ObjCreate_Wrapper().
+; Related .......: __Chilkat_ObjCreate_Wrapper
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatBinDataRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_BINDATA_ObjCreate()
+	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_BINDATA)
+	Return SetError(@error, @extended, $oObject)
+EndFunc   ;==>_Chilkat_BINDATA_ObjCreate
+
+; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_BINDATA_ToBinary
 ; Description ...: Returns the bytes stored in a Chilkat BinData object as an AutoIt binary Variant.
 ; Syntax ........: _Chilkat_BINDATA_ToBinary(ByRef $oBinData)
@@ -1691,10 +1685,10 @@ Func _Chilkat_BINDATA_ToBinary(ByRef $oBinData)
 	Local $dBinaryData = $oBinData.GetBinary()
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $dBinaryData)
 EndFunc   ;==>_Chilkat_BINDATA_ToBinary
-
 #EndRegion ; _Chilkat_BINDATA_**
 
 #Region ; _Chilkat_TASK_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_TASK_ObjCreate
@@ -1714,10 +1708,10 @@ Func _Chilkat_TASK_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_TASK)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_TASK_ObjCreate
-
 #EndRegion ; _Chilkat_TASK_**
 
 #Region ; _Chilkat_TASKCHAIN_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_TASKCHAIN_ObjCreate
@@ -1737,13 +1731,10 @@ Func _Chilkat_TASKCHAIN_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_TASKCHAIN)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_TASKCHAIN_ObjCreate
-
 #EndRegion ; _Chilkat_TASKCHAIN_**
 
-
-
-
 #Region ; _Chilkat_StringTable_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_StringTable_ObjCreate
@@ -1763,12 +1754,10 @@ Func _Chilkat_StringTable_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_STRINGTABLE)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_StringTable_ObjCreate
-
 #EndRegion ; _Chilkat_StringTable_**
 
-
-
 #Region ; _Chilkat_Asn_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Asn_ObjCreate
@@ -1788,10 +1777,10 @@ Func _Chilkat_Asn_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_ASN)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Asn_ObjCreate
-
 #EndRegion ; _Chilkat_Asn_**
 
 #Region ; _Chilkat_AuthAws_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_AuthAws_ObjCreate
@@ -1811,10 +1800,10 @@ Func _Chilkat_AuthAws_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_AUTHAWS)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_AuthAws_ObjCreate
-
 #EndRegion ; _Chilkat_AuthAws_**
 
 #Region ; _Chilkat_AuthAzureAD_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_AuthAzureAD_ObjCreate
@@ -1834,10 +1823,10 @@ Func _Chilkat_AuthAzureAD_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_AUTHAZUREAD)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_AuthAzureAD_ObjCreate
-
 #EndRegion ; _Chilkat_AuthAzureAD_**
 
 #Region ; _Chilkat_AuthAzureSAS_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_AuthAzureSAS_ObjCreate
@@ -1857,10 +1846,10 @@ Func _Chilkat_AuthAzureSAS_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_AUTHAZURESAS)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_AuthAzureSAS_ObjCreate
-
 #EndRegion ; _Chilkat_AuthAzureSAS_**
 
 #Region ; _Chilkat_AuthAzureStorage_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_AuthAzureStorage_ObjCreate
@@ -1880,10 +1869,10 @@ Func _Chilkat_AuthAzureStorage_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_AUTHAZURESTORAGE)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_AuthAzureStorage_ObjCreate
-
 #EndRegion ; _Chilkat_AuthAzureStorage_**
 
 #Region ; _Chilkat_AuthGoogle_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_AuthGoogle_ObjCreate
@@ -1903,10 +1892,10 @@ Func _Chilkat_AuthGoogle_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_AUTHGOOGLE)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_AuthGoogle_ObjCreate
-
 #EndRegion ; _Chilkat_AuthGoogle_**
 
 #Region ; _Chilkat_AuthUtil_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_AuthUtil_ObjCreate
@@ -1926,12 +1915,10 @@ Func _Chilkat_AuthUtil_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_AUTHUTIL)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_AuthUtil_ObjCreate
-
 #EndRegion ; _Chilkat_AuthUtil_**
 
-
-
 #Region ; _Chilkat_Cache_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Cache_ObjCreate
@@ -1951,11 +1938,10 @@ Func _Chilkat_Cache_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_CACHE)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Cache_ObjCreate
-
 #EndRegion ; _Chilkat_Cache_**
 
-
 #Region ; _Chilkat_Cgi_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Cgi_ObjCreate
@@ -1975,10 +1961,10 @@ Func _Chilkat_Cgi_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_CGI)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Cgi_ObjCreate
-
 #EndRegion ; _Chilkat_Cgi_**
 
 #Region ; _Chilkat_Charset_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Charset_ObjCreate
@@ -1998,10 +1984,10 @@ Func _Chilkat_Charset_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_CHARSET)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Charset_ObjCreate
-
 #EndRegion ; _Chilkat_Charset_**
 
 #Region ; _Chilkat_CkDateTime_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_CkDateTime_ObjCreate
@@ -2021,11 +2007,10 @@ Func _Chilkat_CkDateTime_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_CKDATETIME)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_CkDateTime_ObjCreate
-
 #EndRegion ; _Chilkat_CkDateTime_**
 
-
 #Region ; _Chilkat_CreateCS_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_CreateCS_ObjCreate
@@ -2045,13 +2030,10 @@ Func _Chilkat_CreateCS_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_CREATECS)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_CreateCS_ObjCreate
-
 #EndRegion ; _Chilkat_CreateCS_**
 
-
-
-
 #Region ; _Chilkat_DirTree_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_DirTree_ObjCreate
@@ -2071,11 +2053,10 @@ Func _Chilkat_DirTree_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_DIRTREE)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_DirTree_ObjCreate
-
 #EndRegion ; _Chilkat_DirTree_**
 
-
 #Region ; _Chilkat_Dns_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Dns_ObjCreate
@@ -2095,11 +2076,10 @@ Func _Chilkat_Dns_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_DNS)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Dns_ObjCreate
-
 #EndRegion ; _Chilkat_Dns_**
 
-
 #Region ; _Chilkat_DtObj_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_DtObj_ObjCreate
@@ -2119,13 +2099,10 @@ Func _Chilkat_DtObj_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_DTOBJ)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_DtObj_ObjCreate
-
 #EndRegion ; _Chilkat_DtObj_**
 
-
-
-
 #Region ; _Chilkat_FileAccess_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_FileAccess_ObjCreate
@@ -2145,11 +2122,10 @@ Func _Chilkat_FileAccess_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_FILEACCESS)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_FileAccess_ObjCreate
-
 #EndRegion ; _Chilkat_FileAccess_**
 
-
 #Region ; _Chilkat_Hashtable_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Hashtable_ObjCreate
@@ -2169,10 +2145,10 @@ Func _Chilkat_Hashtable_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_HASHTABLE)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Hashtable_ObjCreate
-
 #EndRegion ; _Chilkat_Hashtable_**
 
 #Region ; _Chilkat_HtmlToText_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_HtmlToText_ObjCreate
@@ -2192,10 +2168,10 @@ Func _Chilkat_HtmlToText_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_HTMLTOTEXT)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_HtmlToText_ObjCreate
-
 #EndRegion ; _Chilkat_HtmlToText_**
 
 #Region ; _Chilkat_HtmlToXml_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_HtmlToXml_ObjCreate
@@ -2215,10 +2191,10 @@ Func _Chilkat_HtmlToXml_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_HTMLTOXML)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_HtmlToXml_ObjCreate
-
 #EndRegion ; _Chilkat_HtmlToXml_**
 
 #Region ; _Chilkat_HttpRequest_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_HttpRequest_ObjCreate
@@ -2238,10 +2214,10 @@ Func _Chilkat_HttpRequest_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_HTTPREQUEST)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_HttpRequest_ObjCreate
-
 #EndRegion ; _Chilkat_HttpRequest_**
 
 #Region ; _Chilkat_HttpResponse_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_HttpResponse_ObjCreate
@@ -2261,11 +2237,10 @@ Func _Chilkat_HttpResponse_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_HTTPRESPONSE)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_HttpResponse_ObjCreate
-
 #EndRegion ; _Chilkat_HttpResponse_**
 
-
 #Region ; _Chilkat_JsonArray_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_JsonArray_ObjCreate
@@ -2285,14 +2260,10 @@ Func _Chilkat_JsonArray_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_JSONARRAY)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_JsonArray_ObjCreate
-
 #EndRegion ; _Chilkat_JsonArray_**
 
-
-
-
-
 #Region ; _Chilkat_Log_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Log_ObjCreate
@@ -2312,13 +2283,10 @@ Func _Chilkat_Log_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_LOG)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Log_ObjCreate
-
 #EndRegion ; _Chilkat_Log_**
 
-
-
-
 #Region ; _Chilkat_Ntlm_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Ntlm_ObjCreate
@@ -2338,10 +2306,10 @@ Func _Chilkat_Ntlm_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_NTLM)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Ntlm_ObjCreate
-
 #EndRegion ; _Chilkat_Ntlm_**
 
 #Region ; _Chilkat_OAuth1_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_OAuth1_ObjCreate
@@ -2361,10 +2329,10 @@ Func _Chilkat_OAuth1_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_OAUTH1)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_OAuth1_ObjCreate
-
 #EndRegion ; _Chilkat_OAuth1_**
 
 #Region ; _Chilkat_OAuth2_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_OAuth2_ObjCreate
@@ -2384,16 +2352,10 @@ Func _Chilkat_OAuth2_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_OAUTH2)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_OAuth2_ObjCreate
-
 #EndRegion ; _Chilkat_OAuth2_**
 
-
-
-
-
-
-
 #Region ; _Chilkat_Rest_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Rest_ObjCreate
@@ -2413,11 +2375,10 @@ Func _Chilkat_Rest_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_REST)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Rest_ObjCreate
-
 #EndRegion ; _Chilkat_Rest_**
 
-
 #Region ; _Chilkat_Rss_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Rss_ObjCreate
@@ -2437,13 +2398,10 @@ Func _Chilkat_Rss_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_RSS)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Rss_ObjCreate
-
 #EndRegion ; _Chilkat_Rss_**
 
-
-
-
 #Region ; _Chilkat_ServerSentEvent_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_ServerSentEvent_ObjCreate
@@ -2463,10 +2421,10 @@ Func _Chilkat_ServerSentEvent_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SERVERSENTEVENT)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_ServerSentEvent_ObjCreate
-
 #EndRegion ; _Chilkat_ServerSentEvent_**
 
 #Region ; _Chilkat_Socket_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Socket_ObjCreate
@@ -2486,10 +2444,10 @@ Func _Chilkat_Socket_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SOCKET)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Socket_ObjCreate
-
 #EndRegion ; _Chilkat_Socket_**
 
 #Region ; _Chilkat_Spider_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Spider_ObjCreate
@@ -2509,10 +2467,10 @@ Func _Chilkat_Spider_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SPIDER)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Spider_ObjCreate
-
 #EndRegion ; _Chilkat_Spider_**
 
 #Region ; _Chilkat_Ssh_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Ssh_ObjCreate
@@ -2532,10 +2490,10 @@ Func _Chilkat_Ssh_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SSH)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Ssh_ObjCreate
-
 #EndRegion ; _Chilkat_Ssh_**
 
 #Region ; _Chilkat_SshKey_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_SshKey_ObjCreate
@@ -2555,10 +2513,10 @@ Func _Chilkat_SshKey_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SSHKEY)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_SshKey_ObjCreate
-
 #EndRegion ; _Chilkat_SshKey_**
 
 #Region ; _Chilkat_Stream_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Stream_ObjCreate
@@ -2578,10 +2536,10 @@ Func _Chilkat_Stream_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_STREAM)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Stream_ObjCreate
-
 #EndRegion ; _Chilkat_Stream_**
 
 #Region ; _Chilkat_StringArray_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_StringArray_ObjCreate
@@ -2601,13 +2559,10 @@ Func _Chilkat_StringArray_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_STRINGARRAY)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_StringArray_ObjCreate
-
 #EndRegion ; _Chilkat_StringArray_**
 
-
-
-
 #Region ; _Chilkat_Upload_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Upload_ObjCreate
@@ -2627,10 +2582,10 @@ Func _Chilkat_Upload_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_UPLOAD)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Upload_ObjCreate
-
 #EndRegion ; _Chilkat_Upload_**
 
 #Region ; _Chilkat_Url_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Url_ObjCreate
@@ -2650,10 +2605,10 @@ Func _Chilkat_Url_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_URL)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Url_ObjCreate
-
 #EndRegion ; _Chilkat_Url_**
 
 #Region ; _Chilkat_WebSocket_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_WebSocket_ObjCreate
@@ -2673,13 +2628,10 @@ Func _Chilkat_WebSocket_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_WEBSOCKET)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_WebSocket_ObjCreate
-
 #EndRegion ; _Chilkat_WebSocket_**
 
-
-
-
 #Region ; _Chilkat_Xmp_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Xmp_ObjCreate
@@ -2699,10 +2651,10 @@ Func _Chilkat_Xmp_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_XMP)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Xmp_ObjCreate
-
 #EndRegion ; _Chilkat_Xmp_**
 
 #Region ; _Chilkat_Secrets_**
+
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Secrets_ObjCreate
@@ -2722,13 +2674,44 @@ Func _Chilkat_Secrets_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_SECRETS)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Secrets_ObjCreate
-
 #EndRegion ; _Chilkat_Secrets_**
-
 
 #EndRegion - Chilkat.au3 - Chilkat object-specific functions
 
 #Region - Chilkat.au3 - Function - Misc
+
+
+Func __Chilkat_Array_CreateEmpty2D($iCols)
+	Local $aEmpty[0][$iCols]
+	Return $aEmpty
+EndFunc   ;==>__Chilkat_Array_CreateEmpty2D
+
+Func __Chilkat_Array_SetCertRow(ByRef $aCerts, $iRow, ByRef $oCert, $iIndex)
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_INDEX] = $iIndex
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SUBJECT_DN] = $oCert.SubjectDN
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_ISSUER_DN] = $oCert.IssuerDN
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SUBJECT_CN] = $oCert.SubjectCN
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_ISSUER_CN] = $oCert.IssuerCN
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SERIAL] = $oCert.SerialNumber
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SHA1] = $oCert.Sha1Thumbprint
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_HAS_PRIVATE_KEY] = $oCert.HasPrivateKey()
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_VALID_FROM] = $oCert.ValidFromStr
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_VALID_TO] = $oCert.ValidToStr
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_DATE_VALID_NOW] = _Chilkat_Cert_IsDateValidNow($oCert)
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_KEY_USAGE] = $oCert.IntendedKeyUsage
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_EXT_KEY_USAGE] = $oCert.ExtendedKeyUsage
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_QUALIFIED_TYPE] = _Chilkat_Cert_GetQualifiedType($oCert)
+	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_QUALIFIED_POLICY_OID] = _Chilkat_Cert_GetQualifiedPolicyOid($oCert)
+EndFunc   ;==>__Chilkat_Array_SetCertRow
+
+Func __Chilkat_ConsoleWrite_IFNC($sData, $iError = @error, $iExtended = @extended)
+	If Not @Compiled Then ConsoleWrite('- IFNC: Chilkat.au3 ' & $sData & @CRLF)
+	Return SetError($iError, $iExtended)
+EndFunc   ;==>__Chilkat_ConsoleWrite_IFNC
+
+Func __Chilkat_GetAndSaveFileToDisc_Progress($iProgress)
+	__Chilkat_Log("Progres: " & $iProgress & "%")
+EndFunc   ;==>__Chilkat_GetAndSaveFileToDisc_Progress
 
 Func __Chilkat_IsValidObject($oObject)
 	If Not IsObj($oObject) Then
@@ -2762,68 +2745,62 @@ Func __Chilkat_LogOnError($sText, $oLastError = Null, $iError = @error, $iExtend
 	Return SetError($iError, $iExtended)
 EndFunc   ;==>__Chilkat_LogOnError
 
-Func __Chilkat_ConsoleWrite_IFNC($sData, $iError = @error, $iExtended = @extended)
-	If Not @Compiled Then ConsoleWrite('- IFNC: Chilkat.au3 ' & $sData & @CRLF)
-	Return SetError($iError, $iExtended)
-EndFunc   ;==>__Chilkat_ConsoleWrite_IFNC
+Func __Chilkat_NowCalcUtc()
+	Local $tSystemTime = DllStructCreate('ushort Year;ushort Month;ushort DayOfWeek;ushort Day;ushort Hour;ushort Minute;ushort Second;ushort Milliseconds')
+	Local $aRet = DllCall('kernel32.dll', 'none', 'GetSystemTime', 'struct*', $tSystemTime)
+	If @error Or Not IsArray($aRet) Then Return StringFormat('%04d/%02d/%02d %02d:%02d:%02d', @YEAR, @MON, @MDAY, @HOUR, @MIN, @SEC)
+	Return StringFormat('%04d/%02d/%02d %02d:%02d:%02d', DllStructGetData($tSystemTime, 'Year'), DllStructGetData($tSystemTime, 'Month'), DllStructGetData($tSystemTime, 'Day'), DllStructGetData($tSystemTime, 'Hour'), DllStructGetData($tSystemTime, 'Minute'), DllStructGetData($tSystemTime, 'Second'))
+EndFunc   ;==>__Chilkat_NowCalcUtc
 
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Chilkat_ObjName_FlagsValue
-; Description ...: Builds and logs diagnostic ObjName information for an AutoIt object.
-; Syntax ........: _Chilkat_ObjName_FlagsValue(ByRef $oObj, $sComment = @ScriptLineNumber, $iError = @error, $iExtended = @extended)
-; Parameters ....: $oObj                  - [in/out] object passed to ObjName diagnostics.
-;                  $sComment              - [in] diagnostic comment used in console/log output. Default is @ScriptLineNumber.
-;                  $iError                - [in] @error value to preserve/restore. Default is @error.
-;                  $iExtended             - [in] @extended value to preserve/restore. Default is @extended.
-; Return values .: Success: diagnostic text. Preserves supplied @error/@extended values.
-; Author ........: mLipok
-; Modified ......:
-; Remarks .......: Header generated by #AI
-; Related .......: __Chilkat_Log
-; Link ..........:
-; Example .......: Yes
-; ===============================================================================================================================
-Func _Chilkat_ObjName_FlagsValue(ByRef $oObj, $sComment = @ScriptLineNumber, $iError = @error, $iExtended = @extended)
-	Local $sInfo = ''
-	If Not IsObj($oObj) Then
-		$sInfo &= 'Parameter - is not Object' & @CRLF
-	ElseIf VarGetType($oObj) <> 'Object' Then
-		$sInfo &= 'Parameter type - is not Object type' & @CRLF
-	Else
-		$sInfo &= '+>' & @TAB & 'ObjName($oObj,1) {The name of the Object} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_NAME)
-		If @error Then $sInfo &= '@error = ' & @error
-		$sInfo &= @CRLF
+Func __Chilkat_PathGetDir($sFileFullPath)
+	Local $sDir = StringRegExpReplace($sFileFullPath, '[\\/][^\\/]*$', '')
+	If $sDir = $sFileFullPath Then Return '.'
+	If $sDir = '' Then Return '.'
+	Return $sDir
+EndFunc   ;==>__Chilkat_PathGetDir
 
-		; HELPFILE REMARKS: Not all Objects support flags 2 to 7. Always test for @error in these cases.
-		$sInfo &= '+>' & @TAB & 'ObjName($oObj,2) {Description string of the Object} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_STRING)
-		If @error Then $sInfo &= '@error = ' & @error
-		$sInfo &= @CRLF
+Func __Chilkat_PathGetFileName($sFileFullPath)
+	Return StringRegExpReplace($sFileFullPath, '^.*[\\/]', '')
+EndFunc   ;==>__Chilkat_PathGetFileName
 
-		$sInfo &= '+>' & @TAB & 'ObjName($oObj,3) {The ProgID of the Object} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_PROGID)
-		If @error Then $sInfo &= '@error = ' & @error
-		$sInfo &= @CRLF
+Func __Chilkat_Rfc822GmtToCalc($sRfc822)
+	If Not IsString($sRfc822) Then Return ''
+	Local $aMatch = StringRegExp(StringStripWS($sRfc822, 3), '(?i)^(?:[a-z]{3},\s*)?(\d{1,2})\s+([a-z]{3})\s+(\d{4})\s+(\d{1,2}):(\d{2}):(\d{2})', 1)
+	If @error Or UBound($aMatch) < 6 Then Return ''
+	Local $iMonth = __Chilkat_Rfc822MonthToNumber($aMatch[1])
+	If $iMonth < 1 Then Return ''
+	Return StringFormat('%04d/%02d/%02d %02d:%02d:%02d', Number($aMatch[2]), $iMonth, Number($aMatch[0]), Number($aMatch[3]), Number($aMatch[4]), Number($aMatch[5]))
+EndFunc   ;==>__Chilkat_Rfc822GmtToCalc
 
-		$sInfo &= '+>' & @TAB & 'ObjName($oObj,4) {The file that is associated with the object in the Registry} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_FILE)
-		If @error Then $sInfo &= '@error = ' & @error
-		$sInfo &= @CRLF
-
-		$sInfo &= '+>' & @TAB & 'ObjName($oObj,5) {Module name in which the object runs (WIN XP And above). Marshaller for non-inproc objects.} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_MODULE)
-		If @error Then $sInfo &= '@error = ' & @error
-		$sInfo &= @CRLF
-
-		$sInfo &= '+>' & @TAB & 'ObjName($oObj,6) {CLSID of the object''s coclass} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_CLSID)
-		If @error Then $sInfo &= '@error = ' & @error
-		$sInfo &= @CRLF
-
-		$sInfo &= '+>' & @TAB & 'ObjName($oObj,7) {IID of the object''s interface} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_IID)
-		If @error Then $sInfo &= '@error = ' & @error
-		$sInfo &= @CRLF
-
-	EndIf
-	$sInfo = $sComment & ' _Chilkat_ObjName_FlagsValue' & @CRLF & $sInfo & @CRLF
-	__Chilkat_Log($sInfo)
-	Return SetError($iError, $iExtended, $sInfo)
-EndFunc   ;==>_Chilkat_ObjName_FlagsValue
+Func __Chilkat_Rfc822MonthToNumber($sMonth)
+	Switch StringLower($sMonth)
+		Case 'jan'
+			Return 1
+		Case 'feb'
+			Return 2
+		Case 'mar'
+			Return 3
+		Case 'apr'
+			Return 4
+		Case 'may'
+			Return 5
+		Case 'jun'
+			Return 6
+		Case 'jul'
+			Return 7
+		Case 'aug'
+			Return 8
+		Case 'sep'
+			Return 9
+		Case 'oct'
+			Return 10
+		Case 'nov'
+			Return 11
+		Case 'dec'
+			Return 12
+	EndSwitch
+	Return 0
+EndFunc   ;==>__Chilkat_Rfc822MonthToNumber
 
 Func __Fake_COM_ERROR_HANDLER__for_Chilkat(ByRef $oError) ; User's COM error function. Will be called if COM error occurs
 	; Do anything here.
@@ -2872,6 +2849,44 @@ Func _Chilkat_ErrorLogWrapper($fnFunction = Default, $iError = @error, $iExtende
 	$fnFunction_static = $fnFunction
 	Return SetError($iError, $iExtended, $fnFunction_static)
 EndFunc   ;==>_Chilkat_ErrorLogWrapper
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_GetAndSaveFileToDisc
+; Description ...: Downloads binary data from an HTTP URL and saves it to a local file.
+; Syntax ........: _Chilkat_GetAndSaveFileToDisc($sHTTP_Source, $sFileFullPath_LocalDest)
+; Parameters ....: $sHTTP_Source          - [in] HTTP URL to download.
+;                  $sFileFullPath_LocalDest - [in] local destination file path.
+; Return values .: Success: no explicit return. Failure: sets @error/@extended.
+; Author ........: mLipok
+; Modified ......:
+; Remarks .......: Header generated by #AI
+; Related .......: _Chilkat_HTTP_ObjCreate, __Chilkat_LogOnError, _Chilkat_BINDATA_ObjCreate, __Chilkat_Log
+; Link ..........:
+; Example .......: No
+; ===============================================================================================================================
+Func _Chilkat_GetAndSaveFileToDisc($sHTTP_Source, $sFileFullPath_LocalDest)
+	Local $oErrorHandler = ObjEvent("AutoIt.Error", __Internal_COM_ERROR_HANDLER__for_Chilkat)
+	#forceref $oErrorHandler
+
+;~ 	https://www.example-code.com/autoit/box_download_binary_to_memory.asp
+
+	Local $oHttp = _Chilkat_HTTP_ObjCreate()
+	__Chilkat_LogOnError(@ScriptLineNumber)
+
+	Local $oBinData = _Chilkat_BINDATA_ObjCreate()
+	__Chilkat_LogOnError(@ScriptLineNumber)
+
+	Local $iSuccess = $oHttp.DownloadBd($sHTTP_Source, $oBinData)
+	If @error Or $iSuccess <> 1 Then
+		If Not @error Then SetError($CHILKAT_ERR_FAILURE, @extended)
+		__Chilkat_LogOnError(@ScriptLineNumber & ' DownloadBD ', $oHttp)
+		Return SetError(@error, @extended, $iSuccess)
+	EndIf
+	__Chilkat_Log(@ScriptLineNumber & " Downloaded into an object holding the binary data. Number of bytes: " & $oBinData.NumBytes)
+	Local $hFileOpen = FileOpen($sFileFullPath_LocalDest, $FO_BINARY + $FO_OVERWRITE)
+	FileWrite($hFileOpen, Binary("0x" & $oBinData.GetEncoded("hex")))
+	FileClose($hFileOpen)
+EndFunc   ;==>_Chilkat_GetAndSaveFileToDisc
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_GetVersion
@@ -2993,6 +3008,64 @@ Func _Chilkat_LogWrapper($fnFunction_Or_String = Default, $iError = @error, $iEx
 EndFunc   ;==>_Chilkat_LogWrapper
 
 ; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_ObjName_FlagsValue
+; Description ...: Builds and logs diagnostic ObjName information for an AutoIt object.
+; Syntax ........: _Chilkat_ObjName_FlagsValue(ByRef $oObj, $sComment = @ScriptLineNumber, $iError = @error, $iExtended = @extended)
+; Parameters ....: $oObj                  - [in/out] object passed to ObjName diagnostics.
+;                  $sComment              - [in] diagnostic comment used in console/log output. Default is @ScriptLineNumber.
+;                  $iError                - [in] @error value to preserve/restore. Default is @error.
+;                  $iExtended             - [in] @extended value to preserve/restore. Default is @extended.
+; Return values .: Success: diagnostic text. Preserves supplied @error/@extended values.
+; Author ........: mLipok
+; Modified ......:
+; Remarks .......: Header generated by #AI
+; Related .......: __Chilkat_Log
+; Link ..........:
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_ObjName_FlagsValue(ByRef $oObj, $sComment = @ScriptLineNumber, $iError = @error, $iExtended = @extended)
+	Local $sInfo = ''
+	If Not IsObj($oObj) Then
+		$sInfo &= 'Parameter - is not Object' & @CRLF
+	ElseIf VarGetType($oObj) <> 'Object' Then
+		$sInfo &= 'Parameter type - is not Object type' & @CRLF
+	Else
+		$sInfo &= '+>' & @TAB & 'ObjName($oObj,1) {The name of the Object} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_NAME)
+		If @error Then $sInfo &= '@error = ' & @error
+		$sInfo &= @CRLF
+
+		; HELPFILE REMARKS: Not all Objects support flags 2 to 7. Always test for @error in these cases.
+		$sInfo &= '+>' & @TAB & 'ObjName($oObj,2) {Description string of the Object} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_STRING)
+		If @error Then $sInfo &= '@error = ' & @error
+		$sInfo &= @CRLF
+
+		$sInfo &= '+>' & @TAB & 'ObjName($oObj,3) {The ProgID of the Object} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_PROGID)
+		If @error Then $sInfo &= '@error = ' & @error
+		$sInfo &= @CRLF
+
+		$sInfo &= '+>' & @TAB & 'ObjName($oObj,4) {The file that is associated with the object in the Registry} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_FILE)
+		If @error Then $sInfo &= '@error = ' & @error
+		$sInfo &= @CRLF
+
+		$sInfo &= '+>' & @TAB & 'ObjName($oObj,5) {Module name in which the object runs (WIN XP And above). Marshaller for non-inproc objects.} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_MODULE)
+		If @error Then $sInfo &= '@error = ' & @error
+		$sInfo &= @CRLF
+
+		$sInfo &= '+>' & @TAB & 'ObjName($oObj,6) {CLSID of the object''s coclass} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_CLSID)
+		If @error Then $sInfo &= '@error = ' & @error
+		$sInfo &= @CRLF
+
+		$sInfo &= '+>' & @TAB & 'ObjName($oObj,7) {IID of the object''s interface} =' & @CRLF & @TAB & ObjName($oObj, $OBJ_IID)
+		If @error Then $sInfo &= '@error = ' & @error
+		$sInfo &= @CRLF
+
+	EndIf
+	$sInfo = $sComment & ' _Chilkat_ObjName_FlagsValue' & @CRLF & $sInfo & @CRLF
+	__Chilkat_Log($sInfo)
+	Return SetError($iError, $iExtended, $sInfo)
+EndFunc   ;==>_Chilkat_ObjName_FlagsValue
+
+; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_ViewHTML
 ; Description ...: Displays an HTML string in an embedded Internet Explorer control.
 ; Syntax ........: _Chilkat_ViewHTML(ByRef $sHTML)
@@ -3035,127 +3108,4 @@ Func _Chilkat_ViewHTML(ByRef $sHTML)
 	GUIDelete()
 
 EndFunc   ;==>_Chilkat_ViewHTML
-
-Func __Chilkat_GetAndSaveFileToDisc_Progress($iProgress)
-	__Chilkat_Log("Progres: " & $iProgress & "%")
-EndFunc   ;==>__Chilkat_GetAndSaveFileToDisc_Progress
-
-; #FUNCTION# ====================================================================================================================
-; Name ..........: _Chilkat_GetAndSaveFileToDisc
-; Description ...: Downloads binary data from an HTTP URL and saves it to a local file.
-; Syntax ........: _Chilkat_GetAndSaveFileToDisc($sHTTP_Source, $sFileFullPath_LocalDest)
-; Parameters ....: $sHTTP_Source          - [in] HTTP URL to download.
-;                  $sFileFullPath_LocalDest - [in] local destination file path.
-; Return values .: Success: no explicit return. Failure: sets @error/@extended.
-; Author ........: mLipok
-; Modified ......:
-; Remarks .......: Header generated by #AI
-; Related .......: _Chilkat_HTTP_ObjCreate, __Chilkat_LogOnError, _Chilkat_BINDATA_ObjCreate, __Chilkat_Log
-; Link ..........:
-; Example .......: No
-; ===============================================================================================================================
-Func _Chilkat_GetAndSaveFileToDisc($sHTTP_Source, $sFileFullPath_LocalDest)
-	Local $oErrorHandler = ObjEvent("AutoIt.Error", __Internal_COM_ERROR_HANDLER__for_Chilkat)
-	#forceref $oErrorHandler
-
-;~ 	https://www.example-code.com/autoit/box_download_binary_to_memory.asp
-
-	Local $oHttp = _Chilkat_HTTP_ObjCreate()
-	__Chilkat_LogOnError(@ScriptLineNumber)
-
-	Local $oBinData = _Chilkat_BINDATA_ObjCreate()
-	__Chilkat_LogOnError(@ScriptLineNumber)
-
-	Local $iSuccess = $oHttp.DownloadBd($sHTTP_Source, $oBinData)
-	If @error Or $iSuccess <> 1 Then
-		If Not @error Then SetError($CHILKAT_ERR_FAILURE, @extended)
-		__Chilkat_LogOnError(@ScriptLineNumber & ' DownloadBD ', $oHttp)
-		Return SetError(@error, @extended, $iSuccess)
-	EndIf
-	__Chilkat_Log(@ScriptLineNumber & " Downloaded into an object holding the binary data. Number of bytes: " & $oBinData.NumBytes)
-	Local $hFileOpen = FileOpen($sFileFullPath_LocalDest, $FO_BINARY + $FO_OVERWRITE)
-	FileWrite($hFileOpen, Binary("0x" & $oBinData.GetEncoded("hex")))
-	FileClose($hFileOpen)
-EndFunc   ;==>_Chilkat_GetAndSaveFileToDisc
-
-Func __Chilkat_Array_CreateEmpty2D($iCols)
-	Local $aEmpty[0][$iCols]
-	Return $aEmpty
-EndFunc   ;==>__Chilkat_Array_CreateEmpty2D
-
-Func __Chilkat_Array_SetCertRow(ByRef $aCerts, $iRow, ByRef $oCert, $iIndex)
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_INDEX] = $iIndex
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SUBJECT_DN] = $oCert.SubjectDN
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_ISSUER_DN] = $oCert.IssuerDN
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SUBJECT_CN] = $oCert.SubjectCN
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_ISSUER_CN] = $oCert.IssuerCN
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SERIAL] = $oCert.SerialNumber
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_SHA1] = $oCert.Sha1Thumbprint
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_HAS_PRIVATE_KEY] = $oCert.HasPrivateKey()
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_VALID_FROM] = $oCert.ValidFromStr
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_VALID_TO] = $oCert.ValidToStr
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_DATE_VALID_NOW] = _Chilkat_Cert_IsDateValidNow($oCert)
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_KEY_USAGE] = $oCert.IntendedKeyUsage
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_EXT_KEY_USAGE] = $oCert.ExtendedKeyUsage
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_QUALIFIED_TYPE] = _Chilkat_Cert_GetQualifiedType($oCert)
-	$aCerts[$iRow][$CHILKAT_CERT_LIST_COL_QUALIFIED_POLICY_OID] = _Chilkat_Cert_GetQualifiedPolicyOid($oCert)
-EndFunc   ;==>__Chilkat_Array_SetCertRow
-
-Func __Chilkat_NowCalcUtc()
-	Local $tSystemTime = DllStructCreate('ushort Year;ushort Month;ushort DayOfWeek;ushort Day;ushort Hour;ushort Minute;ushort Second;ushort Milliseconds')
-	Local $aRet = DllCall('kernel32.dll', 'none', 'GetSystemTime', 'struct*', $tSystemTime)
-	If @error Or Not IsArray($aRet) Then Return StringFormat('%04d/%02d/%02d %02d:%02d:%02d', @YEAR, @MON, @MDAY, @HOUR, @MIN, @SEC)
-	Return StringFormat('%04d/%02d/%02d %02d:%02d:%02d', DllStructGetData($tSystemTime, 'Year'), DllStructGetData($tSystemTime, 'Month'), DllStructGetData($tSystemTime, 'Day'), DllStructGetData($tSystemTime, 'Hour'), DllStructGetData($tSystemTime, 'Minute'), DllStructGetData($tSystemTime, 'Second'))
-EndFunc   ;==>__Chilkat_NowCalcUtc
-
-Func __Chilkat_Rfc822GmtToCalc($sRfc822)
-	If Not IsString($sRfc822) Then Return ''
-	Local $aMatch = StringRegExp(StringStripWS($sRfc822, 3), '(?i)^(?:[a-z]{3},\s*)?(\d{1,2})\s+([a-z]{3})\s+(\d{4})\s+(\d{1,2}):(\d{2}):(\d{2})', 1)
-	If @error Or UBound($aMatch) < 6 Then Return ''
-	Local $iMonth = __Chilkat_Rfc822MonthToNumber($aMatch[1])
-	If $iMonth < 1 Then Return ''
-	Return StringFormat('%04d/%02d/%02d %02d:%02d:%02d', Number($aMatch[2]), $iMonth, Number($aMatch[0]), Number($aMatch[3]), Number($aMatch[4]), Number($aMatch[5]))
-EndFunc   ;==>__Chilkat_Rfc822GmtToCalc
-
-Func __Chilkat_Rfc822MonthToNumber($sMonth)
-	Switch StringLower($sMonth)
-		Case 'jan'
-			Return 1
-		Case 'feb'
-			Return 2
-		Case 'mar'
-			Return 3
-		Case 'apr'
-			Return 4
-		Case 'may'
-			Return 5
-		Case 'jun'
-			Return 6
-		Case 'jul'
-			Return 7
-		Case 'aug'
-			Return 8
-		Case 'sep'
-			Return 9
-		Case 'oct'
-			Return 10
-		Case 'nov'
-			Return 11
-		Case 'dec'
-			Return 12
-	EndSwitch
-	Return 0
-EndFunc   ;==>__Chilkat_Rfc822MonthToNumber
-
-Func __Chilkat_PathGetDir($sFileFullPath)
-	Local $sDir = StringRegExpReplace($sFileFullPath, '[\\/][^\\/]*$', '')
-	If $sDir = $sFileFullPath Then Return '.'
-	If $sDir = '' Then Return '.'
-	Return $sDir
-EndFunc   ;==>__Chilkat_PathGetDir
-
-Func __Chilkat_PathGetFileName($sFileFullPath)
-	Return StringRegExpReplace($sFileFullPath, '^.*[\\/]', '')
-EndFunc   ;==>__Chilkat_PathGetFileName
-
 #EndRegion - Chilkat.au3 - Function - Misc
