@@ -19,6 +19,7 @@ The documentation reflects the modular source layout currently developed on the 
 - [API overview](api-overview.md)
 - [Troubleshooting](troubleshooting.md)
 - [References and support](links.md)
+- [Release Notes](../RELEASE_NOTES.md)
 
 ## Development status
 
@@ -38,6 +39,7 @@ The principal files are:
 - `Chilkat_Cryptography.au3` — RSA, ECC, DSA, EdDSA, encryption, and key handling.
 - `Chilkat_CompressionArchives.au3` — ZIP, Gzip, Tar, and compression workflows.
 - `Examples/` — individual runnable examples and the shared initialization layer.
+- `RELEASE_NOTES.md` — central release history and maintenance policy.
 
 ## Documentation baseline maintenance
 
@@ -47,11 +49,10 @@ Before creating a final release, update the Chilkat.au3 version/tag in that noti
 
 ## Release Notes maintenance
 
-Release Notes are currently maintained in the `#Region ; Release Notes` section of `Chilkat.au3`.
+The complete release history is maintained in [`RELEASE_NOTES.md`](../RELEASE_NOTES.md) in the repository root.
 
 From `v0.3.0` onward:
 
-- every new UDF function must be documented in the current Release Notes entry as part of the same change;
-- while a version is still under development, revise and extend its latest entry instead of leaving an incomplete summary.
-
-The complete history may be moved to a separate `RELEASE_NOTES.md` file in a later iteration.
+- every new UDF function and every significant UDF change must be documented in the current Release Notes entry as part of the same change;
+- while a version is still under development, revise and extend its latest entry instead of creating incomplete or duplicate entries;
+- before publishing a final release, verify that the release version/date and the Markdown documentation baseline tag are consistent across the repository.
