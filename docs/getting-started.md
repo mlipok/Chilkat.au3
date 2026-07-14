@@ -6,52 +6,41 @@
 ## Requirements
 
 - AutoIt 3.3.10.2 or newer.
-- The complete `0.3.x` UDF file set located together.
-- A compatible Chilkat ActiveX component.
-- Matching process architecture between AutoIt and the Chilkat DLL or registered component.
-- A Chilkat unlock code, or the Chilkat trial mode where applicable.
+- A compatible Chilkat ActiveX installation or a Registration-Free COM/SxS DLL.
+- Matching process architecture between AutoIt and the Chilkat DLL.
+- A valid Chilkat unlock code or trial mode when required.
+- The complete modular UDF file set stored beside `Chilkat.au3`.
 
-## Include model
+## Include the UDF
 
-Applications should include only the primary UDF file:
+Application scripts should include only the primary file:
 
 ```autoit
 #include "Chilkat.au3"
 ```
 
-`Chilkat.au3` loads the thematic modules automatically. Do not copy only the primary file; deployment must include every module referenced by it.
+The primary file loads every thematic module. Do not include individual modules instead of `Chilkat.au3` unless you are deliberately developing the UDF itself.
 
-## Basic initialization
+## Initialization
 
-A typical workflow is:
+The examples initialize the selected Chilkat API and unlock the component through:
 
-1. Select the Chilkat object-version metadata with `_Chilkat_DllVersion()`.
-2. Load or identify the Chilkat ActiveX component with `_Chilkat_StartUp()` when using the DLL-based path.
-3. Create the global Chilkat object with `_Chilkat_GLOBAL_ObjCreate()`.
-4. Unlock the component with `_Chilkat_GLOBAL_UnlockBundle()`.
-5. Create the required object through the corresponding `_Chilkat_*_ObjCreate()` wrapper.
-6. Check the return value, `@error`, and `@extended` after each UDF operation.
+```autoit
+#include "..\Chilkat.au3"
+#include "Chilkat_Example_Common.au3"
 
-## Version selection
+_Example_Init()
+If @error Then Exit
+```
 
-The constants currently include metadata sets for:
-
-- `$CHILKATOBJ_VERSION_950`
-- `$CHILKATOBJ_VERSION_10`
-- `$CHILKATOBJ_VERSION_11`
-
-The selected metadata must match the ActiveX component used by the process. The helper `_Chilkat_IsAtLeastThisVersion()` is used where the Chilkat 10 and Chilkat 11 APIs differ.
+Registration-Free COM users must supply the correct Chilkat DLL path through the shared example configuration or call `_Chilkat_StartUp()` in their own application.
 
 ## Error handling
 
-The UDF uses:
+Check both `@error` and `@extended` immediately after a UDF call. Many wrappers also log the Chilkat `LastErrorText` through the shared logging layer.
 
-- `$CHILKAT_RET_SUCCESS` and `$CHILKAT_RET_FAILURE` for common result values;
-- `$CHILKAT_ERR_*` values in `@error`;
-- `$CHILKAT_EXT_*` values or operation-specific details in `@extended`.
+Functions that call HTTP APIs generally return the HTTP status code in `@extended`. Structured API responses are returned as Chilkat `JsonObject` instances.
 
-Use `_Chilkat_ErrorLogWrapper()` to configure application logging. Chilkat object failures should also be diagnosed from the object's `LastErrorText` information where exposed by the wrapper.
+## Shutdown
 
-## Start with an example
-
-The numbered scripts in `Examples/` demonstrate the intended initialization pattern. Review `Examples/Chilkat_Example_Common.au3` before adapting an example to a production deployment, because its DLL path and version selection are development defaults rather than universal settings.
+Call `_Chilkat_ShutDown()` when the application finishes. The UDF also registers an exit callback as a fallback, but explicit shutdown is preferred in examples and long-running applications.
