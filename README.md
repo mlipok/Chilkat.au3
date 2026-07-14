@@ -18,7 +18,7 @@ Active development for the modular `0.3.x` line is performed on:
 
 - branch: `the_way_to_0.3.x`
 - current UDF header version: `v0.3.0 BETA - Work in progress`
-- current UDF header date: `2026/07/13`
+- current UDF header date: `2026/07/14`
 
 The development branch may contain script-breaking changes compared with earlier public versions.
 
@@ -38,6 +38,11 @@ See [Getting started](docs/getting-started.md) for initialization, version selec
 
 The `0.3.x` line keeps `Chilkat.au3` as the public entry point and moves object-specific functions into thematic modules:
 
+- `Chilkat_DataFormats.au3`
+- `Chilkat_Authentication.au3`
+- `Chilkat_TransferNetworking.au3`
+- `Chilkat_CloudStorage.au3`
+- `Chilkat_Google.au3`
 - `Chilkat_Certificates_PKI.au3`
 - `Chilkat_DigitalSignatures.au3`
 - `Chilkat_Email.au3`
@@ -51,14 +56,27 @@ See [Architecture and modules](docs/architecture-and-modules.md) for module scop
 - modular source layout while preserving one primary include file;
 - individual runnable example files instead of one monolithic example script;
 - shared example initialization through `Examples/Chilkat_Example_Common.au3`;
+- dedicated modules for data formats, authentication, transfer/networking, cloud storage, and Google APIs;
+- standard Google API CRUD wrappers plus Calendar, Sheets, Tasks, Cloud SQL, and Firebase helpers;
 - RSA key-pair generation compatible with Chilkat 10 and Chilkat 11+;
 - private-key and public-key PEM export helpers;
 - CSR generation and X.509 certificate export helpers;
 - GUI examples for generating and inspecting PEM, KEY, PUB, CSR, CERT, CER, and CRT files;
 - array-returning helpers for ZIP, FTP2, PC/SC, PKCS11, and certificate metadata;
-- explicit smart-card certificate selection for signing workflows.
+- explicit smart-card certificate selection for signing workflows;
+- CertStore search, full basic SCard connection lifecycle and SmartCardFailReason diagnostics;
+- LTV-enabled PAdES signatures with RFC 3161 TSA timestamps;
+- Authenticode signing, verification and signature removal for EXE/DLL files.
 
-Detailed RSA, PEM, KEY, CSR, and certificate documentation is available in [PEM, keys, CSR, and certificates](docs/pem-key-csr-cert.md).
+Detailed documentation is available for:
+
+- [Data formats](docs/data-formats.md)
+- [Authentication](docs/authentication.md)
+- [Transfer and networking](docs/transfer-networking.md)
+- [Cloud storage](docs/cloud-storage.md)
+- [Google APIs and CRUD](docs/google.md)
+- [PEM, keys, CSR, and certificates](docs/pem-key-csr-cert.md)
+- [Code signing, PAdES TSA timestamps, and SCard](docs/codesign-pades-tsa-scard.md)
 
 ## Examples
 
@@ -82,6 +100,15 @@ Notable additions include:
 
 - `Examples/Chilkat_Example_038_PEM_GENERATOR.au3`
 - `Examples/Chilkat_Example_039_PEM_KEY_CERT_Reader.au3`
+- `Examples/Chilkat_Example_040_DataFormats_Base64_Markdown.au3`
+- `Examples/Chilkat_Example_041_OIDC_Discovery.au3`
+- `Examples/Chilkat_Example_042_Google_CRUD.au3`
+- `Examples/Chilkat_Example_043_CloudStorage_S3.au3`
+- `Examples/Chilkat_Example_044_CertStore_FindCert.au3`
+- `Examples/Chilkat_Example_045_SCard_ConnectionStatus.au3`
+- `Examples/Chilkat_Example_046_PDF_PAdES_TSA_Timestamp.au3`
+- `Examples/Chilkat_Example_047_CodeSign_Authenticode.au3`
+- `Examples/Chilkat_Example_048_SmartCardFailReason.au3`
 
 See [Examples and initialization](docs/examples-and-initialization.md) for the common example model and development defaults.
 
@@ -91,7 +118,8 @@ See [Examples and initialization](docs/examples-and-initialization.md) for the c
 - the complete `0.3.x` UDF file set;
 - a compatible Chilkat ActiveX component;
 - matching process architecture between AutoIt and Chilkat;
-- a Chilkat unlock code or trial mode where applicable.
+- a Chilkat unlock code or trial mode where applicable;
+- provider credentials, OAuth scopes, certificates, or hardware tokens required by the selected service.
 
 For registered COM, Registration-Free COM / SxS, ProgID, CLSID, IID, DLL loading, and deployment details, see [Object creation and deployment](docs/object-creation-and-deployment.md).
 
@@ -99,27 +127,13 @@ For registered COM, Registration-Free COM / SxS, ProgID, CLSID, IID, DLL loading
 
 The documentation index is available at [`docs/README.md`](docs/README.md).
 
-Main topics:
-
-- [Getting started](docs/getting-started.md)
-- [Architecture and modules](docs/architecture-and-modules.md)
-- [Object creation and deployment](docs/object-creation-and-deployment.md)
-- [Examples and initialization](docs/examples-and-initialization.md)
-- [PEM, keys, CSR, and certificates](docs/pem-key-csr-cert.md)
-- [Certificates, PKI, and smart cards](docs/certificates-pki-and-smart-cards.md)
-- [Digital signatures](docs/digital-signatures.md)
-- [API overview](docs/api-overview.md)
-- [Troubleshooting](docs/troubleshooting.md)
-- [References and support](docs/links.md)
-- [Release Notes](RELEASE_NOTES.md)
-
 The current UDF function headers and `ChilkatConstants.au3` metadata remain authoritative for exact signatures, return values, `@error`, `@extended`, ProgIDs, CLSIDs, IIDs, and supported object-version metadata.
 
 ## Release Notes
 
-The complete release history is maintained in [`RELEASE_NOTES.md`](RELEASE_NOTES.md) in the repository root.
+Release Notes are maintained in [`RELEASE_NOTES.md`](RELEASE_NOTES.md).
 
-From `v0.3.0` onward, every new UDF function and every significant UDF change must be documented in the current release entry as part of the same change. While a version remains under development, revise and expand its latest entry instead of creating incomplete or duplicate entries.
+From `v0.3.0` onward, every new UDF function must be documented in the current Release Notes entry as part of the same change. While a version remains under development, its latest entry should be revised and expanded rather than duplicated.
 
 ## Authors and support
 
