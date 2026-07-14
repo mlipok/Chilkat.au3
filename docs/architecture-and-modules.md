@@ -3,64 +3,58 @@
 <!-- AI_ASSISTED_DOCUMENTATION_NOTICE -->
 > **AI-assisted documentation:** This document is developed with assistance from ChatGPT AI, reviewed by mLipok, and based on Chilkat.au3 version/tag `v0.3.0 BETA - Work in progress`.
 
-## Primary include file
+## Design goal
 
-`Chilkat.au3` remains the public entry point:
+`Chilkat.au3` remains the stable public entry point. Object-specific functions are stored in thematic modules so the source is easier to maintain without requiring application scripts to change their include statement.
 
-```autoit
-#include "Chilkat.au3"
-```
+## Core file
 
-The primary file contains shared constants usage, object creation infrastructure, common helpers, and functions that have not been moved into a thematic module. It also includes the module files required by the `0.3.x` layout.
+`Chilkat.au3` contains:
+
+- shared constants and array-column definitions that do not belong to a thematic module;
+- DLL/API version selection;
+- Registration-Free COM startup and shutdown;
+- generic object creation, error logging, and common helpers;
+- `#include` statements for all thematic modules.
 
 ## Thematic modules
 
-### `Chilkat_Certificates_PKI.au3`
+### Data formats
 
-Contains certificate and public-key infrastructure functionality, including certificate stores, X.509 certificates, CSR, JKS, PEM, PFX/P12, PKCS11, PC/SC `SCard`, smart cards, and `ScMinidriver` workflows.
+`Chilkat_DataFormats.au3` contains ASN.1, Base64, CSV, CkString, StringBuilder, HTML-to-text/XML, JSON, JsonArray, Markdown, and XML functions.
 
-### `Chilkat_DigitalSignatures.au3`
+### Authentication
 
-Contains digital-signature functionality, including PDF/PAdES, XAdES, XMLDSig, CAdES-related workflows, code signing, JWS, JWE, JWT, and cloud-signing components.
+`Chilkat_Authentication.au3` contains NTLM, OAuth1, OAuth2, OIDC discovery, and OIDC UserInfo support.
 
-### `Chilkat_Email.au3`
+### Transfer and networking
 
-Contains email-related functionality, including MailMan/SMTP, IMAP, POP3, MIME, DKIM, Gmail, Microsoft 365, Outlook, and related message objects.
+`Chilkat_TransferNetworking.au3` contains CURL, FTP/FTPS, HTTP, HTTP request/response, REST, SCP, SFTP, SSH, SSH keys/tunnels, sockets and TLS, Spider, Stream, Upload, and WebSocket functions. Public FTP2 listing constants are stored in this module.
 
-### `Chilkat_Cryptography.au3`
+### Cloud storage
 
-Contains general cryptography and key functionality, including RSA, DSA, Diffie-Hellman, ECC, Ed25519/EdDSA, symmetric encryption, PRNG, private keys, and public keys.
+`Chilkat_CloudStorage.au3` contains AWS and Azure authentication objects, generic cloud REST requests, and dedicated Amazon S3 wrappers. Other providers use the common HTTP/REST layer.
 
-### `Chilkat_CompressionArchives.au3`
+### Google
 
-Contains compression and archive functionality, including ZIP, Gzip, Tar, general compression, and in-memory binary archive workflows.
+`Chilkat_Google.au3` contains AuthGoogle and standard wrappers for Google APIs, Calendar, Sheets, Tasks, Cloud SQL, and Firebase.
+
+### Existing modules
+
+- `Chilkat_Certificates_PKI.au3`
+- `Chilkat_DigitalSignatures.au3`
+- `Chilkat_Email.au3`
+- `Chilkat_Cryptography.au3`
+- `Chilkat_CompressionArchives.au3`
+
+## Dependency direction
+
+Modules may call shared functions defined by `Chilkat.au3` and functions in modules included earlier by `Chilkat.au3`. Application code should not depend on this ordering and should include only the main UDF.
 
 ## Deployment rule
 
-Although application scripts include only `Chilkat.au3`, the module files are runtime source dependencies and must be deployed beside it or in a valid AutoIt include path.
+The complete set of `.au3` modules is one deployment unit. Copying only `Chilkat.au3` and `ChilkatConstants.au3` will produce include errors.
 
-A minimal source layout is:
+## Naming
 
-```text
-project/
-  Chilkat.au3
-  ChilkatConstants.au3
-  Chilkat_Certificates_PKI.au3
-  Chilkat_DigitalSignatures.au3
-  Chilkat_Email.au3
-  Chilkat_Cryptography.au3
-  Chilkat_CompressionArchives.au3
-```
-
-## Public and internal naming
-
-- Public UDF functions normally use the `_Chilkat_` prefix.
-- Internal implementation functions use the `__Chilkat_` prefix.
-- Object creator wrappers normally follow `_Chilkat_<OBJECT>_ObjCreate()`.
-- Object metadata is stored in `$CHILKATOBJ_API` and indexed by `$CHILKATOBJ_NAME_*` constants.
-
-Application code should not depend on double-underscore functions unless the function is explicitly documented as a supported extension point.
-
-## Compatibility
-
-The modular split is a source-layout change. Existing scripts should continue to include `Chilkat.au3`, but packaging processes that previously copied only two UDF files must be updated to include all thematic modules.
+Public functions use `_Chilkat_<Object>_<Operation>()`. Internal implementation helpers use the double-underscore prefix when appropriate. Existing names are retained for script compatibility, including historical spelling where changing it would be script-breaking.
