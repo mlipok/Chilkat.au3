@@ -3,60 +3,43 @@
 <!-- AI_ASSISTED_DOCUMENTATION_NOTICE -->
 > **AI-assisted documentation:** This document is developed with assistance from ChatGPT AI, reviewed by mLipok, and based on Chilkat.au3 version/tag `v0.3.0 BETA - Work in progress`.
 
-## Object cannot be created
+## Object creation fails
 
 Check:
 
-- the selected `$CHILKATOBJ_VERSION_*` value;
-- whether the required object metadata exists in `ChilkatConstants.au3`;
-- whether registered COM or Registration-Free COM is being used;
-- ProgID, CLSID, and IID values;
-- AutoIt and Chilkat architecture compatibility;
-- the DLL path supplied to `_Chilkat_StartUp()`.
+- selected Chilkat API version;
+- registered ProgID or Registration-Free COM startup;
+- CLSID/IID metadata;
+- 32-bit versus 64-bit architecture;
+- DLL path and file existence.
 
-## DLL loads but object creation fails
+## Unlock fails
 
-The DLL may be the wrong architecture, the metadata may not match the DLL version, or the requested Chilkat class may not exist in that release. Confirm the actual component version and object introduction version.
+Verify the unlock code, component version, and whether trial mode is expected. Read `LastErrorText` and the UDF log.
 
-## UnlockBundle fails
+## HTTP API call fails
 
-Verify that:
+Check:
 
-- the global object was created successfully;
-- the unlock code is read correctly;
-- no whitespace or encoding issue was introduced while reading the secret file;
-- the installed component supports the requested operation.
+- endpoint URL and API version;
+- HTTP status returned in `@extended`;
+- OAuth access-token validity and required scopes;
+- API enablement and IAM permissions;
+- JSON request body and content type;
+- system clock and TLS configuration.
 
-Do not print the real unlock code in logs.
+## Smart card or PKCS11 fails
 
-## Example uses a missing DLL
+Check reader/token presence, provider/CSP name, PKCS11 DLL architecture, slot discovery, PIN, certificate validity, and private-key availability.
 
-`Chilkat_Example_Common.au3` contains development-specific DLL filenames. Select an installed/available version and update the path for the local environment.
+## Include errors
 
-## Include file is missing
+Deploy the complete modular file set beside `Chilkat.au3`. Application scripts should not copy only the main and constants files.
 
-The `0.3.x` source is modular. Keep all thematic module files beside `Chilkat.au3` or in a valid include path. Including only the primary file and constants file is no longer sufficient.
+## Example does not run
 
-## PKCS11 module cannot be loaded
+Review `Examples/Chilkat_Example_Common.au3`, configure the DLL/unlock settings, and confirm that the example's external resource, credential, or hardware prerequisite is available.
 
-Verify the vendor middleware, PKCS11 DLL path, architecture, token connection, and whether another process has locked the device. The library filename is vendor-specific.
+## Validation scope of this package
 
-## Smart-card certificate is not listed
-
-Check reader visibility, card insertion, middleware, certificate validity dates, private-key availability, and whether the filtering options exclude the certificate.
-
-## Signing fails after certificate selection
-
-Confirm that the exact selected `Chilkat.Cert` object is passed to the signing operation, the private key remains accessible, and the PIN belongs to the selected token/card.
-
-## Chilkat 10/11 method mismatch
-
-Use `_Chilkat_IsAtLeastThisVersion()` for version-dependent paths. Confirm the actual loaded component version rather than relying only on the intended configuration.
-
-## `@error` is not enough
-
-Capture both `@error` and `@extended`, then inspect the relevant Chilkat object's `LastErrorText`. Preserve the original error state before calling unrelated functions that may overwrite AutoIt error macros.
-
-## Binary workflow returns unexpected data
-
-Confirm whether the function expects an AutoIt Binary variant, Chilkat `BinData`, a file path, or a Chilkat object. Use the dedicated conversion helpers and avoid implicit string conversion of binary values.
+The package received static validation for balanced functions/regions, duplicate definitions, include targets, documentation notices, release-note coverage, and ZIP integrity. Runtime access to external providers, credentials, smart cards, network services, and the Chilkat ActiveX component was not exercised during package generation.
