@@ -8,15 +8,24 @@
 _Example_Init()
 If @error Then Exit
 
-Local $sText = 'Chilkat.au3 data formats example'
-Local $sBase64 = _Chilkat_Base64_EncodeString($sText)
-If @error Then Exit MsgBox($MB_ICONERROR, 'Data formats', 'Base64 encoding failed.')
-Local $sDecoded = _Chilkat_Base64_DecodeString($sBase64)
-If @error Then Exit MsgBox($MB_ICONERROR, 'Data formats', 'Base64 decoding failed.')
-ConsoleWrite('Base64: ' & $sBase64 & @CRLF)
-ConsoleWrite('Decoded: ' & $sDecoded & @CRLF)
+_Example()
+Func _Example()
+	Local $sText = 'Chilkat.au3 data formats example'
+	Local $sBase64 = _Chilkat_Base64_EncodeString($sText)
+	If @error Then Exit MsgBox($MB_ICONERROR, 'Data formats', 'Base64 encoding failed.')
+	Local $sDecoded = _Chilkat_Base64_DecodeString($sBase64)
+	If @error Then Exit MsgBox($MB_ICONERROR, 'Data formats', 'Base64 decoding failed.')
+	_Log_ChilkatExample('Base64: ' & $sBase64)
+	_Log_ChilkatExample('Decoded: ' & $sDecoded)
 
-Local $sHtml = _Chilkat_Markdown_ToHtml('# Chilkat.au3' & @LF & @LF & '- Data formats' & @LF & '- Markdown')
-If Not @error Then ConsoleWrite($sHtml & @CRLF)
+	Local $sHtml = _Chilkat_Markdown_ToHtml('# Chilkat.au3' & @LF & @LF & '- Data formats' & @LF & '- Markdown')
+	If @error Then
+		_Log_ChilkatExample("! ERROR in _Chilkat_Markdown_ToHtml()")
+	Else
+		_Log_ChilkatExample("> $sHtml:")
+		_Log_ChilkatExample($sHtml)
+	EndIf
+EndFunc   ;==>_Example
+
 
 _Chilkat_ShutDown()
