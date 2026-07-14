@@ -11,7 +11,7 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - While a version is still in development, revise and extend its latest entry instead of creating incomplete duplicate entries.
 - Before a final release, update the version/tag in the AI-assisted documentation notice in every Markdown file.
 
-## v0.3.0 — 2026/07/13
+## v0.3.0 — 2026/07/14
 
 - Changed: split object-specific functions into Certificates/PKI, Digital Signatures, Email, Cryptography and Compression/Archives modules - AI / mLipok
 - Changed: Chilkat.au3 remains the primary include file and links all modular UDF files, preserving a single entry point for existing scripts - AI / mLipok
@@ -44,6 +44,71 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - Changed: Example 039 selects Chilkat 11 *At() PEM enumeration methods or Chilkat 10 Get*() compatibility methods through _Chilkat_IsAtLeastThisVersion() - AI / mLipok
 - Fixed: Example 039 uses _StringRepeat() from String.au3 instead of the nonexistent StringRepeat() function - AI / mLipok
 - Changed: moved the complete Release Notes history from the `#Region ; Release Notes` block in `Chilkat.au3` to the central `RELEASE_NOTES.md` file - AI / mLipok
+- Added: `_Chilkat_CertStore_FindCert()` with native Chilkat 10.1.2+ `CertStore.FindCert()` support and a validated fallback based on `_Chilkat_CertStore_ListValidCertificates_AsArray()` - AI / mLipok
+- Added: `_Chilkat_Cert_GetSmartCardFailReason()` and `_Chilkat_Cert_SmartCardFailReasonToText()`; legacy smart-card loading now returns the Chilkat reason code in `@extended` when available - AI / mLipok
+- Added: SCard wrappers for EstablishContext, ConnectedReader, Connect, CheckStatus, Reconnect, Disconnect, FindSmartcards and ReleaseContext - AI / mLipok
+- Added: PAdES LTV/TSA option creation, file and binary signing variants for Cert, SmartCard and PKCS11, and explicit TSA verification wrappers - AI / mLipok
+- Added: Authenticode CodeSign wrappers for AddSignature, VerifySignature, RemoveSignature, smart-card signing and PKCS11 signing - AI / mLipok
+- Added: Examples 044-048 covering CertStore search, SCard lifecycle/status, PAdES TSA timestamps, Authenticode signing and SmartCardFailReason - AI / mLipok
+- Changed: refreshed the TODO list to remove completed SCard, SmartCardFailReason, CertStore.FindCert, PAdES TSA and Authenticode items - AI / mLipok
+
+- Changed: moved CURL, FTP, HTTP, REST, SCP, SFTP, SSH, SSH Key, SSH Tunnel, Socket/SSL/TLS, Spider, Stream, Upload and WebSocket object functions from `Chilkat.au3` to `Chilkat_TransferNetworking.au3` - AI / mLipok
+- Changed: moved the public `$CHILKAT_FTP2_*` list and filter constants from `Chilkat.au3` to `Chilkat_TransferNetworking.au3` - AI / mLipok
+- Changed: `Chilkat.au3` now includes `Chilkat_TransferNetworking.au3` as part of the primary single-file entry point - AI / mLipok
+- Added: Function: `_Chilkat_HTTPCURL_ObjCreate()` for creating the Chilkat 11 HttpCurl object through the existing object metadata wrapper - AI / mLipok
+
+- Changed: moved ASN.1, Base64-related CkString/StringBuilder support, CSV, HTML-to-XML/Text, JSON, Markdown and XML functions from `Chilkat.au3` to `Chilkat_DataFormats.au3` - AI / mLipok
+- Added: Functions: `_Chilkat_Base64_EncodeString()`, `_Chilkat_Base64_DecodeString()` and `_Chilkat_Markdown_ToHtml()` - AI / mLipok
+- Changed: moved NTLM, OAuth1 and OAuth2 object functions from `Chilkat.au3` to `Chilkat_Authentication.au3` - AI / mLipok
+- Added: Functions: `_Chilkat_OIDC_Discover_AsJson()` and `_Chilkat_OIDC_UserInfo_AsJson()` - AI / mLipok
+- Changed: moved AuthAws, AuthAzureAD, AuthAzureSAS and AuthAzureStorage object functions from `Chilkat.au3` to `Chilkat_CloudStorage.au3` - AI / mLipok
+- Added: generic cloud-storage JSON REST support and Amazon S3 create/configure, upload, download, delete and list wrappers - AI / mLipok
+- Changed: moved AuthGoogle object functions from `Chilkat.au3` to `Chilkat_Google.au3` - AI / mLipok
+- Added: generic Google API CRUD wrappers plus Calendar event CRUD, Sheets value CRUD, Tasks CRUD, Cloud SQL instance CRUD and Firebase CRUD helpers - AI / mLipok
+- Added: Function: `_Chilkat_Base64_DecodeString()` - AI / mLipok
+- Added: Function: `_Chilkat_Base64_EncodeString()` - AI / mLipok
+- Added: Function: `_Chilkat_CloudStorage_Request_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_Firebase_Create_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_Firebase_Delete()` - AI / mLipok
+- Added: Function: `_Chilkat_Firebase_Read_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_Firebase_Update_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleAPI_Create_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleAPI_Delete()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleAPI_Read_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleAPI_Update_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleCalendar_CreateEvent_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleCalendar_DeleteEvent()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleCalendar_ListEvents_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleCalendar_ReadEvent_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleCalendar_UpdateEvent_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleCloudSQL_CreateInstance_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleCloudSQL_DeleteInstance()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleCloudSQL_ListInstances_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleCloudSQL_ReadInstance_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleCloudSQL_UpdateInstance_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleSheets_CreateSpreadsheet_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleSheets_CreateValues_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleSheets_DeleteValues_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleSheets_ReadSpreadsheet_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleSheets_ReadValues_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleSheets_UpdateValues_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleTasks_CreateTask_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleTasks_DeleteTask()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleTasks_ListTasks_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleTasks_ReadTask_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_GoogleTasks_UpdateTask_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_HTTP_Request_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_HTTP_UrlEncode()` - AI / mLipok
+- Added: Function: `_Chilkat_Markdown_ToHtml()` - AI / mLipok
+- Added: Function: `_Chilkat_OIDC_Discover_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_OIDC_UserInfo_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_S3_CreateHttp()` - AI / mLipok
+- Added: Function: `_Chilkat_S3_DeleteObject()` - AI / mLipok
+- Added: Function: `_Chilkat_S3_DownloadFile()` - AI / mLipok
+- Added: Function: `_Chilkat_S3_ListBucketObjects_AsXml()` - AI / mLipok
+- Added: Function: `_Chilkat_S3_UploadFile()` - AI / mLipok
+- Added: shared `_Chilkat_HTTP_Request_AsJson()` and `_Chilkat_HTTP_UrlEncode()` helpers with Chilkat 10 and 11 compatibility paths - AI / mLipok
+- Added: Examples 040-043 for data formats, OIDC discovery, Google CRUD and S3 cloud storage - AI / mLipok
 
 <!-- @LAST -->
 
