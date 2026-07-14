@@ -22,19 +22,19 @@ EndIf
 
 ; READ examples are safe starting points. CREATE, UPDATE and DELETE require API-specific JSON bodies and IDs.
 Local $oEvents = _Chilkat_GoogleCalendar_ListEvents_AsJson($sCalendarId, $sAccessToken, 'maxResults=10&singleEvents=true')
-If Not @error Then ConsoleWrite($oEvents.Emit() & @CRLF)
+If Not @error Then _Log_ChilkatExample($oEvents.Emit())
 
 If $sSpreadsheetId <> '' Then
 	Local $oValues = _Chilkat_GoogleSheets_ReadValues_AsJson($sSpreadsheetId, 'Sheet1!A1:D20', $sAccessToken)
-	If Not @error Then ConsoleWrite($oValues.Emit() & @CRLF)
+	If Not @error Then _Log_ChilkatExample($oValues.Emit())
 EndIf
 
 Local $oTasks = _Chilkat_GoogleTasks_ListTasks_AsJson($sTaskListId, $sAccessToken, 'maxResults=20')
-If Not @error Then ConsoleWrite($oTasks.Emit() & @CRLF)
+If Not @error Then _Log_ChilkatExample($oTasks.Emit())
 
 If $sCloudSqlProjectId <> '' Then
 	Local $oInstances = _Chilkat_GoogleCloudSQL_ListInstances_AsJson($sCloudSqlProjectId, $sAccessToken)
-	If Not @error Then ConsoleWrite($oInstances.Emit() & @CRLF)
+	If Not @error Then _Log_ChilkatExample($oInstances.Emit())
 EndIf
 
 _Chilkat_ShutDown()

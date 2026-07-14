@@ -35,7 +35,7 @@ Func _Example_12_JsonObject_PrettyPrint()
 	; Load the JSON text into the Chilkat JSON object.
 	Local $iSuccess = $oJSON.Load($sJSON_String)
 	If ($iSuccess <> 1) Then
-		ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText & @CRLF)
+		_Log_ChilkatExample($__g_oChilkat_GLOBAL.LastErrorText)
 		Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 	EndIf
 
@@ -47,5 +47,5 @@ Func _Example_12_JsonObject_PrettyPrint()
 	$oJSON.EmitCrLf = 0
 
 	;  Emit the formatted JSON:
-	ConsoleWrite($oJSON.Emit() & @CRLF)
+	_Log_ChilkatExample($oJSON.Emit())
 EndFunc   ;==>_Example_12_JsonObject_PrettyPrint

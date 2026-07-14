@@ -13,7 +13,7 @@ If @error Then
 	MsgBox($MB_ICONERROR, 'OIDC discovery', 'Discovery failed. @error=' & @error & ', @extended=' & @extended)
 Else
 	$oDiscovery.EmitCompact = 0
-	ConsoleWrite($oDiscovery.Emit() & @CRLF)
+	_Log_ChilkatExample($oDiscovery.Emit())
 EndIf
 
 _Chilkat_ShutDown()

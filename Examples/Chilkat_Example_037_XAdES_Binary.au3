@@ -45,7 +45,7 @@ Func _Example_37_XADES_Binary()
 
 	Local $oVerifyJson = _Chilkat_XADES_VerifyBinary_AsJson($dXadesXml, $dPayload, $sReferenceUri)
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	ConsoleWrite($oVerifyJson.Emit() & @CRLF)
+	_Log_ChilkatExample($oVerifyJson.Emit())
 
 	Local $sOutput = $sFileFullPath & '.xades.xml'
 	Local $hFile = FileOpen($sOutput, $FO_BINARY + $FO_OVERWRITE)

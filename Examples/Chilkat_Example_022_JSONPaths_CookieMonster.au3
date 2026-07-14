@@ -37,6 +37,6 @@ Func _Example_22_JSONPaths_cookiemonster()
 	Local $sJSON_Path = ''
 	For $iClient_idx = 0 To $iClientSize - 1
 		$sJSON_Path = "client[" & $iClient_idx & "].client_info.info.name"
-		ConsoleWrite("+ " & $sJSON_Path & " = " & $oJSON.StringOf($sJSON_Path) & @CRLF)
+		_Log_ChilkatExample("+ " & $sJSON_Path & " = " & $oJSON.StringOf($sJSON_Path))
 	Next
 EndFunc   ;==>_Example_22_JSONPaths_cookiemonster

@@ -33,7 +33,7 @@ Func _Example_13_JsonObject_IterateMembers()
 
 	Local $iSuccess = $oJSON.Load($sJSON_String)
 	If ($iSuccess <> 1) Then
-		ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText & @CRLF)
+		_Log_ChilkatExample($__g_oChilkat_GLOBAL.LastErrorText)
 		Return SetError($CHILKAT_ERR_LOAD, @extended, $CHILKAT_RET_FAILURE)
 	EndIf
 
@@ -43,9 +43,9 @@ Func _Example_13_JsonObject_IterateMembers()
 	For $iMember_idx = 0 To $iNumMembers - 1
 		$sName = $oJSON.NameAt($iMember_idx)
 		$sValue = $oJSON.StringAt($iMember_idx)
-		ConsoleWrite($sName & ": " & $sValue & @CRLF)
+		_Log_ChilkatExample($sName & ": " & $sValue)
 
 		$iValue = $oJSON.IntAt($iMember_idx)
-		ConsoleWrite($sName & " as integer: " & $iValue & @CRLF)
+		_Log_ChilkatExample($sName & " as integer: " & $iValue)
 	Next
 EndFunc   ;==>_Example_13_JsonObject_IterateMembers

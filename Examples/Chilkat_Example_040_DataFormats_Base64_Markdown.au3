@@ -18,14 +18,17 @@ Func _Example()
 	_Log_ChilkatExample('Base64: ' & $sBase64)
 	_Log_ChilkatExample('Decoded: ' & $sDecoded)
 
-	Local $sHtml = _Chilkat_Markdown_ToHtml('# Chilkat.au3' & @LF & @LF & '- Data formats' & @LF & '- Markdown')
-	If @error Then
-		_Log_ChilkatExample("! ERROR in _Chilkat_Markdown_ToHtml()")
+	If _Chilkat_IsAtLeastThisVersion('11.2.0', 'StringBuilder.MarkdownToHtml') Then
+		Local $sHtml = _Chilkat_Markdown_ToHtml('# Chilkat.au3' & @LF & @LF & '- Data formats' & @LF & '- Markdown')
+		If @error Then
+			_Log_ChilkatExample('! ERROR in _Chilkat_Markdown_ToHtml(); @error=' & @error & '; @extended=' & @extended)
+		Else
+			_Log_ChilkatExample('> $sHtml:')
+			_Log_ChilkatExample($sHtml)
+		EndIf
 	Else
-		_Log_ChilkatExample("> $sHtml:")
-		_Log_ChilkatExample($sHtml)
+		_Log_ChilkatExample('Markdown example skipped: requires Chilkat 11.2.0 or newer.')
 	EndIf
 EndFunc   ;==>_Example
-
 
 _Chilkat_ShutDown()

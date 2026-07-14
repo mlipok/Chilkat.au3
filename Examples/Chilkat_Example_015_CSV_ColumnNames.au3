@@ -40,7 +40,7 @@ Func _Example_15_CSV_ColumnNames()
 	; Load the $oCSV records from the file:
 	Local $iSuccess = $oCSV.LoadFile(@ScriptDir & "\Example_Files\sample.csv")
 	If ($iSuccess <> 1) Then
-		ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText & @CRLF)
+		_Log_ChilkatExample($__g_oChilkat_GLOBAL.LastErrorText)
 		Return SetError($CHILKAT_ERR_LOADFILE, @extended, $CHILKAT_RET_FAILURE)
 	EndIf
 
@@ -50,12 +50,12 @@ Func _Example_15_CSV_ColumnNames()
 	; Display the column names:
 	For $iCol_idx = 0 To $oCSV.NumColumns - 1
 		$sColName = $oCSV.GetColumnName($iCol_idx)
-		ConsoleWrite($iCol_idx & ": " & $sColName & @CRLF)
+		_Log_ChilkatExample($iCol_idx & ": " & $sColName)
 
 		; The following line demonstrates to to get the column
 		; index given a column name:
 		$iIndex = $oCSV.GetIndex($sColName)
-		ConsoleWrite($sColName & " is at column index " & $iIndex & @CRLF)
+		_Log_ChilkatExample($sColName & " is at column index " & $iIndex)
 	Next
 
 EndFunc   ;==>_Example_15_CSV_ColumnNames

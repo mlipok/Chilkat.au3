@@ -30,7 +30,7 @@ Func _Example_17_CSV_ToArray($sName_RegExpPattern, $sCity_RegExpPattern)
 
 	Local $sURL = 'https://epuap.gov.pl/wps/wcm/connect/61e062b9-d981-4526-9f63-c2569263775a/RESP_2016-10-07.csv?MOD=AJPERES'
 	InetGet($sURL, @ScriptDir & '\Example_Files\ePUAP.csv')
-	ConsoleWrite("- Download completed" & @CRLF)
+	_Log_ChilkatExample("- Download completed")
 
 	Local $oCSV = _Chilkat_CSV_ObjCreate()
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
@@ -41,13 +41,13 @@ Func _Example_17_CSV_ToArray($sName_RegExpPattern, $sCity_RegExpPattern)
 
 	; Load the $oCSV records from the file:
 	Local $sCSVContent = FileRead(@ScriptDir & "\Example_Files\ePUAP.csv")
-	ConsoleWrite("- Load File completed" & @CRLF)
+	_Log_ChilkatExample("- Load File completed")
 	Local $iSuccess = $oCSV.LoadFromString($sCSVContent)
 	If ($iSuccess <> 1) Then
-		ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText & @CRLF)
+		_Log_ChilkatExample($__g_oChilkat_GLOBAL.LastErrorText)
 		Return SetError($CHILKAT_ERR_LOADFILE, @extended, $CHILKAT_RET_FAILURE)
 	EndIf
-	ConsoleWrite("- LoadFromString completed" & @CRLF)
+	_Log_ChilkatExample("- LoadFromString completed")
 
 	Local $iNumColumns = $oCSV.NumColumns
 	Local $iNumRows = $oCSV.NumRows
@@ -76,12 +76,12 @@ Func _Example_17_CSV_ToArray($sName_RegExpPattern, $sCity_RegExpPattern)
 	; strip array size to Number of founds rows
 	ReDim $aResult[$iResult_RowCount][$iNumColumns]
 
-	ConsoleWrite("! $iNumRows = " & $iNumRows & @CRLF)
-	ConsoleWrite("! $iNumColumns = " & $iNumColumns & @CRLF)
-	ConsoleWrite("! $iResult_RowCount = " & $iResult_RowCount & @CRLF)
-	ConsoleWrite("! $iNumColumns = " & $iNumColumns & @CRLF)
+	_Log_ChilkatExample("! $iNumRows = " & $iNumRows)
+	_Log_ChilkatExample("! $iNumColumns = " & $iNumColumns)
+	_Log_ChilkatExample("! $iResult_RowCount = " & $iResult_RowCount)
+	_Log_ChilkatExample("! $iNumColumns = " & $iNumColumns)
 
-	ConsoleWrite("- Parsing completed" & @CRLF)
+	_Log_ChilkatExample("- Parsing completed")
 
 	_ArrayDisplay($aResult, '$aResult')
 

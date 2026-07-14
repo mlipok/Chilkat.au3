@@ -41,7 +41,7 @@ Func _Example_19b_CSV_CreateFile()
 
 	;  Save the CSV to a file:
 	Local $bSuccess = $oCSV.SaveFile("_Example_19b_CSV_CreateFile_Result.csv")
-	If Not $bSuccess Then ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText)
+	If Not $bSuccess Then _Log_ChilkatExample($__g_oChilkat_GLOBAL.LastErrorText)
 
 EndFunc   ;==>_Example_19b_CSV_CreateFile
 

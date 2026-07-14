@@ -32,11 +32,11 @@ Func _Example_25_Simple_IMAP_List_MailBoxes()
 	; we will use __Chilkat_LogOnError instead following reporting model
 	; Set outFile = fso.CreateTextFile("output.txt", True)
 
-	ConsoleWrite(@ScriptLineNumber & @CRLF)
+	_Log_ChilkatExample(@ScriptLineNumber)
 	Local $oImap = _Chilkat_Imap_ObjCreate()
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
-	ConsoleWrite(@ScriptLineNumber & @CRLF)
+	_Log_ChilkatExample(@ScriptLineNumber)
 	Local $sMyEmail = IniRead(@ScriptDir & '\!!!_MY_SECRET_DATA\MyChilkatConfig.ini', 'IMAP', 'MyEmail', '')
 	If $sMyEmail = '' Then $sMyEmail = "youremail@domain.com"
 
@@ -51,13 +51,13 @@ Func _Example_25_Simple_IMAP_List_MailBoxes()
 
 	Local $iImapSsl = IniRead(@ScriptDir & '\!!!_MY_SECRET_DATA\MyChilkatConfig.ini', 'IMAP', 'ImapSsl', '')
 	If $iImapSsl = '' Then $iImapSsl = "1"
-	ConsoleWrite("! " & $iImapSsl & @CRLF)
+	_Log_ChilkatExample("! " & $iImapSsl)
 
 	Local $iImapPort = IniRead(@ScriptDir & '\!!!_MY_SECRET_DATA\MyChilkatConfig.ini', 'IMAP', 'ImapPort', '')
 	If $iImapPort = '' Then $iImapPort = "143"
-	ConsoleWrite("! " & $iImapPort & @CRLF)
+	_Log_ChilkatExample("! " & $iImapPort)
 
-	ConsoleWrite(@ScriptLineNumber & @CRLF)
+	_Log_ChilkatExample(@ScriptLineNumber)
 	;  Any string argument automatically begins the 30-day trial.
 
 	#CS
@@ -80,15 +80,15 @@ Func _Example_25_Simple_IMAP_List_MailBoxes()
 		Return ; @TODO - refactoring
 	EndIf
 
-	ConsoleWrite(@ScriptLineNumber & @CRLF)
+	_Log_ChilkatExample(@ScriptLineNumber)
 	;  Login using login/password
 	$oImap.Login($sImapUserName, $sImapPassword)
 	If ($oImap.LastMethodSuccess <> 1) Then
-		ConsoleWrite(@ScriptLineNumber & ' LOGIN: ' & $oImap.LastErrorText & @CRLF)
+		_Log_ChilkatExample(@ScriptLineNumber & ' LOGIN: ' & $oImap.LastErrorText)
 		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
 		Return ; @TODO - refactoring
 	EndIf
-	ConsoleWrite(@ScriptLineNumber & ' LOGIN: ' & $oImap.LastErrorText & @CRLF)
+	_Log_ChilkatExample(@ScriptLineNumber & ' LOGIN: ' & $oImap.LastErrorText)
 
 	;  The ListMailboxes method returns a Mailboxes object that contains the collection of mailboxes.
 	;  It accepts two arguments: a refName and a wildcardedMailbox.
@@ -105,23 +105,23 @@ Func _Example_25_Simple_IMAP_List_MailBoxes()
 ;~ 		__Chilkat_LogOnError($__g_oChilkat_GLOBAL.LastErrorText)
 ;~ 		Return ; @TODO - refactoring
 ;~ 	EndIf
-	ConsoleWrite(@ScriptLineNumber & ' ' & $oImap.LastErrorText & @CRLF)
-	ConsoleWrite('! ' & IsObj($oMBoxes) & @CRLF)
-	ConsoleWrite('! ' & ObjName($oMBoxes, $OBJ_STRING) & @CRLF)
-	ConsoleWrite('! ' & VarGetType($oMBoxes) & @CRLF)
+	_Log_ChilkatExample(@ScriptLineNumber & ' ' & $oImap.LastErrorText)
+	_Log_ChilkatExample('! ' & IsObj($oMBoxes))
+	_Log_ChilkatExample('! ' & ObjName($oMBoxes, $OBJ_STRING))
+	_Log_ChilkatExample('! ' & VarGetType($oMBoxes))
 
-	ConsoleWrite('! Count MBoxes = ' & $oMBoxes.Count & @CRLF)
+	_Log_ChilkatExample('! Count MBoxes = ' & $oMBoxes.Count)
 	__Chilkat_LogOnError("Get ListMailboxes")
 	__Chilkat_LogOnError("Mailboxes has been listed : " & $oMBoxes.Count)
-	ConsoleWrite(@ScriptLineNumber & @CRLF)
-	ConsoleWrite("Mailboxes has been listed : " & $oMBoxes.Count & @CRLF)
+	_Log_ChilkatExample(@ScriptLineNumber)
+	_Log_ChilkatExample("Mailboxes has been listed : " & $oMBoxes.Count)
 
 	; https://www.example-code.com/csharp/imap_find_sent_mailbox.asp
 
 	For $iMailbox_idx = 0 To $oMBoxes.Count - 1
-;~ 		ConsoleWrite('! ' & $oMBoxes.GetName($iMailbox_idx) & @CRLF)
-;~         ConsoleWrite(">> mboxes.GetNthFlag(i,0)=" & $oMBoxes.GetNthFlag($iMailbox_idx, 0)& @CRLF)
-;~         ConsoleWrite(">> mboxes.GetNthFlag(i,1)=" & $oMBoxes.GetNthFlag($iMailbox_idx, 1)& @CRLF)
+;~ 		_Log_ChilkatExample('! ' & $oMBoxes.GetName($iMailbox_idx))
+;~         _Log_ChilkatExample(">> mboxes.GetNthFlag(i,0)=" & $oMBoxes.GetNthFlag($iMailbox_idx, 0))
+;~         _Log_ChilkatExample(">> mboxes.GetNthFlag(i,1)=" & $oMBoxes.GetNthFlag($iMailbox_idx, 1))
 
 		If $oMBoxes.GetName($iMailbox_idx) = "Sent" Then
 			__Chilkat_LogOnError(@ScriptLineNumber & ' ' & $oMBoxes.GetName($iMailbox_idx))

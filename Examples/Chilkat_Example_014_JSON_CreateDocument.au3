@@ -31,13 +31,13 @@ Func _Example_14_JsonObject_CreateDocument()
 
 	Local $iSuccess
 	$iSuccess = $oJSON.AddStringAt(-1, "Title", "Pan's Labyrinth")
-	ConsoleWrite("- $iSuccess=" & $iSuccess & @CRLF)
+	_Log_ChilkatExample("- $iSuccess=" & $iSuccess)
 	$iSuccess = $oJSON.AddStringAt(-1, "Director", "Guillermo del Toro")
-	ConsoleWrite("- $iSuccess=" & $iSuccess & @CRLF)
+	_Log_ChilkatExample("- $iSuccess=" & $iSuccess)
 	$iSuccess = $oJSON.AddStringAt(-1, "Original_Title", "El laberinto del fauno")
-	ConsoleWrite("- $iSuccess=" & $iSuccess & @CRLF)
+	_Log_ChilkatExample("- $iSuccess=" & $iSuccess)
 	$iSuccess = $oJSON.AddIntAt(-1, "Year_Released", 2006)
-	ConsoleWrite("- $iSuccess=" & $iSuccess & @CRLF)
+	_Log_ChilkatExample("- $iSuccess=" & $iSuccess)
 	$oJSON.EmitCompact = 0
-	ConsoleWrite($oJSON.Emit() & @CRLF)
+	_Log_ChilkatExample($oJSON.Emit())
 EndFunc   ;==>_Example_14_JsonObject_CreateDocument

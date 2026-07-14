@@ -39,7 +39,7 @@ Func _Example_16_CSV_ToArray()
 	; Load the $oCSV records from the file:
 	Local $iSuccess = $oCSV.LoadFile(@ScriptDir & "\Example_Files\sample.csv")
 	If ($iSuccess <> 1) Then
-		ConsoleWrite($__g_oChilkat_GLOBAL.LastErrorText & @CRLF)
+		_Log_ChilkatExample($__g_oChilkat_GLOBAL.LastErrorText)
 		Return SetError($CHILKAT_ERR_LOADFILE, @extended, $CHILKAT_RET_FAILURE)
 	EndIf
 

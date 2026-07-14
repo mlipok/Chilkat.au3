@@ -47,6 +47,6 @@ Func _Example_26_ZIP()
 
 	Local $dExtracted = _Chilkat_ZIP_Binary_GetEntry($dZipBinary, 'docs/readme.txt')
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
-	ConsoleWrite('Extracted from binary ZIP: ' & BinaryToString($dExtracted, $SB_UTF8) & @CRLF)
+	_Log_ChilkatExample('Extracted from binary ZIP: ' & BinaryToString($dExtracted, $SB_UTF8))
 
 EndFunc   ;==>_Example_26_ZIP

@@ -41,10 +41,8 @@ Func _Example_Init()
 	Return $__g_oChilkat_GLOBAL
 EndFunc   ;==>_Example_Init
 
-Func _Log_ChilkatExample($sData, $iErr = @error, $iExt = @extended)
-	If $iErr Then $sData &= " ERR="& $iErr & " EXT=" & $iExt
-	ConsoleWrite($sData & @CRLF)
-	Return SetError($iErr, $iExt, '')
+Func _Log_ChilkatExample($sData)
+	ConsoleWrite('>+ ' & $sData & @CRLF)
 EndFunc   ;==>_Log_ChilkatExample
 
 Func _File_ReadHexData($sFileFullPath, $iFileOpenMode = $FO_READ)

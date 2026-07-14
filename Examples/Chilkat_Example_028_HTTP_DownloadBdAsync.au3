@@ -30,23 +30,23 @@ Func _Example_28_HTTP_DownloadBdAsync()
 
 	Local $oHttp = _Chilkat_HTTP_ObjCreate()
 	__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-	ConsoleWrite(@ScriptLineNumber & @CRLF & $oHttp.LastErrorText)
+	_Log_ChilkatExample(@ScriptLineNumber & @CRLF & $oHttp.LastErrorText)
 
 	Local $oBinData = _Chilkat_BINDATA_ObjCreate()
 	__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-	ConsoleWrite(@ScriptLineNumber & @CRLF & $oBinData.LastErrorText)
+	_Log_ChilkatExample(@ScriptLineNumber & @CRLF & $oBinData.LastErrorText)
 
 	Local $hTimer = TimerInit() ; Begin the timer and store the handle in a variable.
 ;~ 	Local $oTask = $oHttp.DownloadBdAsync("https://www.autoitscript.com/cgi-bin/getfile.pl?autoit3/autoit-v3-setup.exe", $oBinData)
 ;~ 	Local $oTask = $oHttp.DownloadBdAsync("https://upgrades.michaelo.pl/ML_Programy/KK_ePUAP_2020-05-07_v2.exe", $oBinData)
 ;~ 	Local $oTask = $oHttp.DownloadBdAsync("https://upgrades.michaelo.pl/ML_Downloader/KK_Upgrades/2018-08-03__36_41_Small.zip", $oBinData)
-	ConsoleWrite('! 11111' & @CRLF)
+	_Log_ChilkatExample('! 11111')
 ;~ 	Local $oTaskMy = _Chilkat_TASK_ObjCreate()
 ;~ 	_Chilkat_ObjName_FlagsValue($oTaskMy)
 
 	Local $oTask = $oHttp.DownloadBdAsync("https://upgrades.michaelo.pl/ByteScout_OCRData/pol_fast.traineddata", $oBinData)
 	_Chilkat_ObjName_FlagsValue($oTask)
-	ConsoleWrite(@ScriptLineNumber & @CRLF & $oHttp.LastErrorText)
+	_Log_ChilkatExample(@ScriptLineNumber & @CRLF & $oHttp.LastErrorText)
 
 	Local $iSuccess = $oTask.Run()
 	If $iSuccess <> 1 Then
@@ -57,7 +57,7 @@ Func _Example_28_HTTP_DownloadBdAsync()
 
 			If ($oTask.PercentDone <> $iCurPctDone) Then
 				$iCurPctDone = $oTask.PercentDone
-				ConsoleWrite("+ Downloading progress = " & $iCurPctDone & '%' & ' Status = ' & $oTask.Status & @CRLF)
+				_Log_ChilkatExample("+ Downloading progress = " & $iCurPctDone & '%' & ' Status = ' & $oTask.Status)
 			EndIf
 
 			$oTask.SleepMs(100)

@@ -31,22 +31,22 @@ Func _Example_23_ATOM()
 	Local $oATOM = _Chilkat_ATOM_ObjCreate()
 	$oATOM.DownloadAtom('https://status.teamviewer.com/history.atom')
 	Local $iATOM_NumEntries = $oATOM.NumEntries
-	ConsoleWrite("> $iATOM_NumEntries = " & $iATOM_NumEntries & @CRLF)
+	_Log_ChilkatExample("> $iATOM_NumEntries = " & $iATOM_NumEntries)
 	ClipPut($oATOM.ToXmlString())
 	MsgBox($MB_OK + $MB_TOPMOST + $MB_ICONINFORMATION, '$oATOM.ToXmlString()', $oATOM.ToXmlString())
 
-	ConsoleWrite(@CRLF)
+	_Log_ChilkatExample(@CRLF)
 	Local $oATOMEntry = Null
 	For $iEntry_idx = 0 To $iATOM_NumEntries - 1
 		$oATOMEntry = $oATOM.GetEntry($iEntry_idx)
-;~ 		ConsoleWrite($oATOMEntry.GetElementCount('id') & @CRLF)
-		ConsoleWrite("+ ID: " & $oATOMEntry.GetElement('id', 0) & @CRLF)
-		ConsoleWrite("+ Published: " & $oATOMEntry.GetElement('published', 0) & @CRLF)
-		ConsoleWrite("+ Updated: " & $oATOMEntry.GetElement('updated', 0) & @CRLF)
-		ConsoleWrite("+ Title: " & $oATOMEntry.GetElement('title', 0) & @CRLF)
-		ConsoleWrite("> Content Type: " & $oATOMEntry.GetElementAttr('content', 0, 'type') & @CRLF)
-		ConsoleWrite("> Content: " & $oATOMEntry.GetElement('content', 0) & @CRLF)
-		ConsoleWrite(@CRLF)
+;~ 		_Log_ChilkatExample($oATOMEntry.GetElementCount('id'))
+		_Log_ChilkatExample("+ ID: " & $oATOMEntry.GetElement('id', 0))
+		_Log_ChilkatExample("+ Published: " & $oATOMEntry.GetElement('published', 0))
+		_Log_ChilkatExample("+ Updated: " & $oATOMEntry.GetElement('updated', 0))
+		_Log_ChilkatExample("+ Title: " & $oATOMEntry.GetElement('title', 0))
+		_Log_ChilkatExample("> Content Type: " & $oATOMEntry.GetElementAttr('content', 0, 'type'))
+		_Log_ChilkatExample("> Content: " & $oATOMEntry.GetElement('content', 0))
+		_Log_ChilkatExample(@CRLF)
 	Next
 
 EndFunc   ;==>_Example_23_ATOM

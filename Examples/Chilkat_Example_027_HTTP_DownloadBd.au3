@@ -30,7 +30,7 @@ Func _Example_27_HTTP_DownloadBd()
 
 	Local $oHttp = _Chilkat_HTTP_ObjCreate()
 	__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)
-	ConsoleWrite(@ScriptLineNumber & @CRLF & $oHttp.LastErrorText)
+	_Log_ChilkatExample(@ScriptLineNumber & @CRLF & $oHttp.LastErrorText)
 
 	Local $oBinData = _Chilkat_BINDATA_ObjCreate()
 	__Chilkat_LogOnError(@ScriptLineNumber & @CRLF & $__g_oChilkat_GLOBAL.LastErrorText)

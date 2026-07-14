@@ -22,7 +22,7 @@ Local $sXml = _Chilkat_S3_ListBucketObjects_AsXml($sBucketPath, $sAccessKey, $sS
 If @error Then
 	MsgBox($MB_ICONERROR, 'Cloud storage S3', 'Listing failed. @error=' & @error & ', @extended=' & @extended)
 Else
-	ConsoleWrite($sXml & @CRLF)
+	_Log_ChilkatExample($sXml)
 EndIf
 
 _Chilkat_ShutDown()

@@ -26,7 +26,7 @@ Func _Example_44_CertStore_FindCert()
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
 	If $oStore.OpenSmartcard('') = 0 Then
-		ConsoleWrite($oStore.LastErrorText & @CRLF)
+		_Log_ChilkatExample($oStore.LastErrorText)
 		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
 	EndIf
 
