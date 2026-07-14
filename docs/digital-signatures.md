@@ -3,56 +3,43 @@
 <!-- AI_ASSISTED_DOCUMENTATION_NOTICE -->
 > **AI-assisted documentation:** This document is developed with assistance from ChatGPT AI, reviewed by mLipok, and based on Chilkat.au3 version/tag `v0.3.0 BETA - Work in progress`.
 
-Digital-signature helpers are primarily located in `Chilkat_DigitalSignatures.au3`.
+`Chilkat_DigitalSignatures.au3` contains digital-signature formats, PDF signing, XML signing, and token-backed signing workflows.
 
-## Supported areas
+## Covered categories
 
-The module includes workflows related to:
+- CAdES
+- Cloud Signature Consortium workflows
+- JWE
+- JWS
+- JWT
+- PDF signatures and PAdES
+- XAdES
+- XML Digital Signatures
 
-- PDF signatures and PAdES;
-- XAdES;
-- XML digital signatures;
-- CAdES-related operations;
-- code signing;
-- JWS, JWE, and JWT;
-- local certificates, smart cards, and PKCS11-backed keys;
-- cloud-signing and Cloud Signature Consortium components where supported by Chilkat.
+## PAdES
 
-## PDF and PAdES
+File and binary-data helpers support signing with:
 
-The UDF contains helpers for signing PDF files and binary PDF data with certificates obtained from files, smart cards, or PKCS11 modules. Aggregate verification helpers expose signature and certificate-related details.
+- a supplied Chilkat `Cert` object;
+- a selected smart-card certificate;
+- a certificate/private key accessed through PKCS11.
 
-For binary workflows, use Chilkat `BinData` conversion helpers rather than unnecessary temporary files.
+Verification helpers return booleans, Chilkat JSON, or selected AutoIt-array information depending on the function.
 
-## XAdES
+## XAdES and XML signatures
 
-XAdES helpers support external-file and binary-reference workflows. Confirm the intended profile, reference URI, digest method, canonicalization settings, and certificate source before treating a generated signature as interoperable.
+The module includes external-file and binary-reference workflows as well as verification helpers.
 
 ## Certificate selection
 
-Smart-card signing must use explicit certificate selection. Do not silently use the first certificate returned by a card, store, or token. Verify validity dates and private-key availability before prompting for a PIN.
+Smart-card signing should use the interactive valid-certificate workflow described in [Certificates, PKI, and smart cards](certificates-pki-and-smart-cards.md), rather than relying on arbitrary certificate selection.
 
-## Verification boundaries
+## Security
 
-A cryptographically valid signature does not automatically establish:
+Signature verification is not equivalent to a complete trust decision. Applications may also need certificate-chain validation, revocation checks, policy evaluation, trusted timestamps, and business-rule validation.
 
-- certificate-chain trust;
-- revocation status;
-- qualified-signature status;
-- timestamp trust;
-- signer authorization;
-- document-policy compliance.
+## PAdES with TSA timestamp
 
-Applications must define these checks according to their legal and operational requirements.
+`_Chilkat_PDF_PAdES_CreateTsaOptions()` creates LTV/OCSP and RFC 3161 timestamp-token options. File and binary signing variants are available for direct certificates, smart cards and PKCS11. Verification wrappers return the Chilkat JSON produced by PDF signature verification.
 
-## Diagnostics
-
-On failure, preserve:
-
-- UDF `@error` and `@extended`;
-- the Chilkat object's `LastErrorText`;
-- the selected certificate summary;
-- the signing profile and input type;
-- PKCS11 or smart-card middleware information.
-
-Never include PINs, private keys, passwords, or sensitive document contents in logs.
+Authenticode wrappers support signing, verification and signature removal for EXE and DLL files. See [Code signing, PAdES TSA timestamps, and SCard](codesign-pades-tsa-scard.md).
