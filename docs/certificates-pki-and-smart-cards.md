@@ -3,51 +3,41 @@
 <!-- AI_ASSISTED_DOCUMENTATION_NOTICE -->
 > **AI-assisted documentation:** This document is developed with assistance from ChatGPT AI, reviewed by mLipok, and based on Chilkat.au3 version/tag `v0.3.0 BETA - Work in progress`.
 
-## Scope
+`Chilkat_Certificates_PKI.au3` contains certificate, certificate-store, key-container, PKCS11, PC/SC, smart-card, and code-signing object support.
 
-Certificate and PKI helpers are primarily located in `Chilkat_Certificates_PKI.au3`.
+## Safe smart-card selection
 
-The module covers:
+The preferred signing workflow:
 
-- X.509 certificates and certificate stores;
-- PEM and PFX/P12 containers;
-- CSR generation;
-- Java KeyStore;
-- PKCS11 modules and tokens;
-- PC/SC readers through `SCard`;
-- smart-card and minidriver workflows.
+1. Opens the smart-card certificate store.
+2. Enumerates certificates into a native AutoIt array.
+3. Filters for certificates with private-key access.
+4. Rejects expired and not-yet-valid certificates by default.
+5. Displays certificate identity, issuer, validity, serial number, and full SHA-1 fingerprint.
+6. Lets the user choose a certificate.
+7. Resolves the certificate by the complete normalized fingerprint.
+8. Requests the PIN only after selection.
 
-RSA key generation and private/public key export helpers are located in `Chilkat_Cryptography.au3`.
+The legacy `Cert.LoadFromSmartcard()` path may arbitrarily select a certificate when several are present. It remains available for compatibility but is not the default safe path.
 
-Detailed documentation for RSA, PEM, private keys, public keys, CSR, certificate export, and examples 038/039 is available in [PEM, keys, CSR, and certificates](pem-key-csr-cert.md).
+## PKCS11
 
-## Smart-card discovery
+The module supports slot/token discovery, session opening and closing, certificate enumeration, private-key filtering, and certificate selection for signing workflows.
 
-The UDF provides array-returning helpers for PC/SC readers, PKCS11 slots/tokens, and certificates. Prefer these helpers over directly selecting the first returned object.
+## PC/SC
 
-A signing workflow should:
+`_Chilkat_SCARD_ListReaders_AsArray()` lists available PC/SC readers and returns a native AutoIt array.
 
-1. Enumerate available certificates.
-2. Reject expired or not-yet-valid certificates.
-3. Require access to a private key.
-4. Show certificate metadata to the user.
-5. Let the user select the certificate explicitly.
-6. Identify the selected certificate consistently, for example by its full SHA-1 fingerprint.
-7. Request the PIN only after the certificate is selected.
-8. Reuse the same selected `Chilkat.Cert` object for signing.
+## Qualified-certificate metadata
 
-The SHA-1 fingerprint in this workflow is an identifier, not a trust or cryptographic-strength assessment.
+Policy-OID helpers recognize known EU qualified certificate policies. This is metadata recognition only and is not a substitute for full trust-list, chain, and revocation validation.
 
-## PKCS11 module path
+See [PEM, keys, CSR, and certificates](pem-key-csr-cert.md) for key generation and PEM/CSR helpers.
 
-PKCS11 workflows require the vendor's PKCS11 library path. The correct DLL depends on the token or smart-card middleware installed on the system. Do not assume one universal filename.
+## CertStore FindCert and SmartCardFailReason
 
-The PKCS11 DLL architecture must match the AutoIt process architecture.
+`_Chilkat_CertStore_FindCert()` supports CN, issuer CN, serial number, SHA-1 fingerprint, subject DN and issuer DN. It uses native `CertStore.FindCert()` on Chilkat 10.1.2+ and the existing valid-certificate array workflow as a compatibility and validation path.
 
-## Security recommendations
+Legacy `Cert.LoadFromSmartcard()` failures expose `SmartCardFailReason` in `@extended` on Chilkat 10.1.0+. Use `_Chilkat_Cert_SmartCardFailReasonToText()` to convert the code to a readable message.
 
-- Never log PINs or private-key passwords.
-- Avoid displaying raw private-key source unless explicitly required.
-- Store generated private keys in a protected directory.
-- Validate certificate purpose, validity, issuer, and policy outside simple presence checks.
-- Treat successful key access as distinct from certificate trust validation.
+The expanded SCard wrapper set supports context management, reader connection, status checks, reconnect/disconnect, inserted-card discovery and context release. See [Code signing, PAdES TSA timestamps, and SCard](codesign-pades-tsa-scard.md).
