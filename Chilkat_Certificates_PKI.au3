@@ -510,6 +510,56 @@ Func _Chilkat_Cert_IsQualified_ByPolicy(ByRef $oCert, $bRequireQSCD = 0)
 EndFunc   ;==>_Chilkat_Cert_IsQualified_ByPolicy
 
 ; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_Cert_SmartCardFailReasonToText
+; Description ...: Converts a Cert.SmartCardFailReason code to a readable description.
+; Syntax ........: _Chilkat_Cert_SmartCardFailReasonToText($iReason)
+; Parameters ....: $iReason               - [in] SmartCardFailReason numeric value.
+; Return values .: Readable reason string.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Chilkat introduced Cert.SmartCardFailReason in version 10.1.0.
+; Related .......: _Chilkat_Cert_GetSmartCardFailReason, _Chilkat_Cert_LoadFromSmartCard, _Chilkat_Cert_LoadFromSmartCardEx
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCertRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_Cert_SmartCardFailReasonToText($iReason)
+	If Not IsInt($iReason) Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERTYPE, $CHILKAT_EXT_PARAM1, '')
+	Switch $iReason
+		Case 0
+			Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, 'No failure.')
+		Case 1
+			Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, 'No smart card or USB token was detected.')
+		Case 2
+			Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, 'The supplied smart-card PIN was rejected.')
+		Case 3
+			Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, 'A certificate matching the requested criteria was not found.')
+		Case 99
+			Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, 'An undefined smart-card failure occurred. Check LastErrorText.')
+	EndSwitch
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, 'Unknown SmartCardFailReason value: ' & $iReason)
+EndFunc   ;==>_Chilkat_Cert_SmartCardFailReasonToText
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_Cert_GetSmartCardFailReason
+; Description ...: Returns Cert.SmartCardFailReason after a LoadFromSmartcard call.
+; Syntax ........: _Chilkat_Cert_GetSmartCardFailReason(ByRef $oCert)
+; Parameters ....: $oCert                 - [in/out] Chilkat Cert object.
+; Return values .: Success: SmartCardFailReason numeric value. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Requires Chilkat 10.1.0 or newer.
+; Related .......: _Chilkat_Cert_SmartCardFailReasonToText
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCertRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_Cert_GetSmartCardFailReason(ByRef $oCert)
+	If Not IsObj($oCert) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If Not _Chilkat_IsAtLeastThisVersion('10.1.0', 'Cert.SmartCardFailReason') Then _
+			Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oCert.SmartCardFailReason)
+EndFunc   ;==>_Chilkat_Cert_GetSmartCardFailReason
+
+; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Cert_LoadFromSmartCard
 ; Description ...: Loads a certificate from a smart card by using an optional CSP name.
 ; Syntax ........: _Chilkat_Cert_LoadFromSmartCard($s_CspName = '')
@@ -533,10 +583,12 @@ Func _Chilkat_Cert_LoadFromSmartCard($s_CspName = '')
 	Local $oCert = _Chilkat_Cert_ObjCreate()
 	Local $iSuccess = $oCert.LoadFromSmartcard($s_CspName)
 	If $iSuccess = 0 Then
-		__Chilkat_ConsoleWrite_IFNC($oCert.LastErrorText)
-		Return SetError(1)
+		Local $iSmartCardFailReason = 99
+		If _Chilkat_IsAtLeastThisVersion('10.1.0', 'Cert.SmartCardFailReason') Then $iSmartCardFailReason = $oCert.SmartCardFailReason
+		__Chilkat_LogOnError('_Chilkat_Cert_LoadFromSmartCard() Cert.LoadFromSmartcard()', $oCert, $CHILKAT_ERR_FAILURE, $iSmartCardFailReason)
+		Return SetError($CHILKAT_ERR_FAILURE, $iSmartCardFailReason, $CHILKAT_RET_FAILURE)
 	EndIf
-	Return $oCert
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oCert)
 EndFunc   ;==>_Chilkat_Cert_LoadFromSmartCard
 
 ; #FUNCTION# ====================================================================================================================
@@ -572,8 +624,10 @@ Func _Chilkat_Cert_LoadFromSmartCardEx($s_CspName = '', $s_PIN = Default, $bNoDi
 
 	Local $iSuccess = $oCert.LoadFromSmartcard($s_CspName)
 	If $iSuccess = 0 Then
-		__Chilkat_LogOnError('_Chilkat_Cert_LoadFromSmartCardEx() Cert.LoadFromSmartcard()', $oCert, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
-		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+		Local $iSmartCardFailReason = 99
+		If _Chilkat_IsAtLeastThisVersion('10.1.0', 'Cert.SmartCardFailReason') Then $iSmartCardFailReason = $oCert.SmartCardFailReason
+		__Chilkat_LogOnError('_Chilkat_Cert_LoadFromSmartCardEx() Cert.LoadFromSmartcard()', $oCert, $CHILKAT_ERR_FAILURE, $iSmartCardFailReason)
+		Return SetError($CHILKAT_ERR_FAILURE, $iSmartCardFailReason, $CHILKAT_RET_FAILURE)
 	EndIf
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oCert)
 EndFunc   ;==>_Chilkat_Cert_LoadFromSmartCardEx
@@ -729,6 +783,89 @@ Func _Chilkat_CertStore_ListValidCertificates_AsArray(ByRef $oCertStore, $bOnlyW
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $aCerts)
 EndFunc   ;==>_Chilkat_CertStore_ListValidCertificates_AsArray
 
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_CertStore_FindCert
+; Description ...: Finds a currently valid certificate in an open CertStore by common certificate criteria.
+; Syntax ........: _Chilkat_CertStore_FindCert(ByRef $oCertStore, $sCriteria, $sValue, $bOnlyWithPrivateKey = 1)
+; Parameters ....: $oCertStore            - [in/out] open Chilkat CertStore object.
+;                  $sCriteria             - [in] CN, issuerCN, serial, sha1, subjectDN or issuerDN.
+;                  $sValue                - [in] value to find.
+;                  $bOnlyWithPrivateKey   - [in] when 1, return only certificates having an accessible private key. Default = 1.
+; Return values .: Success: matching Chilkat Cert object. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Uses CertStore.FindCert() on Chilkat 10.1.2+ and validates/falls back through _Chilkat_CertStore_ListValidCertificates_AsArray().
+; Related .......: _Chilkat_CertStore_ListValidCertificates_AsArray, __Chilkat_CertStore_GetCertByFingerprint
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCertStoreRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_CertStore_FindCert(ByRef $oCertStore, $sCriteria, $sValue, $bOnlyWithPrivateKey = 1)
+	Local $oErrorHandler = ObjEvent('AutoIt.Error', __Internal_COM_ERROR_HANDLER__for_Chilkat)
+	#forceref $oErrorHandler
+
+	If Not IsObj($oCertStore) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If Not IsString($sCriteria) Or $sCriteria = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
+	If Not IsString($sValue) Or $sValue = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM3, $CHILKAT_RET_FAILURE)
+
+	Local $sKey = StringLower(StringStripWS($sCriteria, $STR_STRIPALL))
+	Local $sNativeKey = ''
+	Local $iColumn = -1
+	Switch $sKey
+		Case 'cn', 'subjectcn'
+			$sNativeKey = 'CN'
+			$iColumn = $CHILKAT_CERT_LIST_COL_SUBJECT_CN
+		Case 'issuercn'
+			$sNativeKey = 'issuerCN'
+			$iColumn = $CHILKAT_CERT_LIST_COL_ISSUER_CN
+		Case 'serial', 'serialnumber'
+			$sNativeKey = 'serial'
+			$iColumn = $CHILKAT_CERT_LIST_COL_SERIAL
+		Case 'sha1', 'thumbprint', 'fingerprint'
+			$sNativeKey = 'sha1'
+			$iColumn = $CHILKAT_CERT_LIST_COL_SHA1
+		Case 'subjectdn'
+			$sNativeKey = 'subjectDN'
+			$iColumn = $CHILKAT_CERT_LIST_COL_SUBJECT_DN
+		Case 'issuerdn'
+			$sNativeKey = 'issuerDN'
+			$iColumn = $CHILKAT_CERT_LIST_COL_ISSUER_DN
+		Case Else
+			Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
+	EndSwitch
+
+	If _Chilkat_IsAtLeastThisVersion('10.1.2', 'CertStore.FindCert') Then
+		Local $oCriteria = _Chilkat_JSON_ObjCreate()
+		If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+		$oCriteria.UpdateString($sNativeKey, $sValue)
+
+		Local $oNativeCert = _Chilkat_Cert_ObjCreate()
+		If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+		If $oCertStore.FindCert($oCriteria, $oNativeCert) = 1 Then
+			If (Not $bOnlyWithPrivateKey Or $oNativeCert.HasPrivateKey() = 1) And _Chilkat_Cert_IsDateValidNow($oNativeCert) = 1 Then _
+					Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oNativeCert)
+		EndIf
+	EndIf
+
+	Local $aCerts = _Chilkat_CertStore_ListValidCertificates_AsArray($oCertStore, $bOnlyWithPrivateKey)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	If UBound($aCerts, 1) = 0 Then Return SetError($CHILKAT_ERR_NOTFOUND, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	For $i = 0 To UBound($aCerts, 1) - 1
+		Local $sCandidate = String($aCerts[$i][$iColumn])
+		Local $bMatch = 0
+		If $iColumn = $CHILKAT_CERT_LIST_COL_SHA1 Then
+			$bMatch = (__Chilkat_Cert_NormalizeFingerprint($sCandidate) = __Chilkat_Cert_NormalizeFingerprint($sValue))
+		Else
+			$bMatch = (StringCompare($sCandidate, $sValue, 0) = 0)
+		EndIf
+		If $bMatch Then
+			Local $oFoundCert = __Chilkat_CertStore_GetCertByFingerprint($oCertStore, $aCerts[$i][$CHILKAT_CERT_LIST_COL_SHA1])
+			Return SetError(@error, @extended, $oFoundCert)
+		EndIf
+	Next
+
+	Return SetError($CHILKAT_ERR_NOTFOUND, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+EndFunc   ;==>_Chilkat_CertStore_FindCert
+
 #EndRegion ; _Chilkat_CertStore_**
 
 #Region ; _Chilkat_Csp_**
@@ -847,6 +984,153 @@ Func _Chilkat_CodeSign_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_CODESIGN)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_CodeSign_ObjCreate
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_CodeSign_AddSignature
+; Description ...: Adds an Authenticode signature to a Windows EXE or DLL.
+; Syntax ........: _Chilkat_CodeSign_AddSignature($sFileFullPath, ByRef $oCert, $oJsonOptions = Default)
+; Parameters ....: $sFileFullPath         - [in] path to the EXE or DLL to sign.
+;                  $oCert                 - [in/out] Chilkat Cert object with private-key access.
+;                  $oJsonOptions          - [in] optional Chilkat JsonObject containing CodeSign options.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: CodeSign.AddSignature modifies the target file in place.
+; Related .......: _Chilkat_CodeSign_VerifySignature_AsJson, _Chilkat_CodeSign_RemoveSignature
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCodeSignRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_CodeSign_AddSignature($sFileFullPath, ByRef $oCert, $oJsonOptions = Default)
+	If Not FileExists($sFileFullPath) Then Return SetError($CHILKAT_ERR_FILENOTEXIST, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If Not IsObj($oCert) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
+
+	Local $oOptions = 0
+	If $oJsonOptions = Default Then
+		$oOptions = _Chilkat_JSON_ObjCreate()
+		If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	ElseIf Not IsObj($oJsonOptions) Then
+		Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM3, $CHILKAT_RET_FAILURE)
+	Else
+		$oOptions = $oJsonOptions
+	EndIf
+
+	Local $oCodeSign = _Chilkat_CodeSign_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $iSuccess = $oCodeSign.AddSignature($sFileFullPath, $oCert, $oOptions)
+	If $iSuccess = 0 Then
+		__Chilkat_LogOnError('_Chilkat_CodeSign_AddSignature() CodeSign.AddSignature()', $oCodeSign, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
+EndFunc   ;==>_Chilkat_CodeSign_AddSignature
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_CodeSign_VerifySignature_AsJson
+; Description ...: Verifies an Authenticode signature and returns signature information as a Chilkat JsonObject.
+; Syntax ........: _Chilkat_CodeSign_VerifySignature_AsJson($sFileFullPath)
+; Parameters ....: $sFileFullPath         - [in] path to the signed EXE or DLL.
+; Return values .: Success: Chilkat JsonObject. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: A successful return means CodeSign.VerifySignature returned 1.
+; Related .......: _Chilkat_CodeSign_AddSignature
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCodeSignRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_CodeSign_VerifySignature_AsJson($sFileFullPath)
+	If Not FileExists($sFileFullPath) Then Return SetError($CHILKAT_ERR_FILENOTEXIST, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	Local $oCodeSign = _Chilkat_CodeSign_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $oJson = _Chilkat_JSON_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	$oJson.EmitCompact = 0
+	If $oCodeSign.VerifySignature($sFileFullPath, $oJson) = 0 Then
+		__Chilkat_LogOnError('_Chilkat_CodeSign_VerifySignature_AsJson() CodeSign.VerifySignature()', $oCodeSign, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oJson)
+EndFunc   ;==>_Chilkat_CodeSign_VerifySignature_AsJson
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_CodeSign_RemoveSignature
+; Description ...: Removes an Authenticode signature from a Windows EXE or DLL.
+; Syntax ........: _Chilkat_CodeSign_RemoveSignature($sFileFullPath)
+; Parameters ....: $sFileFullPath         - [in] path to the EXE or DLL.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: The target file is modified in place.
+; Related .......: _Chilkat_CodeSign_AddSignature
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCodeSignRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_CodeSign_RemoveSignature($sFileFullPath)
+	If Not FileExists($sFileFullPath) Then Return SetError($CHILKAT_ERR_FILENOTEXIST, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	Local $oCodeSign = _Chilkat_CodeSign_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	If $oCodeSign.RemoveSignature($sFileFullPath) = 0 Then
+		__Chilkat_LogOnError('_Chilkat_CodeSign_RemoveSignature() CodeSign.RemoveSignature()', $oCodeSign, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
+EndFunc   ;==>_Chilkat_CodeSign_RemoveSignature
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_CodeSign_SignFile_BySmartCard
+; Description ...: Authenticode signs an EXE or DLL using a smart-card or USB-token certificate selected by the user.
+; Syntax ........: _Chilkat_CodeSign_SignFile_BySmartCard($sFileFullPath, $sPIN = Default, $sCspName = '', $oJsonOptions = Default, $bNoDialog = Default, $bRejectExpired = 1)
+; Parameters ....: $sFileFullPath         - [in] path to the EXE or DLL.
+;                  $sPIN                  - [in] optional PIN. Default requests the PIN after certificate selection.
+;                  $sCspName              - [in] optional CSP/provider name.
+;                  $oJsonOptions          - [in] optional CodeSign options.
+;                  $bNoDialog             - [in] optional SmartCardNoDialog value.
+;                  $bRejectExpired        - [in] when 1, select only currently valid certificates. Default = 1.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: The file is modified in place.
+; Related .......: _Chilkat_Cert_LoadFromSmartCardEx, _Chilkat_CodeSign_AddSignature
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCodeSignRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_CodeSign_SignFile_BySmartCard($sFileFullPath, $sPin = Default, $sCspName = '', $oJsonOptions = Default, $bNoDialog = Default, $bRejectExpired = 1)
+	Local $oCert = _Chilkat_Cert_LoadFromSmartCardEx($sCspName, $sPin, $bNoDialog, $bRejectExpired, 'Authenticode signing')
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $vResult = _Chilkat_CodeSign_AddSignature($sFileFullPath, $oCert, $oJsonOptions)
+	Return SetError(@error, @extended, $vResult)
+EndFunc   ;==>_Chilkat_CodeSign_SignFile_BySmartCard
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_CodeSign_SignFile_ByPkcs11
+; Description ...: Authenticode signs an EXE or DLL using a certificate/private key from PKCS11.
+; Syntax ........: _Chilkat_CodeSign_SignFile_ByPkcs11($sFileFullPath, $sPkcs11DllFullPath, $sPIN, $iUserType = 1, $oJsonOptions = Default)
+; Parameters ....: $sFileFullPath         - [in] path to the EXE or DLL.
+;                  $sPkcs11DllFullPath    - [in] PKCS11 shared-library path.
+;                  $sPIN                  - [in] PKCS11 user PIN.
+;                  $iUserType             - [in] PKCS11 user type. Default = 1.
+;                  $oJsonOptions          - [in] optional CodeSign options.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Opens a quick PKCS11 session and closes it after signing.
+; Related .......: _Chilkat_PKCS11_OpenSession, _Chilkat_PKCS11_FindCertWithPrivateKey, _Chilkat_CodeSign_AddSignature
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCodeSignRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_CodeSign_SignFile_ByPkcs11($sFileFullPath, $sPkcs11DllFullPath, $sPin, $iUserType = 1, $oJsonOptions = Default)
+	Local $oPkcs11 = _Chilkat_PKCS11_OpenSession($sPkcs11DllFullPath, $sPin, $iUserType)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $oCert = _Chilkat_PKCS11_FindCertWithPrivateKey($oPkcs11)
+	If @error Then
+		Local $iErr = @error, $iExt = @extended
+		_Chilkat_PKCS11_CloseSession($oPkcs11)
+		Return SetError($iErr, $iExt, $CHILKAT_RET_FAILURE)
+	EndIf
+	Local $vResult = _Chilkat_CodeSign_AddSignature($sFileFullPath, $oCert, $oJsonOptions)
+	Local $iReturnError = @error, $iReturnExtended = @extended
+	_Chilkat_PKCS11_CloseSession($oPkcs11)
+	Return SetError($iReturnError, $iReturnExtended, $vResult)
+EndFunc   ;==>_Chilkat_CodeSign_SignFile_ByPkcs11
 
 #EndRegion ; _Chilkat_CodeSign_**
 
@@ -1366,6 +1650,191 @@ Func _Chilkat_SCARD_ListReaders_AsArray($sScope = 'user')
 	$oSCard.ReleaseContext()
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $aReaders)
 EndFunc   ;==>_Chilkat_SCARD_ListReaders_AsArray
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_SCARD_EstablishContext
+; Description ...: Establishes a PC/SC resource-manager context for an SCard object.
+; Syntax ........: _Chilkat_SCARD_EstablishContext(ByRef $oSCard, $sScope = 'user')
+; Parameters ....: $oSCard                - [in/out] Chilkat SCard object.
+;                  $sScope                - [in] user or system. Default = user.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: EstablishContext must be called before reader operations that require a PC/SC context.
+; Related .......: _Chilkat_SCARD_ReleaseContext
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatSCardRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_SCARD_EstablishContext(ByRef $oSCard, $sScope = 'user')
+	If Not IsObj($oSCard) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If $sScope <> 'user' And $sScope <> 'system' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
+	If $oSCard.EstablishContext($sScope) = 0 Then
+		__Chilkat_LogOnError('_Chilkat_SCARD_EstablishContext() SCard.EstablishContext()', $oSCard, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
+EndFunc   ;==>_Chilkat_SCARD_EstablishContext
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_SCARD_GetConnectedReader
+; Description ...: Returns the name of the reader currently connected to an SCard object.
+; Syntax ........: _Chilkat_SCARD_GetConnectedReader(ByRef $oSCard)
+; Parameters ....: $oSCard                - [in/out] Chilkat SCard object.
+; Return values .: Success: reader name or empty string. Failure: empty string and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Wraps the read-only ConnectedReader property.
+; Related .......: _Chilkat_SCARD_Connect, _Chilkat_SCARD_Disconnect
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatSCardRef.html#ConnectedReader
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_SCARD_GetConnectedReader(ByRef $oSCard)
+	If Not IsObj($oSCard) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, '')
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oSCard.ConnectedReader)
+EndFunc   ;==>_Chilkat_SCARD_GetConnectedReader
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_SCARD_Connect
+; Description ...: Connects an SCard object to a smart-card reader.
+; Syntax ........: _Chilkat_SCARD_Connect(ByRef $oSCard, $sReader, $sShareMode = 'shared', $sPreferredProtocol = 'no_preference')
+; Parameters ....: $oSCard                - [in/out] Chilkat SCard object with an established context.
+;                  $sReader               - [in] reader name returned by ListReaders.
+;                  $sShareMode            - [in] shared, exclusive or direct. Default = shared.
+;                  $sPreferredProtocol    - [in] 0, T0, T1, raw or no_preference. Default = no_preference.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: The SCard object remains connected until Disconnect is called.
+; Related .......: _Chilkat_SCARD_Disconnect, _Chilkat_SCARD_Reconnect
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatSCardRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_SCARD_Connect(ByRef $oSCard, $sReader, $sShareMode = 'shared', $sPreferredProtocol = 'no_preference')
+	If Not IsObj($oSCard) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If Not IsString($sReader) Or $sReader = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
+	If $oSCard.Connect($sReader, $sShareMode, $sPreferredProtocol) = 0 Then
+		__Chilkat_LogOnError('_Chilkat_SCARD_Connect() SCard.Connect()', $oSCard, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
+EndFunc   ;==>_Chilkat_SCARD_Connect
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_SCARD_CheckStatus
+; Description ...: Refreshes the status properties of the currently connected reader.
+; Syntax ........: _Chilkat_SCARD_CheckStatus(ByRef $oSCard)
+; Parameters ....: $oSCard                - [in/out] connected Chilkat SCard object.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Updates ReaderStatus, ActiveProtocol and CardAtr.
+; Related .......: _Chilkat_SCARD_GetConnectedReader
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatSCardRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_SCARD_CheckStatus(ByRef $oSCard)
+	If Not IsObj($oSCard) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If $oSCard.CheckStatus() = 0 Then
+		__Chilkat_LogOnError('_Chilkat_SCARD_CheckStatus() SCard.CheckStatus()', $oSCard, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
+EndFunc   ;==>_Chilkat_SCARD_CheckStatus
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_SCARD_Reconnect
+; Description ...: Reestablishes a connection to a previously connected smart-card reader.
+; Syntax ........: _Chilkat_SCARD_Reconnect(ByRef $oSCard, $sShareMode = 'shared', $sPreferredProtocol = 'no_preference', $sAction = 'leave')
+; Parameters ....: $oSCard                - [in/out] Chilkat SCard object.
+;                  $sShareMode            - [in] shared, exclusive or direct.
+;                  $sPreferredProtocol    - [in] 0, T0, T1, raw or no_preference.
+;                  $sAction               - [in] leave, reset, unpower or eject.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Use after SCARD_W_RESET_CARD or when connection state must be renegotiated.
+; Related .......: _Chilkat_SCARD_Connect
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatSCardRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_SCARD_Reconnect(ByRef $oSCard, $sShareMode = 'shared', $sPreferredProtocol = 'no_preference', $sAction = 'leave')
+	If Not IsObj($oSCard) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If $oSCard.Reconnect($sShareMode, $sPreferredProtocol, $sAction) = 0 Then
+		__Chilkat_LogOnError('_Chilkat_SCARD_Reconnect() SCard.Reconnect()', $oSCard, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
+EndFunc   ;==>_Chilkat_SCARD_Reconnect
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_SCARD_Disconnect
+; Description ...: Disconnects an SCard object from its current reader.
+; Syntax ........: _Chilkat_SCARD_Disconnect(ByRef $oSCard, $sDisposition = 'leave')
+; Parameters ....: $oSCard                - [in/out] connected Chilkat SCard object.
+;                  $sDisposition          - [in] leave, reset, unpower or eject. Default = leave.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Call before ReleaseContext.
+; Related .......: _Chilkat_SCARD_ReleaseContext
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatSCardRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_SCARD_Disconnect(ByRef $oSCard, $sDisposition = 'leave')
+	If Not IsObj($oSCard) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If $oSCard.Disconnect($sDisposition) = 0 Then
+		__Chilkat_LogOnError('_Chilkat_SCARD_Disconnect() SCard.Disconnect()', $oSCard, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
+EndFunc   ;==>_Chilkat_SCARD_Disconnect
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_SCARD_FindSmartcards_AsJson
+; Description ...: Returns information about inserted smart cards as a Chilkat JsonObject.
+; Syntax ........: _Chilkat_SCARD_FindSmartcards_AsJson(ByRef $oSCard)
+; Parameters ....: $oSCard                - [in/out] Chilkat SCard object with an established context.
+; Return values .: Success: Chilkat JsonObject. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Wraps SCard.FindSmartcards().
+; Related .......: _Chilkat_SCARD_EstablishContext, _Chilkat_SCARD_ReleaseContext
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatSCardRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_SCARD_FindSmartcards_AsJson(ByRef $oSCard)
+	If Not IsObj($oSCard) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	Local $oJson = _Chilkat_JSON_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	$oJson.EmitCompact = 0
+	If $oSCard.FindSmartcards($oJson) = 0 Then
+		__Chilkat_LogOnError('_Chilkat_SCARD_FindSmartcards_AsJson() SCard.FindSmartcards()', $oSCard, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oJson)
+EndFunc   ;==>_Chilkat_SCARD_FindSmartcards_AsJson
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_SCARD_ReleaseContext
+; Description ...: Releases the PC/SC resource-manager context of an SCard object.
+; Syntax ........: _Chilkat_SCARD_ReleaseContext(ByRef $oSCard)
+; Parameters ....: $oSCard                - [in/out] Chilkat SCard object.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Must be the last PC/SC operation for the object.
+; Related .......: _Chilkat_SCARD_EstablishContext
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatSCardRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_SCARD_ReleaseContext(ByRef $oSCard)
+	If Not IsObj($oSCard) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If $oSCard.ReleaseContext() = 0 Then
+		__Chilkat_LogOnError('_Chilkat_SCARD_ReleaseContext() SCard.ReleaseContext()', $oSCard, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
+EndFunc   ;==>_Chilkat_SCARD_ReleaseContext
 
 #EndRegion ; _Chilkat_SCARD_**
 

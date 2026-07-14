@@ -910,6 +910,212 @@ Func _Chilkat_PDF_VerifySignaturesInFile_AsJson($sPDF_FileFullPath)
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oResult)
 EndFunc   ;==>_Chilkat_PDF_VerifySignaturesInFile_AsJson
 
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_PDF_PAdES_CreateTsaOptions
+; Description ...: Creates PAdES signing options for an LTV-enabled signature with an RFC 3161 TSA timestamp token.
+; Syntax ........: _Chilkat_PDF_PAdES_CreateTsaOptions($sTsaUrl, $sTsaUsername = '', $sTsaPassword = '', $bLtvOcsp = 1, $bRequestTsaCert = 1, $iPage = 1, $sAppearanceX = 'left', $sAppearanceY = 'top', $sFontScale = '10.0', $sLine0 = 'Digitally signed by: cert_cn', $sLine1 = 'current_dt', $sLine2 = 'LTV-enabled signature with TSA timestamp.')
+; Parameters ....: $sTsaUrl               - [in] TSA endpoint URL.
+;                  $sTsaUsername          - [in] optional TSA username.
+;                  $sTsaPassword          - [in] optional TSA password.
+;                  $bLtvOcsp              - [in] enable OCSP-based LTV information. Default = 1.
+;                  $bRequestTsaCert       - [in] request inclusion of the TSA certificate. Default = 1.
+; Return values .: Success: Chilkat JsonObject. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Sets signingCertificateV2, signingTime, ltvOcsp and timestampToken.* options.
+; Related .......: _Chilkat_PDF_SignPAdES_TSA_File_ByCert, _Chilkat_PDF_SignPAdES_TSA_Binary_ByCert
+; Link ..........: https://www.example-code.com/autoit/pdf_sign_with_tsa_timestamp.asp
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_PDF_PAdES_CreateTsaOptions($sTsaUrl, $sTsaUsername = '', $sTsaPassword = '', $bLtvOcsp = 1, $bRequestTsaCert = 1, $iPage = 1, $sAppearanceX = 'left', $sAppearanceY = 'top', $sFontScale = '10.0', $sLine0 = 'Digitally signed by: cert_cn', $sLine1 = 'current_dt', $sLine2 = 'LTV-enabled signature with TSA timestamp.')
+	If Not IsString($sTsaUrl) Or $sTsaUrl = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	Local $oJson = _Chilkat_PDF_PAdES_CreateOptions($iPage, $sAppearanceX, $sAppearanceY, $sFontScale, $sLine0, $sLine1, $sLine2)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	$oJson.UpdateInt('signingCertificateV2', 1)
+	$oJson.UpdateInt('signingTime', 1)
+	$oJson.UpdateBool('ltvOcsp', $bLtvOcsp ? True : False)
+	$oJson.UpdateBool('timestampToken.enabled', True)
+	$oJson.UpdateString('timestampToken.tsaUrl', $sTsaUrl)
+	If $sTsaUsername <> '' Then $oJson.UpdateString('timestampToken.tsaUsername', $sTsaUsername)
+	If $sTsaPassword <> '' Then $oJson.UpdateString('timestampToken.tsaPassword', $sTsaPassword)
+	$oJson.UpdateBool('timestampToken.requestTsaCert', $bRequestTsaCert ? True : False)
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oJson)
+EndFunc   ;==>_Chilkat_PDF_PAdES_CreateTsaOptions
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_PDF_SignPAdES_TSA_File_ByCert
+; Description ...: Signs a PDF file as PAdES with LTV/OCSP data and a TSA timestamp using a Cert object.
+; Syntax ........: _Chilkat_PDF_SignPAdES_TSA_File_ByCert($sInputPath, $sOutputPath, ByRef $oCert, $sTsaUrl, $sTsaUsername = '', $sTsaPassword = '')
+; Parameters ....: $sInputPath            - [in] input PDF path.
+;                  $sOutputPath           - [in] output PDF path.
+;                  $oCert                 - [in/out] signing certificate with private-key access.
+;                  $sTsaUrl               - [in] TSA endpoint URL.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Uses _Chilkat_PDF_PAdES_CreateTsaOptions().
+; Related .......: _Chilkat_PDF_SignPAdES_File_ByCert
+; Link ..........: https://www.example-code.com/autoit/pdf_sign_with_tsa_timestamp.asp
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_PDF_SignPAdES_TSA_File_ByCert($sInputPath, $sOutputPath, ByRef $oCert, $sTsaUrl, $sTsaUsername = '', $sTsaPassword = '')
+	Local $oOptions = _Chilkat_PDF_PAdES_CreateTsaOptions($sTsaUrl, $sTsaUsername, $sTsaPassword)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $vResult = _Chilkat_PDF_SignPAdES_File_ByCert($sInputPath, $sOutputPath, $oCert, $oOptions)
+	Return SetError(@error, @extended, $vResult)
+EndFunc   ;==>_Chilkat_PDF_SignPAdES_TSA_File_ByCert
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_PDF_SignPAdES_TSA_Binary_ByCert
+; Description ...: Signs binary PDF data as PAdES with LTV/OCSP data and a TSA timestamp using a Cert object.
+; Syntax ........: _Chilkat_PDF_SignPAdES_TSA_Binary_ByCert(ByRef $dPdf, ByRef $oCert, $sTsaUrl, $sTsaUsername = '', $sTsaPassword = '')
+; Parameters ....: $dPdf                  - [in/out] input PDF bytes.
+;                  $oCert                 - [in/out] signing certificate with private-key access.
+;                  $sTsaUrl               - [in] TSA endpoint URL.
+; Return values .: Success: signed PDF binary. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Uses _Chilkat_PDF_PAdES_CreateTsaOptions().
+; Related .......: _Chilkat_PDF_SignPAdES_Binary_ByCert
+; Link ..........: https://www.example-code.com/autoit/pdf_sign_with_tsa_timestamp.asp
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_PDF_SignPAdES_TSA_Binary_ByCert(ByRef $dPdf, ByRef $oCert, $sTsaUrl, $sTsaUsername = '', $sTsaPassword = '')
+	Local $oOptions = _Chilkat_PDF_PAdES_CreateTsaOptions($sTsaUrl, $sTsaUsername, $sTsaPassword)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $vResult = _Chilkat_PDF_SignPAdES_Binary_ByCert($dPdf, $oCert, $oOptions)
+	Return SetError(@error, @extended, $vResult)
+EndFunc   ;==>_Chilkat_PDF_SignPAdES_TSA_Binary_ByCert
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_PDF_SignPAdES_TSA_File_BySmartCard
+; Description ...: Signs a PDF file as PAdES with TSA timestamp using a smart-card certificate.
+; Syntax ........: _Chilkat_PDF_SignPAdES_TSA_File_BySmartCard($sInputPath, $sOutputPath, $sTsaUrl, $sPIN = Default, $sCspName = '', $sTsaUsername = '', $sTsaPassword = '', $bNoDialog = Default, $bRejectExpired = 1)
+; Parameters ....: $sInputPath            - [in] input PDF path.
+;                  $sOutputPath           - [in] output PDF path.
+;                  $sTsaUrl               - [in] TSA endpoint URL.
+;                  $sPIN                  - [in] optional smart-card PIN.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Selects a currently valid certificate through _Chilkat_Cert_LoadFromSmartCardEx().
+; Related .......: _Chilkat_PDF_SignPAdES_File_BySmartCard
+; Link ..........: https://www.example-code.com/autoit/pdf_sign_with_tsa_timestamp.asp
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_PDF_SignPAdES_TSA_File_BySmartCard($sInputPath, $sOutputPath, $sTsaUrl, $sPin = Default, $sCspName = '', $sTsaUsername = '', $sTsaPassword = '', $bNoDialog = Default, $bRejectExpired = 1)
+	Local $oOptions = _Chilkat_PDF_PAdES_CreateTsaOptions($sTsaUrl, $sTsaUsername, $sTsaPassword)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $vResult = _Chilkat_PDF_SignPAdES_File_BySmartCard($sInputPath, $sOutputPath, $sPin, $sCspName, $oOptions, $bNoDialog, $bRejectExpired)
+	Return SetError(@error, @extended, $vResult)
+EndFunc   ;==>_Chilkat_PDF_SignPAdES_TSA_File_BySmartCard
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_PDF_SignPAdES_TSA_Binary_BySmartCard
+; Description ...: Signs binary PDF data as PAdES with TSA timestamp using a smart-card certificate.
+; Syntax ........: _Chilkat_PDF_SignPAdES_TSA_Binary_BySmartCard(ByRef $dPdf, $sTsaUrl, $sPIN = Default, $sCspName = '', $sTsaUsername = '', $sTsaPassword = '', $bNoDialog = Default, $bRejectExpired = 1)
+; Parameters ....: $dPdf                  - [in/out] input PDF bytes.
+;                  $sTsaUrl               - [in] TSA endpoint URL.
+; Return values .: Success: signed PDF binary. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Selects a currently valid certificate through _Chilkat_Cert_LoadFromSmartCardEx().
+; Related .......: _Chilkat_PDF_SignPAdES_Binary_BySmartCard
+; Link ..........: https://www.example-code.com/autoit/pdf_sign_with_tsa_timestamp.asp
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_PDF_SignPAdES_TSA_Binary_BySmartCard(ByRef $dPdf, $sTsaUrl, $sPin = Default, $sCspName = '', $sTsaUsername = '', $sTsaPassword = '', $bNoDialog = Default, $bRejectExpired = 1)
+	Local $oOptions = _Chilkat_PDF_PAdES_CreateTsaOptions($sTsaUrl, $sTsaUsername, $sTsaPassword)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $vResult = _Chilkat_PDF_SignPAdES_Binary_BySmartCard($dPdf, $sPin, $sCspName, $oOptions, $bNoDialog, $bRejectExpired)
+	Return SetError(@error, @extended, $vResult)
+EndFunc   ;==>_Chilkat_PDF_SignPAdES_TSA_Binary_BySmartCard
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_PDF_SignPAdES_TSA_File_ByPkcs11
+; Description ...: Signs a PDF file as PAdES with TSA timestamp using PKCS11.
+; Syntax ........: _Chilkat_PDF_SignPAdES_TSA_File_ByPkcs11($sInputPath, $sOutputPath, $sPkcs11DllFullPath, $sPIN, $sTsaUrl, $iUserType = 1, $sTsaUsername = '', $sTsaPassword = '')
+; Parameters ....: $sInputPath            - [in] input PDF path.
+;                  $sOutputPath           - [in] output PDF path.
+;                  $sPkcs11DllFullPath    - [in] PKCS11 shared-library path.
+;                  $sPIN                  - [in] PKCS11 user PIN.
+;                  $sTsaUrl               - [in] TSA endpoint URL.
+; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Opens and closes a PKCS11 session through the existing helpers.
+; Related .......: _Chilkat_PDF_SignPAdES_File_ByPkcs11
+; Link ..........: https://www.example-code.com/autoit/pdf_sign_with_tsa_timestamp.asp
+; Example .......: No
+; ===============================================================================================================================
+Func _Chilkat_PDF_SignPAdES_TSA_File_ByPkcs11($sInputPath, $sOutputPath, $sPkcs11DllFullPath, $sPin, $sTsaUrl, $iUserType = 1, $sTsaUsername = '', $sTsaPassword = '')
+	Local $oOptions = _Chilkat_PDF_PAdES_CreateTsaOptions($sTsaUrl, $sTsaUsername, $sTsaPassword)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $vResult = _Chilkat_PDF_SignPAdES_File_ByPkcs11($sInputPath, $sOutputPath, $sPkcs11DllFullPath, $sPin, $iUserType, $oOptions)
+	Return SetError(@error, @extended, $vResult)
+EndFunc   ;==>_Chilkat_PDF_SignPAdES_TSA_File_ByPkcs11
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_PDF_SignPAdES_TSA_Binary_ByPkcs11
+; Description ...: Signs binary PDF data as PAdES with TSA timestamp using PKCS11.
+; Syntax ........: _Chilkat_PDF_SignPAdES_TSA_Binary_ByPkcs11(ByRef $dPdf, $sPkcs11DllFullPath, $sPIN, $sTsaUrl, $iUserType = 1, $sTsaUsername = '', $sTsaPassword = '')
+; Parameters ....: $dPdf                  - [in/out] input PDF bytes.
+;                  $sPkcs11DllFullPath    - [in] PKCS11 shared-library path.
+;                  $sPIN                  - [in] PKCS11 user PIN.
+;                  $sTsaUrl               - [in] TSA endpoint URL.
+; Return values .: Success: signed PDF binary. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Opens and closes a PKCS11 session through the existing helpers.
+; Related .......: _Chilkat_PDF_SignPAdES_Binary_ByPkcs11
+; Link ..........: https://www.example-code.com/autoit/pdf_sign_with_tsa_timestamp.asp
+; Example .......: No
+; ===============================================================================================================================
+Func _Chilkat_PDF_SignPAdES_TSA_Binary_ByPkcs11(ByRef $dPdf, $sPkcs11DllFullPath, $sPin, $sTsaUrl, $iUserType = 1, $sTsaUsername = '', $sTsaPassword = '')
+	Local $oOptions = _Chilkat_PDF_PAdES_CreateTsaOptions($sTsaUrl, $sTsaUsername, $sTsaPassword)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $vResult = _Chilkat_PDF_SignPAdES_Binary_ByPkcs11($dPdf, $sPkcs11DllFullPath, $sPin, $iUserType, $oOptions)
+	Return SetError(@error, @extended, $vResult)
+EndFunc   ;==>_Chilkat_PDF_SignPAdES_TSA_Binary_ByPkcs11
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_PDF_VerifyPAdES_TSA_File_AsJson
+; Description ...: Verifies a PAdES signature and returns JSON containing signature and timestamp information.
+; Syntax ........: _Chilkat_PDF_VerifyPAdES_TSA_File_AsJson($sPdfFileFullPath, $iSignature = 0)
+; Parameters ....: $sPdfFileFullPath      - [in] signed PDF path.
+;                  $iSignature            - [in] zero-based signature index. Default = 0.
+; Return values .: Success: Chilkat JsonObject. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Delegates to the existing PDF signature verification implementation.
+; Related .......: _Chilkat_PDF_VerifySignatureInFile_AsJson
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatPdfRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_PDF_VerifyPAdES_TSA_File_AsJson($sPdfFileFullPath, $iSignature = 0)
+	Local $oJson = _Chilkat_PDF_VerifySignatureInFile_AsJson($sPdfFileFullPath, $iSignature)
+	Return SetError(@error, @extended, $oJson)
+EndFunc   ;==>_Chilkat_PDF_VerifyPAdES_TSA_File_AsJson
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_PDF_VerifyPAdES_TSA_Binary_AsJson
+; Description ...: Verifies a PAdES signature in binary PDF data and returns JSON containing timestamp information.
+; Syntax ........: _Chilkat_PDF_VerifyPAdES_TSA_Binary_AsJson(ByRef $dPdf, $iSignature = 0)
+; Parameters ....: $dPdf                  - [in/out] signed PDF bytes.
+;                  $iSignature            - [in] zero-based signature index. Default = 0.
+; Return values .: Success: Chilkat JsonObject. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Delegates to the existing PDF signature verification implementation.
+; Related .......: _Chilkat_PDF_VerifySignatureInBd_AsJson
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatPdfRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_PDF_VerifyPAdES_TSA_Binary_AsJson(ByRef $dPdf, $iSignature = 0)
+	Local $oJson = _Chilkat_PDF_VerifySignatureInBd_AsJson($dPdf, $iSignature)
+	Return SetError(@error, @extended, $oJson)
+EndFunc   ;==>_Chilkat_PDF_VerifyPAdES_TSA_Binary_AsJson
+
 #EndRegion ; _Chilkat_Pdf_**
 
 #Region ; _Chilkat_Jwe_**
