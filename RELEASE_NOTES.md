@@ -110,6 +110,12 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - Added: shared `_Chilkat_HTTP_Request_AsJson()` and `_Chilkat_HTTP_UrlEncode()` helpers with Chilkat 10 and 11 compatibility paths - AI / mLipok
 - Added: Examples 040-043 for data formats, OIDC discovery, Google CRUD and S3 cloud storage - AI / mLipok
 
+
+- Added: Function: `_Chilkat_JWT_ExtractBearerToken()` - extracts a compact JWT from a raw token, `Bearer` value, or complete `Authorization: Bearer` header and validates the three-part compact structure - AI / mLipok
+- Added: Function: `_Chilkat_JWT_DecodeHeader_AsJson()` - decodes the JOSE header through Chilkat `Jwt.GetHeader()` and returns a Chilkat JsonObject - AI / mLipok
+- Added: Function: `_Chilkat_JWT_DecodePayload_AsJson()` - decodes the claims payload through Chilkat `Jwt.GetPayload()` and returns a Chilkat JsonObject - AI / mLipok
+- Added: Function: `_Chilkat_JWT_DecodeToken_AsJson()` - returns a combined decoded header/payload object with explicit flags showing that the signature was not verified - AI / mLipok
+- Added: `Chilkat_Example_049_JWT_DecodeBearerToken.au3` for decoding an `Authorization: Bearer` JWT while preserving the distinction between decoding and verification - AI / mLipok
 <!-- @LAST -->
 
 ## v0.2.12 — 2026/07/13
