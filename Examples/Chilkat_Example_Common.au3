@@ -21,6 +21,7 @@ Func _Example_Init()
 	If @error Then
 		MsgBox($MB_ICONERROR, '_Chilkat_StartUp', '@error = ' & @error & @CRLF & '@extended = ' & @extended)
 		If Not @Compiled Then _ArrayDisplay($CHILKATOBJ_API, '$CHILKATOBJ_API')
+		Return SetError(1)
 	EndIf
 
 	$__g_oChilkat_GLOBAL = _Chilkat_GLOBAL_ObjCreate()
