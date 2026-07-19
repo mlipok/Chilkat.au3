@@ -16,6 +16,20 @@
 - XAdES
 - XML Digital Signatures
 
+
+## JWT inspection
+
+The JWT helpers accept any of the following inputs:
+
+- a raw compact token;
+- `Bearer <token>`;
+- `Authorization: Bearer <token>`.
+
+`_Chilkat_JWT_DecodeHeader_AsJson()` returns the decoded JOSE header, while `_Chilkat_JWT_DecodePayload_AsJson()` returns the decoded claims payload. `_Chilkat_JWT_DecodeToken_AsJson()` combines both objects and explicitly reports `signatureVerified: false`.
+
+These helpers use Chilkat `Jwt.GetHeader()` and `Jwt.GetPayload()`, available since Chilkat 9.5.0.58 and therefore compatible with Chilkat 10.1.2.0. Decoding only exposes token contents. It does not verify the signature, issuer, audience, nonce, expiration, not-before time, or authorization context.
+
+Never make an authentication or authorization decision from decoded claims until the token has been verified against trusted keys and the application's validation policy.
 ## PAdES
 
 File and binary-data helpers support signing with:

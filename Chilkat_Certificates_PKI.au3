@@ -6,7 +6,7 @@
 ; Description ...: Certificate and public-key infrastructure support.
 ; Author ........: mLipok
 ; Modified ......: AI / mLipok
-; Date ..........: 2026/07/13
+; Date ..........: 2026/07/19
 ; Version .......: v0.3.0 BETA - Work in progress
 ; Remarks .......: This module is linked and loaded by Chilkat.au3.
 ; Categories ....: CSR; Cert Store; Certificates; Code Signing; Java KeyStore; PEM; PFX/P12; PKCS11; SCard; ScMinidriver
@@ -1182,24 +1182,26 @@ EndFunc   ;==>_Chilkat_Csr_ObjCreate
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Chilkat_Csr_GeneratePemFile
 ; Description ...: Generates a PEM certificate signing request from a private key.
-; Syntax ........: _Chilkat_Csr_GeneratePemFile(ByRef $oPrivateKey, $sFileFullPath, $sCommonName, $sOrganization = '', $sOrganizationUnit = '', $sCountry = '', $sEmail = '', $sDnsSan = '')
+; Syntax ........: _Chilkat_Csr_GeneratePemFile(ByRef $oPrivateKey, $sFileFullPath, $sCommonName, $sOrganization = '', $sOrganizationUnit = '', $sCountry = '', $sEmail = '', $sDnsSan = '', $sState = '', $sLocality = '')
 ; Parameters ....: $oPrivateKey            - [in/out] Chilkat PrivateKey used to sign the CSR.
 ;                  $sFileFullPath          - [in] destination CSR file path.
-;                  $sCommonName            - [in] certificate subject common name.
-;                  $sOrganization          - [in] optional organization name.
-;                  $sOrganizationUnit      - [in] optional organizational unit.
-;                  $sCountry               - [in] optional two-letter country code.
+;                  $sCommonName            - [in] certificate subject common name (CN).
+;                  $sOrganization          - [in] optional organization name (O).
+;                  $sOrganizationUnit      - [in] optional organizational unit (OU).
+;                  $sCountry               - [in] optional two-letter country code (C).
 ;                  $sEmail                 - [in] optional email address.
 ;                  $sDnsSan                - [in] optional DNS subject alternative name.
+;                  $sState                 - [in] optional state or province name (ST).
+;                  $sLocality              - [in] optional locality, city, or town name (L).
 ; Return values .: Success: $CHILKAT_RET_SUCCESS. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
 ; Author ........: AI / mLipok
 ; Modified ......:
-; Remarks .......: The CSR is signed with SHA-256.
+; Remarks .......: The CSR is signed with SHA-256. State and Locality parameters are appended to preserve existing positional calls.
 ; Related .......: _Chilkat_Rsa_GenerateKeyPair
 ; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatCsrRef.html
 ; Example .......: Yes
 ; ===============================================================================================================================
-Func _Chilkat_Csr_GeneratePemFile(ByRef $oPrivateKey, $sFileFullPath, $sCommonName, $sOrganization = '', $sOrganizationUnit = '', $sCountry = '', $sEmail = '', $sDnsSan = '')
+Func _Chilkat_Csr_GeneratePemFile(ByRef $oPrivateKey, $sFileFullPath, $sCommonName, $sOrganization = '', $sOrganizationUnit = '', $sCountry = '', $sEmail = '', $sDnsSan = '', $sState = '', $sLocality = '')
 	If Not IsObj($oPrivateKey) Then Return SetError($CHILKAT_ERR_ISNOTOBJ, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
 	If Not IsString($sFileFullPath) Or $sFileFullPath = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
 	If Not IsString($sCommonName) Or $sCommonName = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM3, $CHILKAT_RET_FAILURE)
@@ -1211,6 +1213,8 @@ Func _Chilkat_Csr_GeneratePemFile(ByRef $oPrivateKey, $sFileFullPath, $sCommonNa
 	$oCsr.Company = $sOrganization
 	$oCsr.CompanyDivision = $sOrganizationUnit
 	$oCsr.Country = StringUpper($sCountry)
+	$oCsr.State = $sState
+	$oCsr.Locality = $sLocality
 	$oCsr.EmailAddress = $sEmail
 	$oCsr.HashAlgorithm = 'sha256'
 

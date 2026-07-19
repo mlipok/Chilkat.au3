@@ -31,11 +31,12 @@ _Example_38_RSA_GeneratePEM_GUI()
 ; Return values .: None.
 ; Remarks .......: Uses the Chilkat 11 GenKey/ToPublicKey API or the Chilkat 10 GenerateKey/Export*KeyObj compatibility API selected by the UDF.
 ;                  A public key is not an X.509 certificate. The certificate section exports a certificate that already exists or was issued from the CSR.
+;                  Generated CSRs are reloaded and verified in the background; the verification summary is displayed in a MsgBox.
 ; ===============================================================================================================================
 Func _Example_38_RSA_GeneratePEM_GUI()
-	Local $hGUI = GUICreate($EXAMPLE_38_TITLE, 760, 700)
+	Local $hGUI = GUICreate($EXAMPLE_38_TITLE, 760, 740)
 
-	GUICtrlCreateGroup('RSA key pair and CSR generation', 10, 10, 740, 430)
+	GUICtrlCreateGroup('RSA key pair and CSR generation', 10, 10, 740, 464)
 
 	GUICtrlCreateLabel('Output directory:', 25, 42, 110, 20)
 	Local $idOutputDir = GUICtrlCreateInput(@ScriptDir & '\RSA_Output', 140, 38, 515, 23)
@@ -72,18 +73,24 @@ Func _Example_38_RSA_GeneratePEM_GUI()
 	GUICtrlCreateLabel('Country (C):', 470, 184, 100, 20)
 	Local $idCountry = GUICtrlCreateInput('PL', 575, 180, 160, 23)
 
-	GUICtrlCreateLabel('Email:', 25, 218, 150, 20)
-	Local $idEmail = GUICtrlCreateInput('', 180, 214, 270, 23)
+	GUICtrlCreateLabel('State or province (ST):', 25, 218, 150, 20)
+	Local $idState = GUICtrlCreateInput('', 180, 214, 270, 23)
 
-	GUICtrlCreateLabel('DNS SAN:', 470, 218, 100, 20)
-	Local $idDnsSan = GUICtrlCreateInput('example.local', 575, 214, 160, 23)
+	GUICtrlCreateLabel('Locality (L):', 470, 218, 100, 20)
+	Local $idLocality = GUICtrlCreateInput('', 575, 214, 160, 23)
 
-	GUICtrlCreateLabel('Files to generate:', 25, 258, 120, 20)
-	Local $idPrivatePem = GUICtrlCreateCheckbox('Private key: <name>-private.pem', 40, 286, 260, 22)
-	Local $idPrivateKey = GUICtrlCreateCheckbox('Private key: <name>-private.key', 40, 314, 260, 22)
-	Local $idPublicPem = GUICtrlCreateCheckbox('Public key: <name>-public.pem', 330, 286, 250, 22)
-	Local $idPublicPub = GUICtrlCreateCheckbox('Public key: <name>-public.pub', 330, 314, 250, 22)
-	Local $idCsr = GUICtrlCreateCheckbox('Certificate signing request: <name>.csr', 40, 342, 320, 22)
+	GUICtrlCreateLabel('Email:', 25, 252, 150, 20)
+	Local $idEmail = GUICtrlCreateInput('', 180, 248, 270, 23)
+
+	GUICtrlCreateLabel('DNS SAN:', 470, 252, 100, 20)
+	Local $idDnsSan = GUICtrlCreateInput('example.local', 575, 248, 160, 23)
+
+	GUICtrlCreateLabel('Files to generate:', 25, 292, 120, 20)
+	Local $idPrivatePem = GUICtrlCreateCheckbox('Private key: <name>-private.pem', 40, 320, 260, 22)
+	Local $idPrivateKey = GUICtrlCreateCheckbox('Private key: <name>-private.key', 40, 348, 260, 22)
+	Local $idPublicPem = GUICtrlCreateCheckbox('Public key: <name>-public.pem', 330, 320, 250, 22)
+	Local $idPublicPub = GUICtrlCreateCheckbox('Public key: <name>-public.pub', 330, 348, 250, 22)
+	Local $idCsr = GUICtrlCreateCheckbox('Certificate signing request: <name>.csr', 40, 376, 320, 22)
 
 	GUICtrlSetState($idPrivatePem, $GUI_CHECKED)
 	GUICtrlSetState($idPrivateKey, $GUI_CHECKED)
@@ -91,26 +98,26 @@ Func _Example_38_RSA_GeneratePEM_GUI()
 	GUICtrlSetState($idPublicPub, $GUI_CHECKED)
 	GUICtrlSetState($idCsr, $GUI_CHECKED)
 
-	GUICtrlCreateLabel('The .key extension does not define the key encoding; the selected private-key PEM format is used.', 40, 374, 680, 20)
-	Local $idGenerate = GUICtrlCreateButton('Generate RSA files', 540, 398, 195, 30, $BS_DEFPUSHBUTTON)
+	GUICtrlCreateLabel('The .key extension does not define the key encoding; the selected private-key PEM format is used.', 40, 408, 680, 20)
+	Local $idGenerate = GUICtrlCreateButton('Generate RSA files', 540, 432, 195, 30, $BS_DEFPUSHBUTTON)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	GUICtrlCreateGroup('Export an existing or CA-issued X.509 certificate', 10, 450, 740, 130)
-	GUICtrlCreateLabel('Source certificate:', 25, 480, 110, 20)
-	Local $idSourceCert = GUICtrlCreateInput('', 140, 476, 515, 23)
-	Local $idBrowseCert = GUICtrlCreateButton('Browse...', 665, 475, 70, 25)
+	GUICtrlCreateGroup('Export an existing or CA-issued X.509 certificate', 10, 490, 740, 130)
+	GUICtrlCreateLabel('Source certificate:', 25, 520, 110, 20)
+	Local $idSourceCert = GUICtrlCreateInput('', 140, 516, 515, 23)
+	Local $idBrowseCert = GUICtrlCreateButton('Browse...', 665, 515, 70, 25)
 
-	GUICtrlCreateLabel('PFX password:', 25, 514, 110, 20)
-	Local $idPfxPassword = GUICtrlCreateInput('', 140, 510, 220, 23, $ES_PASSWORD)
-	Local $idExportCertDer = GUICtrlCreateCheckbox('DER certificate: <name>.cert', 390, 510, 200, 22)
-	Local $idExportCertPem = GUICtrlCreateCheckbox('PEM certificate: <name>.cert.pem', 390, 538, 235, 22)
+	GUICtrlCreateLabel('PFX password:', 25, 554, 110, 20)
+	Local $idPfxPassword = GUICtrlCreateInput('', 140, 550, 220, 23, $ES_PASSWORD)
+	Local $idExportCertDer = GUICtrlCreateCheckbox('DER certificate: <name>.cert', 390, 550, 200, 22)
+	Local $idExportCertPem = GUICtrlCreateCheckbox('PEM certificate: <name>.cert.pem', 390, 578, 235, 22)
 	GUICtrlSetState($idExportCertDer, $GUI_CHECKED)
 	GUICtrlSetState($idExportCertPem, $GUI_CHECKED)
-	Local $idExportCertificate = GUICtrlCreateButton('Export certificate', 630, 520, 105, 35)
+	Local $idExportCertificate = GUICtrlCreateButton('Export certificate', 630, 560, 105, 35)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	Local $idLog = GUICtrlCreateEdit('', 10, 590, 740, 70, BitOR($ES_AUTOVSCROLL, $ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
-	Local $idClose = GUICtrlCreateButton('Close', 650, 668, 100, 25)
+	Local $idLog = GUICtrlCreateEdit('', 10, 630, 740, 70, BitOR($ES_AUTOVSCROLL, $ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
+	Local $idClose = GUICtrlCreateButton('Close', 650, 708, 100, 25)
 
 	GUISetState(@SW_SHOW, $hGUI)
 
@@ -148,13 +155,16 @@ Func _Example_38_RSA_GeneratePEM_GUI()
 						GUICtrlRead($idCountry), _
 						GUICtrlRead($idEmail), _
 						GUICtrlRead($idDnsSan), _
+						GUICtrlRead($idState), _
+						GUICtrlRead($idLocality), _
 						BitAND(GUICtrlRead($idPrivatePem), $GUI_CHECKED) = $GUI_CHECKED, _
 						BitAND(GUICtrlRead($idPrivateKey), $GUI_CHECKED) = $GUI_CHECKED, _
 						BitAND(GUICtrlRead($idPublicPem), $GUI_CHECKED) = $GUI_CHECKED, _
 						BitAND(GUICtrlRead($idPublicPub), $GUI_CHECKED) = $GUI_CHECKED, _
 						BitAND(GUICtrlRead($idCsr), $GUI_CHECKED) = $GUI_CHECKED, _
 						$idLog)
-				If $iGenerateResult = $CHILKAT_RET_SUCCESS Then _
+				If $iGenerateResult = $CHILKAT_RET_SUCCESS And _
+						BitAND(GUICtrlRead($idCsr), $GUI_CHECKED) <> $GUI_CHECKED Then _
 						MsgBox($MB_ICONINFORMATION, $EXAMPLE_38_TITLE, 'RSA files generated successfully.')
 
 			Case $idExportCertificate
@@ -176,7 +186,7 @@ Func _Example_38_RSA_GeneratePEM_GUI()
 EndFunc   ;==>_Example_38_RSA_GeneratePEM_GUI
 
 
-Func __Example_38_GenerateFiles($sOutputDir, $sBaseName, $iBits, $sPrivateFormatLabel, $sPassword, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $bPrivatePem, $bPrivateKey, $bPublicPem, $bPublicPub, $bCsr, $idLog)
+Func __Example_38_GenerateFiles($sOutputDir, $sBaseName, $iBits, $sPrivateFormatLabel, $sPassword, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $sState, $sLocality, $bPrivatePem, $bPrivateKey, $bPublicPem, $bPublicPub, $bCsr, $idLog)
 	$sOutputDir = StringStripWS($sOutputDir, $STR_STRIPLEADING + $STR_STRIPTRAILING)
 	$sBaseName = __Example_38_SanitizeBaseName($sBaseName)
 	If $sOutputDir = '' Or $sBaseName = '' Then
@@ -243,14 +253,129 @@ Func __Example_38_GenerateFiles($sOutputDir, $sBaseName, $iBits, $sPrivateFormat
 
 	If $bCsr Then
 		Local $sCsrPath = __Example_38_JoinPath($sOutputDir, $sBaseName & '.csr')
-		$iResult = _Chilkat_Csr_GeneratePemFile($oPrivateKey, $sCsrPath, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan)
+		$iResult = _Chilkat_Csr_GeneratePemFile($oPrivateKey, $sCsrPath, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $sState, $sLocality)
 		If @error Then Return __Example_38_LogFailure($idLog, $sCsrPath)
 		__Example_38_Log($idLog, 'Created: ' & $sCsrPath)
+
+		$iResult = __Example_38_VerifyGeneratedCsr($sCsrPath, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $sState, $sLocality, $idLog)
+		If @error Or $iResult <> $CHILKAT_RET_SUCCESS Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 	EndIf
 
 	__Example_38_Log($idLog, 'Completed successfully.')
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
 EndFunc   ;==>__Example_38_GenerateFiles
+
+Func __Example_38_VerifyGeneratedCsr($sCsrPath, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $sState, $sLocality, $idLog)
+	Local $sCsrPem = FileRead($sCsrPath)
+	If @error Or $sCsrPem = '' Then
+		Local $sReadError = 'CSR verification failed: the generated file could not be read.' & @CRLF & @CRLF & 'File:' & @CRLF & $sCsrPath
+		__Example_38_Log($idLog, 'CSR verification failed: cannot read the generated file.')
+		MsgBox($MB_ICONERROR, $EXAMPLE_38_TITLE, $sReadError)
+		Return SetError($CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+
+	Local $oCsr = _Chilkat_Csr_ObjCreate()
+	If @error Or Not IsObj($oCsr) Then
+		Local $iCreateError = @error, $iCreateExtended = @extended
+		__Example_38_Log($idLog, 'CSR verification failed: cannot create the Chilkat Csr object.')
+		MsgBox($MB_ICONERROR, $EXAMPLE_38_TITLE, _
+				'CSR verification failed: cannot create the Chilkat Csr object.' & @CRLF & @CRLF & _
+				'@error = ' & $iCreateError & @CRLF & _
+				'@extended = ' & $iCreateExtended & @CRLF & @CRLF & _
+				'File:' & @CRLF & $sCsrPath)
+		Return SetError($iCreateError, $iCreateExtended, $CHILKAT_RET_FAILURE)
+	EndIf
+
+	Local $iLoadSuccess = $oCsr.LoadCsrPem($sCsrPem)
+	If @error Or $iLoadSuccess <> 1 Then
+		__Chilkat_LogOnError('__Example_38_VerifyGeneratedCsr() Csr.LoadCsrPem()', $oCsr, $CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL)
+		__Example_38_Log($idLog, 'CSR verification failed: Csr.LoadCsrPem() failed.')
+		MsgBox($MB_ICONERROR, $EXAMPLE_38_TITLE, _
+				'CSR verification failed: the generated CSR could not be loaded.' & @CRLF & @CRLF & _
+				'File:' & @CRLF & $sCsrPath)
+		Return SetError($CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+
+	Local $iSignatureValid = $oCsr.VerifyCsr()
+	Local $sActualCN = $oCsr.GetSubjectField('2.5.4.3')
+	Local $sActualO = $oCsr.GetSubjectField('2.5.4.10')
+	Local $sActualOU = $oCsr.GetSubjectField('2.5.4.11')
+	Local $sActualC = $oCsr.GetSubjectField('2.5.4.6')
+	Local $sActualST = $oCsr.GetSubjectField('2.5.4.8')
+	Local $sActualL = $oCsr.GetSubjectField('2.5.4.7')
+	Local $sActualEmail = $oCsr.GetSubjectField('1.2.840.113549.1.9.1')
+
+	Local $iSubjectMatches = _
+			StringCompare($sActualCN, $sCommonName, 1) = 0 And _
+			StringCompare($sActualO, $sOrganization, 1) = 0 And _
+			StringCompare($sActualOU, $sOrganizationUnit, 1) = 0 And _
+			StringCompare($sActualC, StringUpper($sCountry), 1) = 0 And _
+			StringCompare($sActualST, $sState, 1) = 0 And _
+			StringCompare($sActualL, $sLocality, 1) = 0 And _
+			StringCompare($sActualEmail, $sEmail, 1) = 0
+
+	Local $sSans = '(none)'
+	Local $iDnsSanMatches = ($sDnsSan = '')
+	Local $oSans = _Chilkat_StringTable_ObjCreate()
+	If IsObj($oSans) Then
+		Local $iGetSansSuccess = $oCsr.GetSans($oSans)
+		If $iGetSansSuccess = 1 And $oSans.Count > 0 Then
+			$sSans = ''
+			For $i = 0 To $oSans.Count - 1
+				Local $sSanEntry = $oSans.StringAt($i)
+				If $sSans <> '' Then $sSans &= @CRLF
+				$sSans &= $sSanEntry
+				If $sDnsSan <> '' And StringInStr($sSanEntry, $sDnsSan, 2) Then $iDnsSanMatches = 1
+			Next
+		EndIf
+	EndIf
+
+	Local $sSignatureStatus = 'No'
+	If $iSignatureValid = 1 Then $sSignatureStatus = 'Yes'
+	Local $sSubjectStatus = 'No'
+	If $iSubjectMatches Then $sSubjectStatus = 'Yes'
+	Local $sDnsSanStatus = 'Not requested'
+	Local $sDnsSanLogStatus = 'not requested'
+	If $sDnsSan <> '' Then
+		$sDnsSanStatus = 'No'
+		$sDnsSanLogStatus = 'mismatch'
+		If $iDnsSanMatches Then
+			$sDnsSanStatus = 'Yes'
+			$sDnsSanLogStatus = 'match'
+		EndIf
+	EndIf
+
+	Local $sSummary = _
+			'CSR verification completed.' & @CRLF & @CRLF & _
+			'Signature valid: ' & $sSignatureStatus & @CRLF & _
+			'Subject matches requested values: ' & $sSubjectStatus & @CRLF & _
+			'DNS SAN matches requested value: ' & $sDnsSanStatus & @CRLF & @CRLF & _
+			'Subject:' & @CRLF & _
+			'C  = ' & $sActualC & @CRLF & _
+			'ST = ' & $sActualST & @CRLF & _
+			'L  = ' & $sActualL & @CRLF & _
+			'O  = ' & $sActualO & @CRLF & _
+			'OU = ' & $sActualOU & @CRLF & _
+			'CN = ' & $sActualCN & @CRLF & _
+			'Email = ' & $sActualEmail & @CRLF & @CRLF & _
+			'DNS SAN:' & @CRLF & $sSans & @CRLF & @CRLF & _
+			'File:' & @CRLF & $sCsrPath
+
+	Local $iVerificationOk = ($iSignatureValid = 1 And $iSubjectMatches And $iDnsSanMatches)
+	Local $sSignatureLogStatus = 'invalid'
+	If $iSignatureValid = 1 Then $sSignatureLogStatus = 'valid'
+	Local $sSubjectLogStatus = 'mismatch'
+	If $iSubjectMatches Then $sSubjectLogStatus = 'match'
+	__Example_38_Log($idLog, 'CSR verification: signature=' & $sSignatureLogStatus & _
+			', subject=' & $sSubjectLogStatus & _
+			', DNS SAN=' & $sDnsSanLogStatus & '.')
+	Local $iMsgIcon = $MB_ICONERROR
+	If $iVerificationOk Then $iMsgIcon = $MB_ICONINFORMATION
+	MsgBox($iMsgIcon, $EXAMPLE_38_TITLE, $sSummary)
+
+	If Not $iVerificationOk Then Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
+EndFunc   ;==>__Example_38_VerifyGeneratedCsr
 
 Func __Example_38_ExportCertificate($sSourcePath, $sPfxPassword, $sOutputDir, $sBaseName, $bExportDer, $bExportPem, $idLog)
 	If Not FileExists($sSourcePath) Then

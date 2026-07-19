@@ -21,7 +21,7 @@ Exports a public key in the standard public-key PEM representation or optional P
 
 ### `_Chilkat_Csr_GeneratePemFile()`
 
-Creates a SHA-256-signed PEM CSR with CN, organization, organizational unit, country, email, and optional DNS Subject Alternative Name.
+Creates a SHA-256-signed PEM CSR with CN, organization, organizational unit, country, state/province (ST), locality (L), email, and an optional DNS Subject Alternative Name. The ST and L parameters are appended to the function signature to preserve existing positional calls.
 
 ### `_Chilkat_Cert_ExportFiles()`
 
@@ -29,7 +29,7 @@ Exports an X.509 certificate to DER (`.cert`/`.cer`) and/or PEM.
 
 ## Example 038
 
-`Chilkat_Example_038_PEM_GENERATOR.au3` provides a GUI for generating RSA key pairs, choosing output formats, creating CSRs, and importing/exporting certificates or PFX/P12 containers.
+`Chilkat_Example_038_PEM_GENERATOR.au3` provides a GUI for generating RSA key pairs, choosing output formats, creating CSRs, and importing/exporting certificates or PFX/P12 containers. Its CSR form includes CN, O, OU, C, ST, L, email, and DNS SAN fields. After a CSR is saved, the example reloads it in the background, verifies the CSR signature, reads the Subject DN and SAN values, compares them with the requested values, and displays a verification summary in a MsgBox.
 
 ## Example 039
 
