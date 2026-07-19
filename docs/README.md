@@ -46,7 +46,7 @@ The principal files are:
 - `Chilkat_Google.au3` — AuthGoogle, Firebase, and Google API CRUD wrappers.
 - `Chilkat_Certificates_PKI.au3` — certificates, key containers, PKI, PKCS11, PC/SC, and smart cards.
 - `Chilkat_DigitalSignatures.au3` — PDF/PAdES, XAdES, XML signatures, JWS, JWE, JWT, and related signing workflows.
-- `Chilkat_Email.au3` — SMTP, IMAP, POP3, MIME, Gmail, Microsoft 365, and other email-related functionality.
+- `Chilkat_Email.au3` — email-message handling, SMTP through MailMan, IMAP, mailboxes, MIME, DKIM, bounce processing, MHT, email bundles, and message sets.
 - `Chilkat_Cryptography.au3` — RSA, ECC, DSA, EdDSA, encryption, and key handling.
 - `Chilkat_CompressionArchives.au3` — ZIP, Gzip, Tar, and compression workflows.
 - `Examples/` — individual runnable examples and the shared initialization layer.
