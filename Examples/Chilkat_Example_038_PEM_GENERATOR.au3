@@ -71,7 +71,7 @@ Func _Example_38_RSA_GeneratePEM_GUI()
 	Local $idOrganizationUnit = GUICtrlCreateInput('Development', 180, 180, 270, 23)
 
 	GUICtrlCreateLabel('Country (C):', 470, 184, 100, 20)
-	Local $idCountry = GUICtrlCreateInput('PL', 575, 180, 160, 23)
+	Local $idCountry = GUICtrlCreateInput(__Example_38_GetWindowsCountryCode(), 575, 180, 160, 23)
 
 	GUICtrlCreateLabel('State or province (ST):', 25, 218, 150, 20)
 	Local $idState = GUICtrlCreateInput('', 180, 214, 270, 23)
@@ -437,6 +437,21 @@ Func __Example_38_JoinPath($sDirectory, $sFileName)
 	Return $sDirectory & '\' & $sFileName
 EndFunc   ;==>__Example_38_JoinPath
 
+Func __Example_38_GetWindowsCountryCode()
+	Local Const $LOCALE_SISO3166CTRYNAME = 0x0000005A
+	Local Const $COUNTRY_CODE_BUFFER_LENGTH = 3
+	Local $tCountryCode = DllStructCreate('wchar[' & $COUNTRY_CODE_BUFFER_LENGTH & ']')
+	Local $aResult = DllCall('kernel32.dll', 'int', 'GetLocaleInfoEx', _
+			'ptr', 0, _
+			'dword', $LOCALE_SISO3166CTRYNAME, _
+			'ptr', DllStructGetPtr($tCountryCode), _
+			'int', $COUNTRY_CODE_BUFFER_LENGTH)
+	If @error Or Not IsArray($aResult) Or $aResult[0] = 0 Then Return ''
+
+	Local $sCountryCode = StringUpper(DllStructGetData($tCountryCode, 1))
+	If Not StringRegExp($sCountryCode, '^[A-Z]{2}$') Then Return ''
+	Return $sCountryCode
+EndFunc   ;==>__Example_38_GetWindowsCountryCode
 Func __Example_38_SanitizeBaseName($sBaseName)
 	$sBaseName = StringStripWS($sBaseName, $STR_STRIPLEADING + $STR_STRIPTRAILING)
 	Return StringRegExpReplace($sBaseName, '[\\/:*?"<>|]', '_')
