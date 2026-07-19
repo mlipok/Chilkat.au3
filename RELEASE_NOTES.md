@@ -140,6 +140,8 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - Changed: `Chilkat_Example_038_PEM_GENERATOR.au3` now provides `ST` and `L` inputs for generated PKCS#10 certificate signing requests - AI / mLipok
 - Added: Example 038 automatically reloads each generated CSR, verifies its signature, compares the Subject DN and requested DNS SAN, and displays the verification summary in a MsgBox without adding verification controls to the GUI - AI / mLipok
 - Fixed: removed redundant blank lines before the JWT entries in the current release notes - AI / mLipok
+- Added: Function: `__Example_38_GetWindowsCountryCode()` - initializes the CSR Country (C) field from the current Windows user's ISO 3166-1 alpha-2 regional country code instead of a hard-coded value; returns an empty string when detection fails - AI / mLipok
+
 ## v0.2.12 — 2026/07/13
 
 - Added: smart-card certificate listing as a native AutoIt array containing certificate name, issuer, serial number, validity dates, fingerprint, key usage and qualification metadata - AI / mLipok
