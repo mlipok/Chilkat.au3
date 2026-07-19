@@ -5,17 +5,15 @@
 
 `Chilkat_DigitalSignatures.au3` contains digital-signature formats, PDF signing, XML signing, and token-backed signing workflows.
 
-## Covered categories
+## Implemented public UDF scope
 
-- CAdES
-- Cloud Signature Consortium workflows
-- JWE
-- JWS
-- JWT
-- PDF signatures and PAdES
-- XAdES
-- XML Digital Signatures
+- JWE and JWS object creation;
+- JWT decoding and inspection;
+- PDF signatures and PAdES;
+- XAdES external-file and binary-reference workflows;
+- XML Digital Signature object creation and verification workflows.
 
+CAdES and Cloud Signature Consortium workflows are not currently exposed through dedicated public UDF wrappers in this module.
 
 ## JWT inspection
 
@@ -30,6 +28,7 @@ The JWT helpers accept any of the following inputs:
 These helpers use Chilkat `Jwt.GetHeader()` and `Jwt.GetPayload()`, available since Chilkat 9.5.0.58 and therefore compatible with Chilkat 10.1.2.0. Decoding only exposes token contents. It does not verify the signature, issuer, audience, nonce, expiration, not-before time, or authorization context.
 
 Never make an authentication or authorization decision from decoded claims until the token has been verified against trusted keys and the application's validation policy.
+
 ## PAdES
 
 File and binary-data helpers support signing with:
@@ -56,4 +55,4 @@ Signature verification is not equivalent to a complete trust decision. Applicati
 
 `_Chilkat_PDF_PAdES_CreateTsaOptions()` creates LTV/OCSP and RFC 3161 timestamp-token options. File and binary signing variants are available for direct certificates, smart cards and PKCS11. Verification wrappers return the Chilkat JSON produced by PDF signature verification.
 
-Authenticode wrappers support signing, verification and signature removal for EXE and DLL files. See [Code signing, PAdES TSA timestamps, and SCard](codesign-pades-tsa-scard.md).
+Authenticode wrappers located in `Chilkat_Certificates_PKI.au3` support signing, verification, and signature removal for EXE and DLL files. See [Code signing, PAdES TSA timestamps, and SCard](codesign-pades-tsa-scard.md).
