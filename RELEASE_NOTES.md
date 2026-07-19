@@ -47,8 +47,30 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - Added: `_Chilkat_CertStore_FindCert()` with native Chilkat 10.1.2+ `CertStore.FindCert()` support and a validated fallback based on `_Chilkat_CertStore_ListValidCertificates_AsArray()` - AI / mLipok
 - Added: `_Chilkat_Cert_GetSmartCardFailReason()` and `_Chilkat_Cert_SmartCardFailReasonToText()`; legacy smart-card loading now returns the Chilkat reason code in `@extended` when available - AI / mLipok
 - Added: SCard wrappers for EstablishContext, ConnectedReader, Connect, CheckStatus, Reconnect, Disconnect, FindSmartcards and ReleaseContext - AI / mLipok
+- Added: Function: `_Chilkat_SCARD_EstablishContext()` - AI / mLipok
+- Added: Function: `_Chilkat_SCARD_GetConnectedReader()` - AI / mLipok
+- Added: Function: `_Chilkat_SCARD_Connect()` - AI / mLipok
+- Added: Function: `_Chilkat_SCARD_CheckStatus()` - AI / mLipok
+- Added: Function: `_Chilkat_SCARD_Reconnect()` - AI / mLipok
+- Added: Function: `_Chilkat_SCARD_Disconnect()` - AI / mLipok
+- Added: Function: `_Chilkat_SCARD_FindSmartcards_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_SCARD_ReleaseContext()` - AI / mLipok
 - Added: PAdES LTV/TSA option creation, file and binary signing variants for Cert, SmartCard and PKCS11, and explicit TSA verification wrappers - AI / mLipok
+- Added: Function: `_Chilkat_PDF_PAdES_CreateTsaOptions()` - AI / mLipok
+- Added: Function: `_Chilkat_PDF_SignPAdES_TSA_File_ByCert()` - AI / mLipok
+- Added: Function: `_Chilkat_PDF_SignPAdES_TSA_Binary_ByCert()` - AI / mLipok
+- Added: Function: `_Chilkat_PDF_SignPAdES_TSA_File_BySmartCard()` - AI / mLipok
+- Added: Function: `_Chilkat_PDF_SignPAdES_TSA_Binary_BySmartCard()` - AI / mLipok
+- Added: Function: `_Chilkat_PDF_SignPAdES_TSA_File_ByPkcs11()` - AI / mLipok
+- Added: Function: `_Chilkat_PDF_SignPAdES_TSA_Binary_ByPkcs11()` - AI / mLipok
+- Added: Function: `_Chilkat_PDF_VerifyPAdES_TSA_File_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_PDF_VerifyPAdES_TSA_Binary_AsJson()` - AI / mLipok
 - Added: Authenticode CodeSign wrappers for AddSignature, VerifySignature, RemoveSignature, smart-card signing and PKCS11 signing - AI / mLipok
+- Added: Function: `_Chilkat_CodeSign_AddSignature()` - AI / mLipok
+- Added: Function: `_Chilkat_CodeSign_VerifySignature_AsJson()` - AI / mLipok
+- Added: Function: `_Chilkat_CodeSign_RemoveSignature()` - AI / mLipok
+- Added: Function: `_Chilkat_CodeSign_SignFile_BySmartCard()` - AI / mLipok
+- Added: Function: `_Chilkat_CodeSign_SignFile_ByPkcs11()` - AI / mLipok
 - Added: Examples 044-048 covering CertStore search, SCard lifecycle/status, PAdES TSA timestamps, Authenticode signing and SmartCardFailReason - AI / mLipok
 - Changed: refreshed the TODO list to remove completed SCard, SmartCardFailReason, CertStore.FindCert, PAdES TSA and Authenticode items - AI / mLipok
 
@@ -118,6 +140,8 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - Changed: `Chilkat_Example_038_PEM_GENERATOR.au3` now provides `ST` and `L` inputs for generated PKCS#10 certificate signing requests - AI / mLipok
 - Added: Example 038 automatically reloads each generated CSR, verifies its signature, compares the Subject DN and requested DNS SAN, and displays the verification summary in a MsgBox without adding verification controls to the GUI - AI / mLipok
 - Fixed: removed redundant blank lines before the JWT entries in the current release notes - AI / mLipok
+## v0.2.12 — 2026/07/13
+
 - Added: smart-card certificate listing as a native AutoIt array containing certificate name, issuer, serial number, validity dates, fingerprint, key usage and qualification metadata - AI / mLipok
 - Added: interactive ListView-based selection of a valid smart-card certificate, with the selected certificate identified by its full SHA-1 fingerprint - AI / mLipok
 - Changed: smart-card PIN prompts now display a readable summary of the selected certificate before requesting the PIN - AI / mLipok
