@@ -5,18 +5,14 @@
 
 `Chilkat_CloudStorage.au3` groups provider authentication, object-storage helpers, and generic cloud REST access.
 
-## Categories
+## Implemented scope
 
-- Amazon Glacier
-- Amazon S3 and newer S3 workflows
-- Azure Cloud Storage
-- Box
-- Dropbox
-- Google Cloud Storage
-- Google Drive
-- Google Photos
-- OneDrive
-- SharePoint
+- AWS and Azure authentication-object creators;
+- dedicated Amazon S3 upload, download, delete, and bucket-listing wrappers;
+- optional S3-compatible endpoints supported by the S3 wrapper configuration;
+- generic bearer-authenticated JSON REST requests.
+
+The module does not currently provide dedicated wrapper sets for Amazon Glacier, Box, Dropbox, Google Cloud Storage, Google Drive, Google Photos, OneDrive, or SharePoint. Providers exposing bearer-authenticated JSON APIs may be accessed through the generic REST helper, but endpoint construction and provider-specific behavior remain the caller's responsibility.
 
 ## Authentication objects
 
