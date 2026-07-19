@@ -6,7 +6,7 @@
 ; Description ...: Digital-signature and signature-container support.
 ; Author ........: mLipok
 ; Modified ......: AI / mLipok
-; Date ..........: 2026/07/13
+; Date ..........: 2026/07/17
 ; Version .......: v0.3.0 BETA - Work in progress
 ; Remarks .......: This module is linked and loaded by Chilkat.au3.
 ; Categories ....: CAdES; Cloud Signature CSC; Digital Signatures; JWE; JWS; JWT; PDF Signatures; Signing in the Cloud; XAdES; XML Digital Signatures
@@ -1184,6 +1184,175 @@ Func _Chilkat_Jwt_ObjCreate()
 	Local $oObject = __Chilkat_ObjCreate_Wrapper($CHILKATOBJ_NAME_JWT)
 	Return SetError(@error, @extended, $oObject)
 EndFunc   ;==>_Chilkat_Jwt_ObjCreate
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_JWT_ExtractBearerToken
+; Description ...: Extracts a compact JWT from a raw token, a Bearer value, or a complete Authorization header.
+; Syntax ........: _Chilkat_JWT_ExtractBearerToken($sAuthorizationOrToken)
+; Parameters ....: $sAuthorizationOrToken - [in] raw compact JWT, "Bearer <token>", or "Authorization: Bearer <token>".
+; Return values .: Success: compact JWT string. Failure: empty string and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Rejects non-Bearer Authorization headers, CR/LF characters, whitespace inside the token, and non-JWT compact formats.
+;                  A compact JWT/JWS must contain exactly three dot-separated parts. This function does not verify the signature.
+; Related .......: _Chilkat_JWT_DecodeHeader_AsJson, _Chilkat_JWT_DecodePayload_AsJson, _Chilkat_JWT_DecodeToken_AsJson
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatJwtRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_JWT_ExtractBearerToken($sAuthorizationOrToken)
+	If Not IsString($sAuthorizationOrToken) Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERTYPE, $CHILKAT_EXT_PARAM1, '')
+
+	Local $sToken = StringStripWS($sAuthorizationOrToken, 3)
+	If $sToken = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM1, '')
+	If StringInStr($sToken, @CR) Or StringInStr($sToken, @LF) Then _
+			Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM1, '')
+
+	Local $aBearerMatch = StringRegExp($sToken, '(?i)^(?:Authorization\s*:\s*)?Bearer\s+(.+)$', 1)
+	If IsArray($aBearerMatch) Then
+		$sToken = StringStripWS($aBearerMatch[0], 3)
+	ElseIf StringRegExp($sToken, '(?i)^(?:Authorization\s*:|Bearer(?:\s|$))') Then
+		Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM1, '')
+	EndIf
+
+	If $sToken = '' Or StringRegExp($sToken, '\s') Then _
+			Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM1, '')
+
+	Local $aParts = StringSplit($sToken, '.', 2)
+	If @error Or UBound($aParts) <> 3 Then _
+			Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM1, '')
+	If $aParts[0] = '' Or $aParts[1] = '' Then _
+			Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM1, '')
+
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $sToken)
+EndFunc   ;==>_Chilkat_JWT_ExtractBearerToken
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_JWT_DecodeHeader_AsJson
+; Description ...: Decodes the JOSE header of a compact JWT and returns it as a Chilkat JsonObject.
+; Syntax ........: _Chilkat_JWT_DecodeHeader_AsJson($sAuthorizationOrToken)
+; Parameters ....: $sAuthorizationOrToken - [in] raw compact JWT, Bearer value, or complete Authorization header.
+; Return values .: Success: Chilkat JsonObject containing the decoded JOSE header. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Uses Jwt.GetHeader(), available since Chilkat 9.5.0.58. Decoding does not verify the token signature.
+; Related .......: _Chilkat_JWT_ExtractBearerToken, _Chilkat_JWT_DecodePayload_AsJson, _Chilkat_JWT_DecodeToken_AsJson
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatJwtRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_JWT_DecodeHeader_AsJson($sAuthorizationOrToken)
+	Local $oErrorHandler = ObjEvent('AutoIt.Error', __Internal_COM_ERROR_HANDLER__for_Chilkat)
+	#forceref $oErrorHandler
+
+	Local $sToken = _Chilkat_JWT_ExtractBearerToken($sAuthorizationOrToken)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+	Local $oJwt = _Chilkat_Jwt_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+	Local $sHeader = $oJwt.GetHeader($sToken)
+	If @error Or Not IsString($sHeader) Or $sHeader = '' Then
+		__Chilkat_LogOnError('_Chilkat_JWT_DecodeHeader_AsJson() Jwt.GetHeader()', $oJwt, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+
+	Local $oHeader = _Chilkat_JSON_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $iSuccess = $oHeader.Load($sHeader)
+	If $iSuccess = 0 Then
+		__Chilkat_LogOnError('_Chilkat_JWT_DecodeHeader_AsJson() JsonObject.Load()', $oHeader, $CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	$oHeader.EmitCompact = 0
+
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oHeader)
+EndFunc   ;==>_Chilkat_JWT_DecodeHeader_AsJson
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_JWT_DecodePayload_AsJson
+; Description ...: Decodes the claims payload of a compact JWT and returns it as a Chilkat JsonObject.
+; Syntax ........: _Chilkat_JWT_DecodePayload_AsJson($sAuthorizationOrToken)
+; Parameters ....: $sAuthorizationOrToken - [in] raw compact JWT, Bearer value, or complete Authorization header.
+; Return values .: Success: Chilkat JsonObject containing the decoded claims. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Uses Jwt.GetPayload(), available since Chilkat 9.5.0.58. Decoding does not validate exp/nbf claims or verify the signature.
+; Related .......: _Chilkat_JWT_ExtractBearerToken, _Chilkat_JWT_DecodeHeader_AsJson, _Chilkat_JWT_DecodeToken_AsJson
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatJwtRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_JWT_DecodePayload_AsJson($sAuthorizationOrToken)
+	Local $oErrorHandler = ObjEvent('AutoIt.Error', __Internal_COM_ERROR_HANDLER__for_Chilkat)
+	#forceref $oErrorHandler
+
+	Local $sToken = _Chilkat_JWT_ExtractBearerToken($sAuthorizationOrToken)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+	Local $oJwt = _Chilkat_Jwt_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+	Local $sPayload = $oJwt.GetPayload($sToken)
+	If @error Or Not IsString($sPayload) Or $sPayload = '' Then
+		__Chilkat_LogOnError('_Chilkat_JWT_DecodePayload_AsJson() Jwt.GetPayload()', $oJwt, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+
+	Local $oPayload = _Chilkat_JSON_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $iSuccess = $oPayload.Load($sPayload)
+	If $iSuccess = 0 Then
+		__Chilkat_LogOnError('_Chilkat_JWT_DecodePayload_AsJson() JsonObject.Load()', $oPayload, $CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	$oPayload.EmitCompact = 0
+
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oPayload)
+EndFunc   ;==>_Chilkat_JWT_DecodePayload_AsJson
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_JWT_DecodeToken_AsJson
+; Description ...: Decodes a compact JWT into one JSON object containing the JOSE header, claims payload, and verification status flags.
+; Syntax ........: _Chilkat_JWT_DecodeToken_AsJson($sAuthorizationOrToken)
+; Parameters ....: $sAuthorizationOrToken - [in] raw compact JWT, Bearer value, or complete Authorization header.
+; Return values .: Success: Chilkat JsonObject with header, payload, signaturePresent, decodedOnly, and signatureVerified. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: This is an inspection helper. It does not verify the signature, issuer, audience, nonce, or time-based claims.
+;                  Never make authorization decisions from decoded claims until the token has been verified by a trusted validation path.
+; Related .......: _Chilkat_JWT_ExtractBearerToken, _Chilkat_JWT_DecodeHeader_AsJson, _Chilkat_JWT_DecodePayload_AsJson
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatJwtRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_JWT_DecodeToken_AsJson($sAuthorizationOrToken)
+	Local $sToken = _Chilkat_JWT_ExtractBearerToken($sAuthorizationOrToken)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+	Local $oHeader = _Chilkat_JWT_DecodeHeader_AsJson($sToken)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	Local $oPayload = _Chilkat_JWT_DecodePayload_AsJson($sToken)
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+
+	Local $oResult = _Chilkat_JSON_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	$oResult.EmitCompact = 0
+
+	Local $oHeaderTarget = $oResult.AppendObject('header')
+	If @error Or Not IsObj($oHeaderTarget) Then Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	Local $iSuccess = $oHeaderTarget.Load($oHeader.Emit())
+	If $iSuccess = 0 Then Return SetError($CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+
+	Local $oPayloadTarget = $oResult.AppendObject('payload')
+	If @error Or Not IsObj($oPayloadTarget) Then Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	$iSuccess = $oPayloadTarget.Load($oPayload.Emit())
+	If $iSuccess = 0 Then Return SetError($CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+
+	Local $aParts = StringSplit($sToken, '.', 2)
+	$oResult.UpdateBool('signaturePresent', UBound($aParts) = 3 And $aParts[2] <> '')
+	$oResult.UpdateBool('decodedOnly', True)
+	$oResult.UpdateBool('signatureVerified', False)
+	$oResult.UpdateString('warning', 'Decoded for inspection only. Signature and claims were not verified.')
+
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oResult)
+EndFunc   ;==>_Chilkat_JWT_DecodeToken_AsJson
 
 #EndRegion ; _Chilkat_Jwt_**
 

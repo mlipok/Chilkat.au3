@@ -11,7 +11,7 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - While a version is still in development, revise and extend its latest entry instead of creating incomplete duplicate entries.
 - Before a final release, update the version/tag in the AI-assisted documentation notice in every Markdown file.
 
-## v0.3.0 — 2026/07/14
+## v0.3.0 — 2026/07/19
 
 - Changed: split object-specific functions into Certificates/PKI, Digital Signatures, Email, Cryptography and Compression/Archives modules - AI / mLipok
 - Changed: Chilkat.au3 remains the primary include file and links all modular UDF files, preserving a single entry point for existing scripts - AI / mLipok
@@ -109,7 +109,6 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - Added: Function: `_Chilkat_S3_UploadFile()` - AI / mLipok
 - Added: shared `_Chilkat_HTTP_Request_AsJson()` and `_Chilkat_HTTP_UrlEncode()` helpers with Chilkat 10 and 11 compatibility paths - AI / mLipok
 - Added: Examples 040-043 for data formats, OIDC discovery, Google CRUD and S3 cloud storage - AI / mLipok
-
 - Added: Function: `_Chilkat_JWT_ExtractBearerToken()` - extracts a compact JWT from a raw token, `Bearer` value, or complete `Authorization: Bearer` header and validates the three-part compact structure - AI / mLipok
 - Added: Function: `_Chilkat_JWT_DecodeHeader_AsJson()` - decodes the JOSE header through Chilkat `Jwt.GetHeader()` and returns a Chilkat JsonObject - AI / mLipok
 - Added: Function: `_Chilkat_JWT_DecodePayload_AsJson()` - decodes the claims payload through Chilkat `Jwt.GetPayload()` and returns a Chilkat JsonObject - AI / mLipok
@@ -119,10 +118,6 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - Changed: `Chilkat_Example_038_PEM_GENERATOR.au3` now provides `ST` and `L` inputs for generated PKCS#10 certificate signing requests - AI / mLipok
 - Added: Example 038 automatically reloads each generated CSR, verifies its signature, compares the Subject DN and requested DNS SAN, and displays the verification summary in a MsgBox without adding verification controls to the GUI - AI / mLipok
 - Fixed: removed redundant blank lines before the JWT entries in the current release notes - AI / mLipok
-<!-- @LAST -->
-
-## v0.2.12 — 2026/07/13
-
 - Added: smart-card certificate listing as a native AutoIt array containing certificate name, issuer, serial number, validity dates, fingerprint, key usage and qualification metadata - AI / mLipok
 - Added: interactive ListView-based selection of a valid smart-card certificate, with the selected certificate identified by its full SHA-1 fingerprint - AI / mLipok
 - Changed: smart-card PIN prompts now display a readable summary of the selected certificate before requesting the PIN - AI / mLipok
