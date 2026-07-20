@@ -58,6 +58,7 @@ See [Architecture and modules](docs/architecture-and-modules.md) for module scop
 - shared example initialization through `Examples/Chilkat_Example_Common.au3`;
 - dedicated modules for data formats, authentication, transfer/networking, cloud storage, and Google APIs;
 - standard Google API CRUD wrappers plus Calendar, Sheets, Tasks, Cloud SQL, and Firebase helpers;
+- interactive Google OAuth2 and unattended service-account authorization for Google Sheets;
 - RSA key-pair generation compatible with Chilkat 10 and Chilkat 11+;
 - private-key and public-key PEM export helpers;
 - CSR generation and X.509 certificate export helpers;
@@ -109,6 +110,9 @@ Notable additions include:
 - `Examples/Chilkat_Example_046_PDF_PAdES_TSA_Timestamp.au3`
 - `Examples/Chilkat_Example_047_CodeSign_Authenticode.au3`
 - `Examples/Chilkat_Example_048_SmartCardFailReason.au3`
+- `Examples/Chilkat_Example_049_JWT_DecodeBearerToken.au3`
+- `Examples/Chilkat_Example_050_GoogleSheets_ReadWrite_GoogleOAuth2.au3`
+- `Examples/Chilkat_Example_051_GoogleSheets_ReadWrite_ServiceAccount.au3`
 
 See [Examples and initialization](docs/examples-and-initialization.md) for the common example model and development defaults.
 
