@@ -6,7 +6,7 @@
 ; Description ...: Google authentication and REST API support.
 ; Author ........: mLipok
 ; Modified ......: AI / mLipok
-; Date ..........: 2026/07/14
+; Date ..........: 2026/07/19
 ; Version .......: v0.3.0 BETA - Work in progress
 ; Remarks .......: This module is linked and loaded by Chilkat.au3.
 ; Categories ....: Firebase; Google APIs; Google Calendar; Google Cloud SQL; Google Sheets; Google Tasks
@@ -35,6 +35,168 @@ Func _Chilkat_AuthGoogle_ObjCreate()
 EndFunc   ;==>_Chilkat_AuthGoogle_ObjCreate
 
 #EndRegion ; _Chilkat_AuthGoogle_**
+
+#Region ; _Chilkat_GoogleOAuth2_**
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_GoogleOAuth2_Authorize_AsJson
+; Description ...: Runs the interactive Google OAuth2 authorization-code flow for a desktop application.
+; Syntax ........: _Chilkat_GoogleOAuth2_Authorize_AsJson($sClientId, $sScope = 'https://www.googleapis.com/auth/spreadsheets', $iListenPort = 3017, $iTimeoutMs = 90000, $sClientSecret = Default)
+; Parameters ....: $sClientId             - [in] Google OAuth2 client identifier.
+;                  $sScope                - [in] space-delimited OAuth2 scopes. Default grants Google Sheets read/write access.
+;                  $iListenPort           - [in] local redirect-listener port configured for the OAuth2 client. Default is 3017.
+;                  $iTimeoutMs            - [in] maximum time to wait for the browser flow in milliseconds. Default is 90000.
+;                  $sClientSecret         - [in] optional OAuth2 client secret. Default omits it for a public desktop client.
+; Return values .: Success: Chilkat JsonObject containing the token response. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Uses PKCE with S256. Google is asked for offline access so that the response can contain a refresh token.
+;                  The returned token data is sensitive and must not be logged or committed to source control.
+; Related .......: _Chilkat_GoogleOAuth2_Refresh_AsJson, _Chilkat_OAuth2_ObjCreate
+; Link ..........: https://developers.google.com/identity/protocols/oauth2/native-app
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_GoogleOAuth2_Authorize_AsJson($sClientId, $sScope = 'https://www.googleapis.com/auth/spreadsheets', $iListenPort = 3017, $iTimeoutMs = 90000, $sClientSecret = Default)
+	If Not IsString($sClientId) Or $sClientId = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If Not IsString($sScope) Or $sScope = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
+	If Not IsInt($iListenPort) Or $iListenPort < 1 Or $iListenPort > 65535 Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM3, $CHILKAT_RET_FAILURE)
+	If Not IsInt($iTimeoutMs) Or $iTimeoutMs < 1000 Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM4, $CHILKAT_RET_FAILURE)
+	If Not IsKeyword($sClientSecret) And Not IsString($sClientSecret) Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERTYPE, $CHILKAT_EXT_PARAM5, $CHILKAT_RET_FAILURE)
+
+	Local $oOAuth2 = _Chilkat_OAuth2_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	$oOAuth2.ListenPort = $iListenPort
+	$oOAuth2.AuthorizationEndpoint = 'https://accounts.google.com/o/oauth2/v2/auth'
+	$oOAuth2.TokenEndpoint = 'https://oauth2.googleapis.com/token'
+	$oOAuth2.ClientId = $sClientId
+	If Not IsKeyword($sClientSecret) And $sClientSecret <> '' Then $oOAuth2.ClientSecret = $sClientSecret
+	$oOAuth2.CodeChallenge = True
+	$oOAuth2.CodeChallengeMethod = 'S256'
+	$oOAuth2.Scope = $sScope
+
+	Local $sAuthorizationUrl = $oOAuth2.StartAuth()
+	If $oOAuth2.LastMethodSuccess = False Then
+		__Chilkat_LogOnError('_Chilkat_GoogleOAuth2_Authorize_AsJson() StartAuth()', $oOAuth2, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	$sAuthorizationUrl &= '&access_type=offline&prompt=consent'
+
+	ShellExecute($sAuthorizationUrl)
+	If @error Then
+		$oOAuth2.Cancel()
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+
+	Local $iElapsedMs = 0
+	While $iElapsedMs < $iTimeoutMs And $oOAuth2.AuthFlowState < 3
+		Sleep(100)
+		$iElapsedMs += 100
+	WEnd
+	If $oOAuth2.AuthFlowState < 3 Then
+		$oOAuth2.Cancel()
+		Return SetError($CHILKAT_ERR_FAILURE, $oOAuth2.AuthFlowState, $CHILKAT_RET_FAILURE)
+	EndIf
+	If $oOAuth2.AuthFlowState <> 3 Then
+		__Chilkat_LogOnError('_Chilkat_GoogleOAuth2_Authorize_AsJson() OAuth2 flow', $oOAuth2, $CHILKAT_ERR_FAILURE, $oOAuth2.AuthFlowState)
+		Return SetError($CHILKAT_ERR_FAILURE, $oOAuth2.AuthFlowState, $CHILKAT_RET_FAILURE)
+	EndIf
+
+	Local $oTokenJson = _Chilkat_JSON_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	If $oTokenJson.Load($oOAuth2.AccessTokenResponse) = False Then
+		__Chilkat_LogOnError('_Chilkat_GoogleOAuth2_Authorize_AsJson() JsonObject.Load()', $oTokenJson, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Return SetError($CHILKAT_ERR_SUCCESS, $oOAuth2.AuthFlowState, $oTokenJson)
+EndFunc   ;==>_Chilkat_GoogleOAuth2_Authorize_AsJson
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_GoogleOAuth2_Refresh_AsJson
+; Description ...: Refreshes a Google OAuth2 access token without user interaction.
+; Syntax ........: _Chilkat_GoogleOAuth2_Refresh_AsJson($sClientId, $oTokenJson, $sClientSecret = Default)
+; Parameters ....: $sClientId             - [in] Google OAuth2 client identifier.
+;                  $oTokenJson            - [in/out] Chilkat JsonObject containing refresh_token and the previous token response.
+;                  $sClientSecret         - [in] optional OAuth2 client secret. Default omits it for a public desktop client.
+; Return values .: Success: updated Chilkat JsonObject. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Preserves the existing refresh token and replaces access_token in the supplied JSON object.
+;                  The returned token data is sensitive and must not be logged or committed to source control.
+; Related .......: _Chilkat_GoogleOAuth2_Authorize_AsJson, _Chilkat_OAuth2_ObjCreate
+; Link ..........: https://developers.google.com/identity/protocols/oauth2/native-app#offline
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_GoogleOAuth2_Refresh_AsJson($sClientId, $oTokenJson, $sClientSecret = Default)
+	If Not IsString($sClientId) Or $sClientId = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If Not IsObj($oTokenJson) Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERTYPE, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
+	If Not IsKeyword($sClientSecret) And Not IsString($sClientSecret) Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERTYPE, $CHILKAT_EXT_PARAM3, $CHILKAT_RET_FAILURE)
+	Local $sRefreshToken = $oTokenJson.StringOf('refresh_token')
+	If $sRefreshToken = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
+
+	Local $oOAuth2 = _Chilkat_OAuth2_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	$oOAuth2.TokenEndpoint = 'https://oauth2.googleapis.com/token'
+	$oOAuth2.ClientId = $sClientId
+	If Not IsKeyword($sClientSecret) And $sClientSecret <> '' Then $oOAuth2.ClientSecret = $sClientSecret
+	$oOAuth2.RefreshToken = $sRefreshToken
+	If $oOAuth2.RefreshAccessToken() = False Then
+		__Chilkat_LogOnError('_Chilkat_GoogleOAuth2_Refresh_AsJson() RefreshAccessToken()', $oOAuth2, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+
+	$oTokenJson.UpdateString('access_token', $oOAuth2.AccessToken)
+	$oTokenJson.UpdateString('token_type', 'Bearer')
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $oTokenJson)
+EndFunc   ;==>_Chilkat_GoogleOAuth2_Refresh_AsJson
+
+#EndRegion ; _Chilkat_GoogleOAuth2_**
+
+#Region ; _Chilkat_GoogleServiceAccount_**
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_GoogleServiceAccount_ObtainAccessToken
+; Description ...: Obtains a Google OAuth2 bearer token using a service-account JSON private key.
+; Syntax ........: _Chilkat_GoogleServiceAccount_ObtainAccessToken($sJsonKey, $sScope = 'https://www.googleapis.com/auth/spreadsheets', $iExpireNumSeconds = 3600)
+; Parameters ....: $sJsonKey              - [in] complete contents of a Google service-account JSON key file.
+;                  $sScope                - [in] space-delimited Google API scopes. Default grants Google Sheets read/write access.
+;                  $iExpireNumSeconds     - [in] requested token lifetime from 1 to 3600 seconds. Default is 3600.
+; Return values .: Success: OAuth2 bearer access token. Failure: $CHILKAT_RET_FAILURE and sets @error/@extended.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: The service-account key is sensitive and must not be logged or committed to source control.
+;                  The target spreadsheet must be shared with the client_email contained in the JSON key.
+; Related .......: _Chilkat_AuthGoogle_ObjCreate, _Chilkat_Socket_ObjCreate
+; Link ..........: https://www.chilkatsoft.com/refdoc/xChilkatAuthGoogleRef.html
+; Example .......: Yes
+; ===============================================================================================================================
+Func _Chilkat_GoogleServiceAccount_ObtainAccessToken($sJsonKey, $sScope = 'https://www.googleapis.com/auth/spreadsheets', $iExpireNumSeconds = 3600)
+	If Not IsString($sJsonKey) Or $sJsonKey = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
+	If Not IsString($sScope) Or $sScope = '' Then Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM2, $CHILKAT_RET_FAILURE)
+	If Not IsInt($iExpireNumSeconds) Or $iExpireNumSeconds < 1 Or $iExpireNumSeconds > 3600 Then _
+			Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_PARAM3, $CHILKAT_RET_FAILURE)
+
+	Local $oAuthGoogle = _Chilkat_AuthGoogle_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	$oAuthGoogle.JsonKey = $sJsonKey
+	$oAuthGoogle.Scope = $sScope
+	$oAuthGoogle.ExpireNumSeconds = $iExpireNumSeconds
+
+	Local $oTlsSocket = _Chilkat_Socket_ObjCreate()
+	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
+	If $oTlsSocket.Connect('www.googleapis.com', 443, True, 5000) = False Then
+		__Chilkat_LogOnError('_Chilkat_GoogleServiceAccount_ObtainAccessToken() Socket.Connect()', $oTlsSocket, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	If $oAuthGoogle.ObtainAccessToken($oTlsSocket) = False Then
+		__Chilkat_LogOnError('_Chilkat_GoogleServiceAccount_ObtainAccessToken() AuthGoogle.ObtainAccessToken()', $oAuthGoogle, $CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
+	Local $sAccessToken = $oAuthGoogle.AccessToken
+	If $sAccessToken = '' Then Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $sAccessToken)
+EndFunc   ;==>_Chilkat_GoogleServiceAccount_ObtainAccessToken
+
+#EndRegion ; _Chilkat_GoogleServiceAccount_**
 
 #Region ; _Chilkat_GoogleAPI_**
 
@@ -258,9 +420,9 @@ EndFunc   ;==>_Chilkat_GoogleCalendar_ListEvents_AsJson
 #Region ; _Chilkat_GoogleSheets_**
 
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: _Chilkat_GoogleSheets_CreateValues_AsJson
-; Description ...: Appends values to a Google Sheets range as the Create operation.
-; Syntax ........: _Chilkat_GoogleSheets_CreateValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken, $oValueRangeJson, $sValueInputOption = 'USER_ENTERED')
+; Name ..........: _Chilkat_GoogleSheets_AppendValues_AsJson
+; Description ...: Appends values to a Google Sheets range.
+; Syntax ........: _Chilkat_GoogleSheets_AppendValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken, $oValueRangeJson, $sValueInputOption = 'USER_ENTERED')
 ; Parameters ....: $sSpreadsheetId        - [in] spreadsheet identifier.
 ;                  $sRange                - [in] A1 notation range.
 ;                  $sAccessToken          - [in] OAuth2 bearer access token.
@@ -274,7 +436,7 @@ EndFunc   ;==>_Chilkat_GoogleCalendar_ListEvents_AsJson
 ; Link ..........: https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/append
 ; Example .......: Yes
 ; ===============================================================================================================================
-Func _Chilkat_GoogleSheets_CreateValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken, $oValueRangeJson, $sValueInputOption = 'USER_ENTERED')
+Func _Chilkat_GoogleSheets_AppendValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken, $oValueRangeJson, $sValueInputOption = 'USER_ENTERED')
 	Local $sEncodedSpreadsheetId = _Chilkat_HTTP_UrlEncode($sSpreadsheetId)
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 	Local $sEncodedRange = _Chilkat_HTTP_UrlEncode($sRange)
@@ -283,6 +445,24 @@ Func _Chilkat_GoogleSheets_CreateValues_AsJson($sSpreadsheetId, $sRange, $sAcces
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 	Local $sUrl = 'https://sheets.googleapis.com/v4/spreadsheets/' & $sEncodedSpreadsheetId & '/values/' & $sEncodedRange & ':append?valueInputOption=' & $sEncodedInputOption & '&insertDataOption=INSERT_ROWS'
 	Local $oJson = _Chilkat_GoogleAPI_Create_AsJson($sUrl, $sAccessToken, $oValueRangeJson)
+	Return SetError(@error, @extended, $oJson)
+EndFunc   ;==>_Chilkat_GoogleSheets_AppendValues_AsJson
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_GoogleSheets_CreateValues_AsJson
+; Description ...: Compatibility alias for _Chilkat_GoogleSheets_AppendValues_AsJson.
+; Syntax ........: _Chilkat_GoogleSheets_CreateValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken, $oValueRangeJson, $sValueInputOption = 'USER_ENTERED')
+; Parameters ....: See _Chilkat_GoogleSheets_AppendValues_AsJson.
+; Return values .: See _Chilkat_GoogleSheets_AppendValues_AsJson.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Deprecated compatibility name. Google Sheets calls this operation append, not create.
+; Related .......: _Chilkat_GoogleSheets_AppendValues_AsJson
+; Link ..........: https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/append
+; Example .......: No
+; ===============================================================================================================================
+Func _Chilkat_GoogleSheets_CreateValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken, $oValueRangeJson, $sValueInputOption = 'USER_ENTERED')
+	Local $oJson = _Chilkat_GoogleSheets_AppendValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken, $oValueRangeJson, $sValueInputOption)
 	Return SetError(@error, @extended, $oJson)
 EndFunc   ;==>_Chilkat_GoogleSheets_CreateValues_AsJson
 
@@ -341,9 +521,9 @@ Func _Chilkat_GoogleSheets_UpdateValues_AsJson($sSpreadsheetId, $sRange, $sAcces
 EndFunc   ;==>_Chilkat_GoogleSheets_UpdateValues_AsJson
 
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: _Chilkat_GoogleSheets_DeleteValues_AsJson
-; Description ...: Clears values in a Google Sheets range as the Delete operation.
-; Syntax ........: _Chilkat_GoogleSheets_DeleteValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken)
+; Name ..........: _Chilkat_GoogleSheets_ClearValues_AsJson
+; Description ...: Clears values in a Google Sheets range.
+; Syntax ........: _Chilkat_GoogleSheets_ClearValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken)
 ; Parameters ....: $sSpreadsheetId        - [in] spreadsheet identifier.
 ;                  $sRange                - [in] A1 notation range to clear.
 ;                  $sAccessToken          - [in] OAuth2 bearer access token.
@@ -355,7 +535,7 @@ EndFunc   ;==>_Chilkat_GoogleSheets_UpdateValues_AsJson
 ; Link ..........: https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/clear
 ; Example .......: Yes
 ; ===============================================================================================================================
-Func _Chilkat_GoogleSheets_DeleteValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken)
+Func _Chilkat_GoogleSheets_ClearValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken)
 	Local $sEncodedSpreadsheetId = _Chilkat_HTTP_UrlEncode($sSpreadsheetId)
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 	Local $sEncodedRange = _Chilkat_HTTP_UrlEncode($sRange)
@@ -364,6 +544,24 @@ Func _Chilkat_GoogleSheets_DeleteValues_AsJson($sSpreadsheetId, $sRange, $sAcces
 	If @error Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 	Local $sUrl = 'https://sheets.googleapis.com/v4/spreadsheets/' & $sEncodedSpreadsheetId & '/values/' & $sEncodedRange & ':clear'
 	Local $oJson = _Chilkat_GoogleAPI_Create_AsJson($sUrl, $sAccessToken, $oEmpty)
+	Return SetError(@error, @extended, $oJson)
+EndFunc   ;==>_Chilkat_GoogleSheets_ClearValues_AsJson
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _Chilkat_GoogleSheets_DeleteValues_AsJson
+; Description ...: Compatibility alias for _Chilkat_GoogleSheets_ClearValues_AsJson.
+; Syntax ........: _Chilkat_GoogleSheets_DeleteValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken)
+; Parameters ....: See _Chilkat_GoogleSheets_ClearValues_AsJson.
+; Return values .: See _Chilkat_GoogleSheets_ClearValues_AsJson.
+; Author ........: AI / mLipok
+; Modified ......:
+; Remarks .......: Deprecated compatibility name. Google Sheets clears cell values; it does not delete the range.
+; Related .......: _Chilkat_GoogleSheets_ClearValues_AsJson
+; Link ..........: https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/clear
+; Example .......: No
+; ===============================================================================================================================
+Func _Chilkat_GoogleSheets_DeleteValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken)
+	Local $oJson = _Chilkat_GoogleSheets_ClearValues_AsJson($sSpreadsheetId, $sRange, $sAccessToken)
 	Return SetError(@error, @extended, $oJson)
 EndFunc   ;==>_Chilkat_GoogleSheets_DeleteValues_AsJson
 
