@@ -39,10 +39,20 @@ Examples call `_Chilkat_ShutDown()` before exiting after their primary workflow.
 - Example 041 — OIDC discovery.
 - Example 042 — Google CRUD structure and safe read operations.
 - Example 043 — Amazon S3 setup and listing.
+- Example 044 — certificate-store search.
+- Example 045 — smart-card connection lifecycle and status.
+- Example 046 — PAdES signature with TSA timestamp.
+- Example 047 — Authenticode signing and verification.
+- Example 048 — SmartCardFailReason diagnostics.
+- Example 049 — JWT extraction and decoding from a bearer token.
+- Example 050 — Google Sheets read/write using interactive Google OAuth2.
+- Example 051 — Google Sheets read/write using a service account.
 
 ## Credentials and destructive operations
 
 Examples must not contain real credentials, PINs, private keys, bearer tokens, or production resource IDs. Create/update/delete examples use placeholders and should avoid executing destructive operations until the user explicitly supplies valid values.
+
+Private example configuration belongs below `Examples/!!!_MY_SECRET_DATA/`. The repository `.gitignore` excludes that entire directory to prevent accidental commits of OAuth client configuration, refresh tokens, service-account private keys, and similar secrets.
 
 ## Certificate, SCard, TSA, and CodeSign examples
 
@@ -51,3 +61,10 @@ Examples must not contain real credentials, PINs, private keys, bearer tokens, o
 - `Chilkat_Example_046_PDF_PAdES_TSA_Timestamp.au3`
 - `Chilkat_Example_047_CodeSign_Authenticode.au3`
 - `Chilkat_Example_048_SmartCardFailReason.au3`
+
+## Google Sheets authorization examples
+
+- `Chilkat_Example_050_GoogleSheets_ReadWrite_GoogleOAuth2.au3` uses a desktop OAuth client, opens the Google authorization page in the default browser, and stores client configuration and tokens in the ignored private directory.
+- `Chilkat_Example_051_GoogleSheets_ReadWrite_ServiceAccount.au3` uses an ignored service-account JSON key and requires the spreadsheet to be shared with the service account.
+
+Spreadsheet IDs, ranges, write enablement, and listener ports remain local constants in the corresponding example instead of being stored in secret JSON files.
