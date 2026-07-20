@@ -1,154 +1,152 @@
 # Chilkat.au3
 
-Chilkat.au3 is an AutoIt UDF for working with the Chilkat ActiveX components from AutoIt scripts.
+<!-- AI_ASSISTED_DOCUMENTATION_NOTICE -->
+> **AI-assisted documentation:** This document is developed with assistance from ChatGPT AI, reviewed by mLipok, and based on Chilkat.au3 version/tag `v0.3.0 BETA - Work in progress`.
 
-This repository preserves and continues the public **Chilkat.au3 UDF** work originally published through the AutoIt community.
+Chilkat.au3 is an AutoIt UDF for working with Chilkat ActiveX components from AutoIt scripts.
+
+This repository preserves and continues the public **Chilkat.au3 UDF** work originally published through the AutoIt community and maintained by **mLipok**.
 
 ## Current release
 
 Current tagged GitHub release:
 
-* `v0.2.12-BETA`
-* https://github.com/mlipok/Chilkat.au3/releases/tag/v0.2.12-BETA
+- `v0.2.12-BETA`
+- https://github.com/mlipok/Chilkat.au3/releases/tag/v0.2.12-BETA
 
-This release should be treated as a beta / work-in-progress development baseline.
+Active development for the modular `0.3.x` line is performed on:
 
-## Current development branch
+- branch: `the_way_to_0.3.x`
+- current UDF header version: `v0.3.0 BETA - Work in progress`
+- current UDF header date: `2026/07/14`
 
-Active development toward the next version is done on:
+The development branch may contain script-breaking changes compared with earlier public versions.
 
-* branch: `the_way_to_0.2.0`
-* current UDF header version on this branch: `0.2.10 BETA - Work in progress`
-* current UDF header date on this branch: `2026/07/09`
-* latest release-notes entry prepared for this development line: `v0.2.12`
+## Quick start
 
-The `0.2.x` development line starts from the earlier public baseline and is intended for maintenance, documentation cleanup, compatibility-sensitive refactoring, and further UDF development.
+Applications should include only the primary UDF file:
 
-The `0.2.x` changelog notes that this development line includes changes prepared with ChatGPT AI assistance and reviewed by mLipok.
-
-Recent development work includes:
-
-* expanded Chilkat ActiveX object metadata for the supported 9.5, 10 and 11 object-version settings, including ProgID / CLSID / IID entries used by wrapper-based object creation;
-* major-version-specific ProgID support for Chilkat v10+ object creation, for example `Chilkat.Http.10` and future `Chilkat.Http.11`, while preserving the legacy `Chilkat_9_5_0.*` naming for the 9.5 object-version setting;
-* clarified object creation paths for registered COM ProgID creation and Registration-Free COM / SxS creation through CLSID, IID and loaded DLL handle metadata;
-* grouped Chilkat object functions into dedicated `#Region` blocks by object prefix;
-* added missing `_Chilkat_*_ObjCreate()` wrapper functions based on `ChilkatConstants.au3` object metadata;
-* standardized `_Chilkat_*_ObjCreate()` documentation remarks with Chilkat object introduction-version information from the Chilkat ActiveX reference documentation where available;
-* additional ProgID fallback object creators, including PKCS11, SCard, ScMinidriver, XmlDSig, XmlDSigGen and PrivateKey;
-* ZIP helper functions for file-based and binary/in-memory archive workflows;
-* FTP2 helper functions for connection, upload/download, binary transfer and directory listing as native AutoIt arrays;
-* smart-card, PC/SC and PKCS11 discovery helpers returning native AutoIt arrays;
-* certificate helper functions, including qualified-policy detection and validity-date checks;
-* smart-card certificate listing as a native AutoIt array containing certificate name, issuer, serial number, validity dates, fingerprint, key usage and qualification metadata;
-* filtering of expired, not-yet-valid and private-key-inaccessible smart-card certificates before selection;
-* interactive `ListView`-based selection of a smart-card certificate;
-* identification of the selected certificate by its complete SHA-1 fingerprint rather than by display name or list position;
-* smart-card PIN prompts that display a readable summary of the selected certificate before requesting the PIN;
-* PAdES PDF signing and aggregate verification helpers, including binary PDF workflows;
-* XAdES-BES signing and verification helpers for external-file and binary XML workflows;
-* updated `_Example_36_PDF_PAdES_Binary()` demonstrating interactive smart-card certificate selection before signing;
-* expanded examples, standardized example function documentation headers, and standardized object-creator documentation.
-
-## Smart-card certificate selection
-
-The smart-card signing workflow is designed to avoid silently selecting the first certificate returned by the card or certificate store.
-
-The intended sequence is:
-
-1. Open the smart-card certificate store.
-2. Read all available certificates into a native AutoIt array.
-3. Reject certificates that are expired, not yet valid or do not provide access to a private key.
-4. Display the remaining certificates in a `ListView` with useful metadata such as subject name, issuer, validity dates, serial number and fingerprint.
-5. Let the user explicitly select the certificate intended for signing.
-6. Identify the selected certificate internally by its complete SHA-1 fingerprint.
-7. Display a readable certificate summary before requesting the smart-card PIN.
-8. Assign the PIN only to the selected `Chilkat.Cert` object.
-9. Use that same selected certificate object for the signing operation.
-
-The fingerprint is used as a certificate identifier, not as a trust or cryptographic-strength assessment. The PIN unlocks access to the private key and does not determine which certificate should be selected. Multiple certificates on the same card may use the same PIN.
-
-## Object creation model
-
-The UDF supports two object creation paths:
-
-1. **Registered COM ProgID path** — uses a registered Chilkat ActiveX ProgID such as `Chilkat.Http.10`.
-2. **Registration-Free COM / SxS path** — creates objects directly from the loaded Chilkat ActiveX DLL by using CLSID, IID and the DLL handle stored by the UDF.
-
-The Registration-Free COM / SxS path is the reason `ChilkatConstants.au3` stores more than ProgID strings. The object metadata also includes CLSID and IID values used by wrapper-based object creation.
-
-For Chilkat v10 and newer, the preferred ProgID pattern in this UDF development line is:
-
-```text
-Chilkat.<ObjectName>.<MajorVersion>
+```autoit
+#include "Chilkat.au3"
 ```
 
-Examples:
+`Chilkat.au3` automatically includes all thematic modules. Deployment must therefore include the complete UDF file set, not only `Chilkat.au3` and `ChilkatConstants.au3`.
+
+See [Getting started](docs/getting-started.md) for initialization, version selection, architecture, and error-handling guidance.
+
+## Modular UDF layout
+
+The `0.3.x` line keeps `Chilkat.au3` as the public entry point and moves object-specific functions into thematic modules:
+
+- `Chilkat_DataFormats.au3`
+- `Chilkat_Authentication.au3`
+- `Chilkat_TransferNetworking.au3`
+- `Chilkat_CloudStorage.au3`
+- `Chilkat_Google.au3`
+- `Chilkat_Certificates_PKI.au3`
+- `Chilkat_DigitalSignatures.au3`
+- `Chilkat_Email.au3`
+- `Chilkat_Cryptography.au3`
+- `Chilkat_CompressionArchives.au3`
+
+See [Architecture and modules](docs/architecture-and-modules.md) for module scope, dependencies, deployment layout, and naming conventions.
+
+## Highlights of the 0.3.x development line
+
+- modular source layout while preserving one primary include file;
+- individual runnable example files instead of one monolithic example script;
+- shared example initialization through `Examples/Chilkat_Example_Common.au3`;
+- dedicated modules for data formats, authentication, transfer/networking, cloud storage, and Google APIs;
+- standard Google API CRUD wrappers plus Calendar, Sheets, Tasks, Cloud SQL, and Firebase helpers;
+- interactive Google OAuth2 and unattended service-account authorization for Google Sheets;
+- RSA key-pair generation compatible with Chilkat 10 and Chilkat 11+;
+- private-key and public-key PEM export helpers;
+- CSR generation and X.509 certificate export helpers;
+- GUI examples for generating and inspecting PEM, KEY, PUB, CSR, CERT, CER, and CRT files;
+- array-returning helpers for ZIP, FTP2, PC/SC, PKCS11, and certificate metadata;
+- explicit smart-card certificate selection for signing workflows;
+- CertStore search, full basic SCard connection lifecycle and SmartCardFailReason diagnostics;
+- LTV-enabled PAdES signatures with RFC 3161 TSA timestamps;
+- Authenticode signing, verification and signature removal for EXE/DLL files.
+
+Detailed documentation is available for:
+
+- [Data formats](docs/data-formats.md)
+- [Authentication](docs/authentication.md)
+- [Transfer and networking](docs/transfer-networking.md)
+- [Cloud storage](docs/cloud-storage.md)
+- [Google APIs and CRUD](docs/google.md)
+- [PEM, keys, CSR, and certificates](docs/pem-key-csr-cert.md)
+- [Code signing, PAdES TSA timestamps, and SCard](docs/codesign-pades-tsa-scard.md)
+
+## Examples
+
+The former `Examples/Chilkat_Examples.au3` file has been split into individual runnable files using this naming convention:
 
 ```text
-Chilkat.Http.10
-Chilkat.BinData.10
-Chilkat.Pdf.10
+Chilkat_Example_XXX_ShortDescription.au3
 ```
 
-For the legacy 9.5 object-version setting, the existing naming style is preserved:
+Examples use the shared initialization layer:
 
-```text
-Chilkat_9_5_0.<ObjectName>
+```autoit
+#include "..\Chilkat.au3"
+#include "Chilkat_Example_Common.au3"
+
+_Example_Init()
+If @error Then Exit
 ```
 
-## Repository contents
+Notable additions include:
 
-The repository contains:
+- `Examples/Chilkat_Example_038_PEM_GENERATOR.au3`
+- `Examples/Chilkat_Example_039_PEM_KEY_CERT_Reader.au3`
+- `Examples/Chilkat_Example_040_DataFormats_Base64_Markdown.au3`
+- `Examples/Chilkat_Example_041_OIDC_Discovery.au3`
+- `Examples/Chilkat_Example_042_Google_CRUD.au3`
+- `Examples/Chilkat_Example_043_CloudStorage_S3.au3`
+- `Examples/Chilkat_Example_044_CertStore_FindCert.au3`
+- `Examples/Chilkat_Example_045_SCard_ConnectionStatus.au3`
+- `Examples/Chilkat_Example_046_PDF_PAdES_TSA_Timestamp.au3`
+- `Examples/Chilkat_Example_047_CodeSign_Authenticode.au3`
+- `Examples/Chilkat_Example_048_SmartCardFailReason.au3`
+- `Examples/Chilkat_Example_049_JWT_DecodeBearerToken.au3`
+- `Examples/Chilkat_Example_050_GoogleSheets_ReadWrite_GoogleOAuth2.au3`
+- `Examples/Chilkat_Example_051_GoogleSheets_ReadWrite_ServiceAccount.au3`
 
-* `Chilkat.au3` — main AutoIt UDF wrapper for Chilkat ActiveX components.
-* `ChilkatConstants.au3` — constants and object metadata used by the UDF.
-* `Examples/Chilkat_Examples.au3` — example scripts demonstrating selected UDF functionality.
-* `Examples/Chilkat_GetObjectFlags_GENERATOR_FOR___$CHILKATOBJ_NAME_template.au3` — helper/generator template used for maintaining Chilkat object metadata.
+See [Examples and initialization](docs/examples-and-initialization.md) for the common example model and development defaults.
 
 ## Requirements
 
-To use this UDF, you need:
+- AutoIt 3.3.10.2 or newer;
+- the complete `0.3.x` UDF file set;
+- a compatible Chilkat ActiveX component;
+- matching process architecture between AutoIt and Chilkat;
+- a Chilkat unlock code or trial mode where applicable;
+- provider credentials, OAuth scopes, certificates, or hardware tokens required by the selected service.
 
-* AutoIt.
-* Chilkat ActiveX installed on the target system.
-* A Chilkat version compatible with the selected `$CHILKATOBJ_VERSION_*` setting used by the UDF.
-* For the registered COM ProgID path: Chilkat ActiveX properly registered in the Windows registry.
-* For the Registration-Free COM / SxS path: compatible CLSID / IID metadata in `ChilkatConstants.au3` and access to the correct Chilkat ActiveX DLL file loaded by the UDF.
+For registered COM, Registration-Free COM / SxS, ProgID, CLSID, IID, DLL loading, and deployment details, see [Object creation and deployment](docs/object-creation-and-deployment.md).
 
-Useful Chilkat references:
+## Documentation
 
-* https://www.chilkatsoft.com/refdoc/activex.asp
-* https://www.chilkatsoft.com/downloads_ActiveX.asp
-* https://chilkatsoft.com/activex_dll_registration_tutorial.asp
-* https://cknotes.com/category/release-notes/
-* https://cknotes.com/chilkat-v10-0-0-activex-registration-and-object-creation/
+The documentation index is available at [`docs/README.md`](docs/README.md).
 
-## Status
+The current UDF function headers and `ChilkatConstants.au3` metadata remain authoritative for exact signatures, return values, `@error`, `@extended`, ProgIDs, CLSIDs, IIDs, and supported object-version metadata.
 
-`v0.2.12-BETA` is the latest tagged GitHub release.
+## Release Notes
 
-The `the_way_to_0.2.0` branch is the active development branch for the next `0.2.x` line and may include script-breaking changes compared to earlier public versions.
+Release Notes are maintained in [`RELEASE_NOTES.md`](RELEASE_NOTES.md).
 
-Known compatibility-sensitive changes include renamed internal/logging helper functions, refactoring around Chilkat object creation wrappers, expanded `$CHILKATOBJ_NAME_*` / `$CHILKATOBJ_API` metadata, updated ProgID naming for Chilkat v10+ objects, additional `_Chilkat_*_ObjCreate()` wrappers, API renaming in newer ZIP and FTP2 helper functions, and explicit user-driven smart-card certificate selection.
+From `v0.3.0` onward, every new UDF function must be documented in the current Release Notes entry as part of the same change. While a version remains under development, its latest entry should be revised and expanded rather than duplicated.
 
-Use the development branch for testing, maintenance, documentation cleanup, and further development rather than as an assumed drop-in replacement without verification.
+## Authors and support
 
-## Original AutoIt Forum references
+Chilkat.au3 is maintained by **mLipok**. The `0.2.x` and `0.3.x` development lines include implementation and documentation assistance from ChatGPT AI, reviewed and integrated by mLipok.
 
-Original AutoIt Forum topic:
+AutoIt Forum support topic:
 
-* https://www.autoitscript.com/forum/topic/186850-chilkatau3-udf/
+- https://www.autoitscript.com/forum/topic/186850-chilkatau3-udf/
 
-Original AutoIt Forum file download:
+Original AutoIt Forum download:
 
-* https://www.autoitscript.com/forum/files/file/433-chilkat-udf
-
-## Authors and contributors
-
-Chilkat.au3 is maintained by mLipok and preserves the AutoIt community work and discussion related to the Chilkat.au3 UDF.
-
-## Discussion and support
-
-Discussion, questions, and support for this UDF can continue in the AutoIt Forum support topic:
-
-* https://www.autoitscript.com/forum/topic/186850-chilkatau3-udf/
+- https://www.autoitscript.com/forum/files/file/433-chilkat-udf
