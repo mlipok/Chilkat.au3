@@ -11,7 +11,7 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - While a version is still in development, revise and extend its latest entry instead of creating incomplete duplicate entries.
 - Before a final release, update the version/tag in the AI-assisted documentation notice in every Markdown file.
 
-## v0.3.0 — 2026/07/19
+## v0.3.0 — 2026/07/20
 
 - Changed: split object-specific functions into Certificates/PKI, Digital Signatures, Email, Cryptography and Compression/Archives modules - AI / mLipok
 - Changed: Chilkat.au3 remains the primary include file and links all modular UDF files, preserving a single entry point for existing scripts - AI / mLipok
@@ -33,6 +33,8 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - Added: Example 038 exports private keys as PKCS#1, PKCS#8 or password-protected AES-256 PKCS#8 PEM/KEY files and exports public keys as PEM/PUB files - AI / mLipok
 - Added: Example 038 generates SHA-256 certificate signing requests with subject fields and optional DNS Subject Alternative Name - AI / mLipok
 - Added: Example 038 imports an existing X.509 certificate or PFX/P12 container and exports the certificate as DER CERT and PEM files - AI / mLipok
+- Changed: Example 038 stores every generated key, CSR and exported certificate set in a versioned `YYYY-MM-DD_HHMM - BaseName` subdirectory and adds a numeric suffix on same-minute collisions to prevent overwriting previous versions - AI / mLipok
+- Changed: Example 038 derives the default CSR country code from the current Windows locale and assigns the main GUI as parent for every MsgBox - AI / mLipok
 - Changed: renamed Chilkat_Example_038_PEM.au3 to Chilkat_Example_038_PEM_GENERATOR.au3 to describe its purpose more precisely - AI / mLipok
 - Added: Chilkat_Example_039_PEM_KEY_CERT_Reader.au3 with a GUI for opening and inspecting PEM, KEY, PUB, CSR, CERT, CER and CRT files - AI / mLipok
 - Added: Example 039 enumerates multiple certificates, private keys, public keys, CSRs and CRLs stored in a single PEM container - AI / mLipok
@@ -87,6 +89,11 @@ This file is the central Release Notes history for the Chilkat.au3 UDF.
 - Added: generic cloud-storage JSON REST support and Amazon S3 create/configure, upload, download, delete and list wrappers - AI / mLipok
 - Changed: moved AuthGoogle object functions from `Chilkat.au3` to `Chilkat_Google.au3` - AI / mLipok
 - Added: generic Google API CRUD wrappers plus Calendar event CRUD, Sheets value CRUD, Tasks CRUD, Cloud SQL instance CRUD and Firebase CRUD helpers - AI / mLipok
+- Added: Functions: `_Chilkat_GoogleOAuth2_Authorize_AsJson()` and `_Chilkat_GoogleOAuth2_Refresh_AsJson()` for interactive desktop authorization with PKCE and saved-token refresh - AI / mLipok
+- Added: Function: `_Chilkat_GoogleServiceAccount_ObtainAccessToken()` for unattended Google API authorization with a service-account JSON private key - AI / mLipok
+- Added: Functions: `_Chilkat_GoogleSheets_AppendValues_AsJson()` and `_Chilkat_GoogleSheets_ClearValues_AsJson()`; the former create/delete names remain compatibility aliases - AI / mLipok
+- Added: Examples 050 and 051 for Google Sheets read/write using interactive Google OAuth2 or a service account, with writes disabled by default - AI / mLipok
+- Changed: Google Sheets operation parameters remain local constants in the examples, while OAuth client data, refresh tokens and service-account keys are stored below the ignored `Examples/!!!_MY_SECRET_DATA/` directory - AI / mLipok
 - Added: Function: `_Chilkat_Base64_DecodeString()` - AI / mLipok
 - Added: Function: `_Chilkat_Base64_EncodeString()` - AI / mLipok
 - Added: Function: `_Chilkat_CloudStorage_Request_AsJson()` - AI / mLipok
