@@ -29,7 +29,17 @@ Exports an X.509 certificate to DER (`.cert`/`.cer`) and/or PEM.
 
 ## Example 038
 
-`Chilkat_Example_038_PEM_GENERATOR.au3` provides a GUI for generating RSA key pairs, choosing output formats, creating CSRs, and importing/exporting certificates or PFX/P12 containers. Its CSR form includes CN, O, OU, C, ST, L, email, and DNS SAN fields. After a CSR is saved, the example reloads it in the background, verifies the CSR signature, reads the Subject DN and SAN values, compares them with the requested values, and displays a verification summary in a MsgBox.
+`Chilkat_Example_038_PEM_GENERATOR.au3` provides a GUI for generating RSA key pairs, choosing output formats, creating CSRs, and importing/exporting certificates or PFX/P12 containers. Its CSR form includes CN, O, OU, C, ST, L, email, and DNS SAN fields. The country field defaults to the two-letter ISO country code of the current Windows locale.
+
+Each generation or certificate-export operation creates a versioned subdirectory below the output directory selected in the GUI:
+
+```text
+OutputDirectory\YYYY-MM-DD_HHMM - BaseName\BaseName...
+```
+
+If a directory with the same minute and base name already exists, the example adds `- 02`, `- 03`, and so on. Existing keys, CSRs, and certificates are therefore not overwritten.
+
+After a CSR is saved, the example reloads it in the background, verifies the CSR signature, reads the Subject DN and SAN values, compares them with the requested values, and displays a verification summary. Every `MsgBox` uses the main GUI window as its parent.
 
 ## Example 039
 
