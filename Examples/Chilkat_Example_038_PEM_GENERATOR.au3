@@ -32,6 +32,7 @@ _Example_38_RSA_GeneratePEM_GUI()
 ; Remarks .......: Uses the Chilkat 11 GenKey/ToPublicKey API or the Chilkat 10 GenerateKey/Export*KeyObj compatibility API selected by the UDF.
 ;                  A public key is not an X.509 certificate. The certificate section exports a certificate that already exists or was issued from the CSR.
 ;                  Generated CSRs are reloaded and verified in the background; the verification summary is displayed in a MsgBox.
+;                  Each operation creates a versioned YYYY-MM-DD_HHMM - BaseName subdirectory below the output directory selected in the GUI.
 ; ===============================================================================================================================
 Func _Example_38_RSA_GeneratePEM_GUI()
 	Local $hGUI = GUICreate($EXAMPLE_38_TITLE, 760, 740)
@@ -162,10 +163,11 @@ Func _Example_38_RSA_GeneratePEM_GUI()
 						BitAND(GUICtrlRead($idPublicPem), $GUI_CHECKED) = $GUI_CHECKED, _
 						BitAND(GUICtrlRead($idPublicPub), $GUI_CHECKED) = $GUI_CHECKED, _
 						BitAND(GUICtrlRead($idCsr), $GUI_CHECKED) = $GUI_CHECKED, _
-						$idLog)
+						$idLog, _
+						$hGUI)
 				If $iGenerateResult = $CHILKAT_RET_SUCCESS And _
 						BitAND(GUICtrlRead($idCsr), $GUI_CHECKED) <> $GUI_CHECKED Then _
-						MsgBox($MB_ICONINFORMATION, $EXAMPLE_38_TITLE, 'RSA files generated successfully.')
+						MsgBox($MB_ICONINFORMATION, $EXAMPLE_38_TITLE, 'RSA files generated successfully.', 0, $hGUI)
 
 			Case $idExportCertificate
 				GUICtrlSetData($idLog, '')
@@ -178,7 +180,7 @@ Func _Example_38_RSA_GeneratePEM_GUI()
 						BitAND(GUICtrlRead($idExportCertPem), $GUI_CHECKED) = $GUI_CHECKED, _
 						$idLog)
 				If $iCertResult = $CHILKAT_RET_SUCCESS Then _
-						MsgBox($MB_ICONINFORMATION, $EXAMPLE_38_TITLE, 'Certificate exported successfully.')
+						MsgBox($MB_ICONINFORMATION, $EXAMPLE_38_TITLE, 'Certificate exported successfully.', 0, $hGUI)
 		EndSwitch
 	WEnd
 
@@ -186,7 +188,7 @@ Func _Example_38_RSA_GeneratePEM_GUI()
 EndFunc   ;==>_Example_38_RSA_GeneratePEM_GUI
 
 
-Func __Example_38_GenerateFiles($sOutputDir, $sBaseName, $iBits, $sPrivateFormatLabel, $sPassword, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $sState, $sLocality, $bPrivatePem, $bPrivateKey, $bPublicPem, $bPublicPub, $bCsr, $idLog)
+Func __Example_38_GenerateFiles($sOutputDir, $sBaseName, $iBits, $sPrivateFormatLabel, $sPassword, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $sState, $sLocality, $bPrivatePem, $bPrivateKey, $bPublicPem, $bPublicPub, $bCsr, $idLog, $hGUI)
 	$sOutputDir = StringStripWS($sOutputDir, $STR_STRIPLEADING + $STR_STRIPTRAILING)
 	$sBaseName = __Example_38_SanitizeBaseName($sBaseName)
 	If $sOutputDir = '' Or $sBaseName = '' Then
@@ -197,11 +199,6 @@ Func __Example_38_GenerateFiles($sOutputDir, $sBaseName, $iBits, $sPrivateFormat
 		__Example_38_Log($idLog, 'Select at least one output file.')
 		Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
 	EndIf
-	If Not FileExists($sOutputDir) And Not DirCreate($sOutputDir) Then
-		__Example_38_Log($idLog, 'Cannot create output directory: ' & $sOutputDir)
-		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
-	EndIf
-
 	Local $sPrivateFormat = 'pkcs8'
 	Switch $sPrivateFormatLabel
 		Case $EXAMPLE_38_PRIVATE_FORMAT_PKCS1
@@ -214,6 +211,12 @@ Func __Example_38_GenerateFiles($sOutputDir, $sBaseName, $iBits, $sPrivateFormat
 		__Example_38_Log($idLog, 'A password is required for encrypted PKCS#8 PEM.')
 		Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
 	EndIf
+
+	Local $sVersionedOutputDir = __Example_38_CreateVersionedOutputDirectory($sOutputDir, $sBaseName, $idLog)
+	Local $iOutputDirError = @error, $iOutputDirExtended = @extended
+	If $iOutputDirError Or $sVersionedOutputDir = '' Then _
+			Return SetError($iOutputDirError, $iOutputDirExtended, $CHILKAT_RET_FAILURE)
+	$sOutputDir = $sVersionedOutputDir
 
 	__Example_38_Log($idLog, 'Generating ' & $iBits & '-bit RSA key pair...')
 	Local $oPrivateKey = Null, $oPublicKey = Null
@@ -257,7 +260,7 @@ Func __Example_38_GenerateFiles($sOutputDir, $sBaseName, $iBits, $sPrivateFormat
 		If @error Then Return __Example_38_LogFailure($idLog, $sCsrPath)
 		__Example_38_Log($idLog, 'Created: ' & $sCsrPath)
 
-		$iResult = __Example_38_VerifyGeneratedCsr($sCsrPath, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $sState, $sLocality, $idLog)
+		$iResult = __Example_38_VerifyGeneratedCsr($sCsrPath, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $sState, $sLocality, $idLog, $hGUI)
 		If @error Or $iResult <> $CHILKAT_RET_SUCCESS Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 	EndIf
 
@@ -265,12 +268,12 @@ Func __Example_38_GenerateFiles($sOutputDir, $sBaseName, $iBits, $sPrivateFormat
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
 EndFunc   ;==>__Example_38_GenerateFiles
 
-Func __Example_38_VerifyGeneratedCsr($sCsrPath, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $sState, $sLocality, $idLog)
+Func __Example_38_VerifyGeneratedCsr($sCsrPath, $sCommonName, $sOrganization, $sOrganizationUnit, $sCountry, $sEmail, $sDnsSan, $sState, $sLocality, $idLog, $hGUI)
 	Local $sCsrPem = FileRead($sCsrPath)
 	If @error Or $sCsrPem = '' Then
 		Local $sReadError = 'CSR verification failed: the generated file could not be read.' & @CRLF & @CRLF & 'File:' & @CRLF & $sCsrPath
 		__Example_38_Log($idLog, 'CSR verification failed: cannot read the generated file.')
-		MsgBox($MB_ICONERROR, $EXAMPLE_38_TITLE, $sReadError)
+		MsgBox($MB_ICONERROR, $EXAMPLE_38_TITLE, $sReadError, 0, $hGUI)
 		Return SetError($CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
 	EndIf
 
@@ -282,7 +285,7 @@ Func __Example_38_VerifyGeneratedCsr($sCsrPath, $sCommonName, $sOrganization, $s
 				'CSR verification failed: cannot create the Chilkat Csr object.' & @CRLF & @CRLF & _
 				'@error = ' & $iCreateError & @CRLF & _
 				'@extended = ' & $iCreateExtended & @CRLF & @CRLF & _
-				'File:' & @CRLF & $sCsrPath)
+				'File:' & @CRLF & $sCsrPath, 0, $hGUI)
 		Return SetError($iCreateError, $iCreateExtended, $CHILKAT_RET_FAILURE)
 	EndIf
 
@@ -292,7 +295,7 @@ Func __Example_38_VerifyGeneratedCsr($sCsrPath, $sCommonName, $sOrganization, $s
 		__Example_38_Log($idLog, 'CSR verification failed: Csr.LoadCsrPem() failed.')
 		MsgBox($MB_ICONERROR, $EXAMPLE_38_TITLE, _
 				'CSR verification failed: the generated CSR could not be loaded.' & @CRLF & @CRLF & _
-				'File:' & @CRLF & $sCsrPath)
+				'File:' & @CRLF & $sCsrPath, 0, $hGUI)
 		Return SetError($CHILKAT_ERR_LOAD, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
 	EndIf
 
@@ -371,13 +374,19 @@ Func __Example_38_VerifyGeneratedCsr($sCsrPath, $sCommonName, $sOrganization, $s
 			', DNS SAN=' & $sDnsSanLogStatus & '.')
 	Local $iMsgIcon = $MB_ICONERROR
 	If $iVerificationOk Then $iMsgIcon = $MB_ICONINFORMATION
-	MsgBox($iMsgIcon, $EXAMPLE_38_TITLE, $sSummary)
+	MsgBox($iMsgIcon, $EXAMPLE_38_TITLE, $sSummary, 0, $hGUI)
 
 	If Not $iVerificationOk Then Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
 	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $CHILKAT_RET_SUCCESS)
 EndFunc   ;==>__Example_38_VerifyGeneratedCsr
 
 Func __Example_38_ExportCertificate($sSourcePath, $sPfxPassword, $sOutputDir, $sBaseName, $bExportDer, $bExportPem, $idLog)
+	$sOutputDir = StringStripWS($sOutputDir, $STR_STRIPLEADING + $STR_STRIPTRAILING)
+	$sBaseName = __Example_38_SanitizeBaseName($sBaseName)
+	If $sOutputDir = '' Or $sBaseName = '' Then
+		__Example_38_Log($idLog, 'Output directory and base file name are required.')
+		Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
+	EndIf
 	If Not FileExists($sSourcePath) Then
 		__Example_38_Log($idLog, 'Certificate source file does not exist.')
 		Return SetError($CHILKAT_ERR_FILENOTEXIST, $CHILKAT_EXT_PARAM1, $CHILKAT_RET_FAILURE)
@@ -386,12 +395,6 @@ Func __Example_38_ExportCertificate($sSourcePath, $sPfxPassword, $sOutputDir, $s
 		__Example_38_Log($idLog, 'Select at least one certificate output format.')
 		Return SetError($CHILKAT_ERR_INVALIDPARAMETERVALUE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
 	EndIf
-	If Not FileExists($sOutputDir) And Not DirCreate($sOutputDir) Then
-		__Example_38_Log($idLog, 'Cannot create output directory: ' & $sOutputDir)
-		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
-	EndIf
-
-	$sBaseName = __Example_38_SanitizeBaseName($sBaseName)
 	Local $oCert = _Chilkat_Cert_ObjCreate()
 	If @error Or Not IsObj($oCert) Then Return SetError(@error, @extended, $CHILKAT_RET_FAILURE)
 
@@ -407,6 +410,12 @@ Func __Example_38_ExportCertificate($sSourcePath, $sPfxPassword, $sOutputDir, $s
 		__Example_38_Log($idLog, 'Certificate load failed.')
 		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, $CHILKAT_RET_FAILURE)
 	EndIf
+
+	Local $sVersionedOutputDir = __Example_38_CreateVersionedOutputDirectory($sOutputDir, $sBaseName, $idLog)
+	Local $iOutputDirError = @error, $iOutputDirExtended = @extended
+	If $iOutputDirError Or $sVersionedOutputDir = '' Then _
+			Return SetError($iOutputDirError, $iOutputDirExtended, $CHILKAT_RET_FAILURE)
+	$sOutputDir = $sVersionedOutputDir
 
 	Local $sDerPath = $bExportDer ? __Example_38_JoinPath($sOutputDir, $sBaseName & '.cert') : Default
 	Local $sPemPath = $bExportPem ? __Example_38_JoinPath($sOutputDir, $sBaseName & '.cert.pem') : Default
@@ -437,6 +446,26 @@ Func __Example_38_JoinPath($sDirectory, $sFileName)
 	Return $sDirectory & '\' & $sFileName
 EndFunc   ;==>__Example_38_JoinPath
 
+Func __Example_38_CreateVersionedOutputDirectory($sRootOutputDir, $sBaseName, $idLog)
+	Local $sTimestamp = @YEAR & '-' & @MON & '-' & @MDAY & '_' & @HOUR & @MIN
+	Local $sVersionFolderName = $sTimestamp & ' - ' & $sBaseName
+	Local $sVersionedOutputDir = __Example_38_JoinPath($sRootOutputDir, $sVersionFolderName)
+	Local $iVersion = 2
+
+	While FileExists($sVersionedOutputDir)
+		$sVersionedOutputDir = __Example_38_JoinPath($sRootOutputDir, $sVersionFolderName & ' - ' & StringFormat('%02d', $iVersion))
+		$iVersion += 1
+	WEnd
+
+	If Not DirCreate($sVersionedOutputDir) Then
+		__Example_38_Log($idLog, 'Cannot create versioned output directory: ' & $sVersionedOutputDir)
+		Return SetError($CHILKAT_ERR_FAILURE, $CHILKAT_EXT_GENERAL, '')
+	EndIf
+
+	__Example_38_Log($idLog, 'Versioned output directory: ' & $sVersionedOutputDir)
+	Return SetError($CHILKAT_ERR_SUCCESS, $CHILKAT_EXT_DEFAULT, $sVersionedOutputDir)
+EndFunc   ;==>__Example_38_CreateVersionedOutputDirectory
+
 Func __Example_38_GetWindowsCountryCode()
 	Local Const $LOCALE_SISO3166CTRYNAME = 0x0000005A
 	Local Const $COUNTRY_CODE_BUFFER_LENGTH = 3
@@ -456,4 +485,3 @@ Func __Example_38_SanitizeBaseName($sBaseName)
 	$sBaseName = StringStripWS($sBaseName, $STR_STRIPLEADING + $STR_STRIPTRAILING)
 	Return StringRegExpReplace($sBaseName, '[\\/:*?"<>|]', '_')
 EndFunc   ;==>__Example_38_SanitizeBaseName
-
